@@ -1,4 +1,4 @@
-# WaterMirror
+# WaterMirror 水之鏡
 💧Water Mirror: AI-powered Water Quality Analysis
 
 ## 「水之鏡，山之屏」  
