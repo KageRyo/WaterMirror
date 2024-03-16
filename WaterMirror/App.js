@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert } from 'react-native';
 
 export default function App() {
   const [waterQualityData, setWaterQualityData] = useState({
@@ -10,11 +10,24 @@ export default function App() {
   const handleInputChange = (key, value) => {
     // 更新水質資料
     setWaterQualityData({ ...waterQualityData, [key]: value });
+    console.log('客戶端填寫了水質資料', waterQualityData)
   };
 
   const handleSubmit = () => {
     // 在這裡處理提交操作，您可以將填寫的數據傳遞給下一個步驟或執行其他操作。
-    console.log('收到客戶端水質資料:', waterQualityData);
+    const filledData = Object.keys(waterQualityData).filter(key => waterQualityData[key] !== '');
+    if (filledData.length > 0) {
+      const message = `已送出${filledData.join(', ')}資料`;
+      Alert.alert('提示', message, [{ text: '確定' }]);
+      console.log('客戶端傳送了水質資料', waterQualityData)
+    } else {
+      Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
+      console.log('客戶端未填寫水質資料')
+    }
+    // 清空水質資料
+    setWaterQualityData({ WT: '', DO: '', pH: '', ORP: '', EC: '' });
+    // 隱藏鍵盤
+    Keyboard.dismiss();
   };
 
   const dismissKeyboard = () => {
