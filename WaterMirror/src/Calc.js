@@ -34,6 +34,15 @@ export default function CalcScreen() {
     Keyboard.dismiss();
   };
 
+  const handleAdditionalInfo = () => {
+    // 顯示提示信息
+    Alert.alert(
+      '偷偷和你說',
+      '不同的水質資料項目需要蒐集更多的水質資料，歡迎對此專案進行貢獻。',
+      [{ text: '了解' }]
+    );
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
@@ -76,6 +85,9 @@ export default function CalcScreen() {
           />
         </View>
         <Button title="送出" onPress={handleSubmit} />
+        <Text style={styles.additionalInfo} onPress={handleAdditionalInfo}>
+          我找不到我的水質項目
+        </Text>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -102,5 +114,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+  },
+  additionalInfo: {
+    marginTop: 20,
+    color: 'blue',
+    textDecorationLine: 'underline',
   },
 });
