@@ -1,6 +1,29 @@
 import React, { useState } from 'react';
 import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert } from 'react-native';
 
+// 水質輸入部分組件
+const WaterQualityInput = ({ label, value, onChangeText }) => (
+  <TextInput
+    style={styles.input}
+    placeholder={label}
+    keyboardType="numeric"
+    value={value}
+    onChangeText={onChangeText}
+  />
+);
+
+// 水質提交按鈕組件
+const SubmitButton = ({ onPress }) => (
+  <Button title="送出" onPress={onPress} />
+);
+
+// 額外信息組件
+const AdditionalInfo = ({ onPress }) => (
+  <Text style={styles.additionalInfo} onPress={onPress}>
+    我找不到我的水質項目
+  </Text>
+);
+
 export default function CalcScreen() {
   const [waterQualityData, setWaterQualityData] = useState({
     // 儲存水質資料
@@ -48,46 +71,34 @@ export default function CalcScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>請填寫水質資料</Text>
         <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="溶氧量（DO, %）"
-            keyboardType="numeric"
+          <WaterQualityInput
+            label="溶氧量（DO, %）"
             value={waterQualityData.DO}
             onChangeText={text => handleInputChange('DO', text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="生物需氧量（BOD, mg/L）"
-            keyboardType="numeric"
+          <WaterQualityInput
+            label="生物需氧量（BOD, mg/L）"
             value={waterQualityData.BOD}
             onChangeText={text => handleInputChange('BOD', text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="懸浮固體（SS, mg/L）"
-            keyboardType="numeric"
+          <WaterQualityInput
+            label="懸浮固體（SS, mg/L）"
             value={waterQualityData.SS}
             onChangeText={text => handleInputChange('SS', text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="氨氮（NH3-N, mg/L）"
-            keyboardType="numeric"
+          <WaterQualityInput
+            label="氨氮（NH3-N, mg/L）"
             value={waterQualityData.NH3N}
             onChangeText={text => handleInputChange('NH3N', text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="導電度（EC, μumho/co）"
-            keyboardType="numeric"
+          <WaterQualityInput
+            label="導電度（EC, μumho/co）"
             value={waterQualityData.EC}
             onChangeText={text => handleInputChange('EC', text)}
           />
         </View>
-        <Button title="送出" onPress={handleSubmit} />
-        <Text style={styles.additionalInfo} onPress={handleAdditionalInfo}>
-          我找不到我的水質項目
-        </Text>
+        <SubmitButton onPress={handleSubmit} />
+        <AdditionalInfo onPress={handleAdditionalInfo} />
       </View>
     </TouchableWithoutFeedback>
   );
