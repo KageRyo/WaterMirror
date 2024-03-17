@@ -24,7 +24,7 @@ export default function CalcScreen() {
       console.log('客戶端未填寫水質資料')
     }
     // 清空水質資料
-    setWaterQualityData({ WT: '', DO: '', pH: '', ORP: '', EC: '' });
+    setWaterQualityData({ DO: '', BOD: '', NH3N: '', EC: '', SS: '' });
     // 隱藏鍵盤
     Keyboard.dismiss();
   };
@@ -42,13 +42,6 @@ export default function CalcScreen() {
         <Text>請填寫水質資料</Text>
         <TextInput
           style={styles.input}
-          placeholder="水溫(WT, °C)"
-          keyboardType="numeric"
-          value={waterQualityData.WT}
-          onChangeText={text => handleInputChange('WT', text)}
-        />
-        <TextInput
-          style={styles.input}
           placeholder="溶氧量（DO, mg/L）"
           keyboardType="numeric"
           value={waterQualityData.DO}
@@ -56,21 +49,28 @@ export default function CalcScreen() {
         />
         <TextInput
           style={styles.input}
-          placeholder="酸鹼值（pH值）"
+          placeholder="生物需氧量（BOD, mg/L）"
           keyboardType="numeric"
-          value={waterQualityData.pH}
-          onChangeText={text => handleInputChange('pH', text)}
+          value={waterQualityData.BOD}
+          onChangeText={text => handleInputChange('BOD', text)}
         />
         <TextInput
           style={styles.input}
-          placeholder="氧化還原電位（ORP）"
+          placeholder="懸浮固體（SS, mg/L）"
           keyboardType="numeric"
-          value={waterQualityData.ORP}
-          onChangeText={text => handleInputChange('ORP', text)}
+          value={waterQualityData.SS}
+          onChangeText={text => handleInputChange('SS', text)}
         />
         <TextInput
           style={styles.input}
-          placeholder="導電度（EC）"
+          placeholder="氨氮（NH3-N, mg/L）"
+          keyboardType="numeric"
+          value={waterQualityData.NH3N}
+          onChangeText={text => handleInputChange('NH3-N', text)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="導電度（EC, μS/cm）"
           keyboardType="numeric"
           value={waterQualityData.EC}
           onChangeText={text => handleInputChange('EC', text)}
