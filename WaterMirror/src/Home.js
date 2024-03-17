@@ -16,8 +16,8 @@ export default function HomeScreen() {
       <Button title="進入水質資料填寫" onPress={() => navigation.navigate('Calc')} />
       {/* 底部容器 */}
       <View style={styles.bottomContainer}>
-        <Text style={styles.blueText}>本專案由國立臺中科技大學智慧生產工程系</Text>
-        <Text style={[styles.blueText, { marginBottom: 10 }]}>張健勳, 吳國維 進行開發</Text>
+        <Text style={styles.blueText}>本專案由國立臺中科技大學</Text>
+        <Text style={[styles.blueText, { marginBottom: 10 }]}>智慧生產工程系 張健勳, 吳國維 進行開發</Text>
         <Text style={{ marginBottom: 10 }}>若有任何問題，歡迎到本專案GitHub頁面！</Text>
         <TouchableOpacity onPress={navigateToGitHub}>
           <Image
