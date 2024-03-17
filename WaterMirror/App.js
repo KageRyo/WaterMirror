@@ -10,7 +10,6 @@ export default function App() {
   const handleInputChange = (key, value) => {
     // 更新水質資料
     setWaterQualityData({ ...waterQualityData, [key]: value });
-    console.log('客戶端填寫了水質資料', waterQualityData)
   };
 
   const handleSubmit = () => {
