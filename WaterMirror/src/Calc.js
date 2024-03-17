@@ -41,7 +41,7 @@ export default function CalcScreen() {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            placeholder="溶氧量（DO, mg/L）"
+            placeholder="溶氧量（DO, %）"
             keyboardType="numeric"
             value={waterQualityData.DO}
             onChangeText={text => handleInputChange('DO', text)}
@@ -69,7 +69,7 @@ export default function CalcScreen() {
           />
           <TextInput
             style={styles.input}
-            placeholder="導電度（EC, μS/cm）"
+            placeholder="導電度（EC, μumho/co）"
             keyboardType="numeric"
             value={waterQualityData.EC}
             onChangeText={text => handleInputChange('EC', text)}
