@@ -43,7 +43,7 @@ export default function CalcScreen() {
       Alert.alert('提示', message, [{ text: '確定' }]);
       console.log('客戶端傳送了水質資料', waterQualityData)
     } else {
-      Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
+      Alert.alert('提示', '請填寫至少一項水質資料', [{ text: '確定' }]);
       console.log('客戶端未填寫水質資料')
     }
     // 清空水質資料
