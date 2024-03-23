@@ -6,7 +6,7 @@ import GitHubMark from '../assets/github-mark.png';
 const githubUrl = 'https://github.com/RotatingPotato/WaterMirror';
 
 // 頂部區塊
-const Top = () => {
+const TopSection = () => {
   return (
     <View style={topStyles.top}>
       <Text style={topStyles.title}>WaterMirror</Text>
@@ -67,7 +67,7 @@ const btnData = [
 ];
 
 // 底部區塊
-const Bottom = () => {
+const BottomSection = () => {
   return (
     <View style={bottomStyles.bottom}>
       <Text style={bottomStyles.blue}>本專案由國立臺中科技大學</Text>
@@ -90,11 +90,11 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <Top />
+      <TopSection />
       <View style={styles.content}>
         <BtnSection navigation={navigation} />
       </View>
-      <Bottom />
+      <BottomSection />
     </View>
   );
 }
