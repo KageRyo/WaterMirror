@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './src/Home'; // 如果這是您首頁的文件名，請替換
-import WaterQualityScreen from './src/Calc'; // 如果這是您水質資料填寫頁面的文件名，請替換
+import HomeScreen from './src/Home'; // 首頁
+import WaterQualityScreen from './src/Calc'; // 水質資料填寫頁面
 
 const Stack = createStackNavigator();
 
