@@ -8,7 +8,7 @@ const navigateToGitHub = () => {
   Linking.openURL('https://github.com/RotatingPotato/WaterMirror');
 };
 
-// 上部分組件
+// 頂部文字組件
 const TopSection = () => (
   <View style={styles.topContainer}>
     <Text style={styles.title}>WaterMirror</Text>
@@ -16,10 +16,20 @@ const TopSection = () => (
   </View>
 );
 
-// 中部分組件
-const MiddleSection = ({ navigation }) => (
-  <View style={styles.middleContainer}>
-    <Button title="進入水質資料填寫" onPress={() => navigation.navigate('Calc')} />
+// 按鈕組件
+const ButtonSection = ({ navigation }) => (
+  <View style={styles.buttonContainer}>
+    <View style={styles.buttonRow}>
+      <Button title="Button 1" onPress={() => navigation.navigate('Calc')} />
+      <View style={styles.buttonSpace} />
+      <Button title="Button 2" />
+    </View>
+    <View style={styles.buttonSpace} />
+    <View style={styles.buttonRow}>
+      <Button title="Button 3" />
+      <View style={styles.buttonSpace} />
+      <Button title="Button 4" />
+    </View>
   </View>
 );
 
@@ -30,24 +40,19 @@ const BottomSection = () => (
     <Text style={[styles.blueText, { marginBottom: 10 }]}>智慧生產工程系 張健勳, 吳國維 進行開發</Text>
     <Text style={{ marginBottom: 10 }}>若有任何問題，歡迎到本專案GitHub頁面！</Text>
     <TouchableOpacity onPress={navigateToGitHub}>
-      <Image
-        source={GitHubMark}
-        style={{ width: 50, height: 50 }}
-      />
+      <Image source={GitHubMark} style={{ width: 50, height: 50 }} />
     </TouchableOpacity>
   </View>
 );
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-
   return (
     <View style={styles.container}>
-      {/* 上部分 */}
       <TopSection />
-      {/* 中部分 */}
-      <MiddleSection navigation={navigation} />
-      {/* 下部分 */}
+      <View style={styles.contentContainer}>
+        <ButtonSection navigation={navigation} />
+      </View>
       <BottomSection />
     </View>
   );
@@ -56,26 +61,33 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   topContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  contentContainer: {
     flex: 1,
     justifyContent: 'center',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonRow: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  middleContainer: {
-    flex: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
+  buttonSpace: {
+    width: 20,
   },
   bottomContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
