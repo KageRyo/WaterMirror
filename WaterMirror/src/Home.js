@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Alert } from 'react-native';
+
 import GitHubMark from '../assets/github-mark.png';
 
 const githubUrl = 'https://github.com/RotatingPotato/WaterMirror';
@@ -37,7 +39,10 @@ const BtnSection = ({ navigation }) => {
 const CustomBtn = ({ bgColor, text, route, navigation }) => {
   // 按鈕點擊事件
   const handlePress = () => {
-    navigation.navigate(route);
+    if(route === 'Calc')
+      navigation.navigate(route);
+    else
+      unfinishedAlert();
   };
 
   // 按鈕樣式
@@ -51,18 +56,18 @@ const CustomBtn = ({ bgColor, text, route, navigation }) => {
 // 按鈕資料
 const btnData = [
   {
-    text: '手動輸入',
+    text: '輸入資料',
     route: 'Calc',
     bgColor: '#FFB6C1',
   },
   {
-    text: '自動輸入',
-    route: 'Auto',
+    text: '查閱報表',
+    route: 'Result',
     bgColor: '#98FB98',
   },
   {
-    text: '查閱報表',
-    route: 'Result',
+    text: '切換色系',
+    route: 'ColorScheme',
     bgColor: '#ADD8E6',
   },
   {
@@ -89,6 +94,15 @@ const BottomSection = () => {
 // 開啟 GitHub 連結
 const openGitHub = () => {
   Linking.openURL(githubUrl);
+};
+
+// 未完成功能提示
+const unfinishedAlert = () => {
+  Alert.alert(
+    '提示',
+    '這個功能目前尚未開放。',
+    [{ text: '確定' }]
+  );
 };
 
 // 畫面視窗
