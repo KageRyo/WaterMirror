@@ -36,8 +36,8 @@ const BtnSection = ({ navigation }) => {
 // 自訂按鈕元件
 const CustomBtn = ({ bgColor, text, onPress }) => {
   return (
-    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]} onPress={onPress}>
-      <Text style={styles.btnText}>{text}</Text>
+    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]}>
+      <Text style={btnStyles.btnText}>{text}</Text>
     </TouchableOpacity>
   );
 };
@@ -150,6 +150,9 @@ const btnStyles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#000',
+  },
+  btnText: {
+    fontSize: 20,
   },
   btnSpace: {
     width: 20,
