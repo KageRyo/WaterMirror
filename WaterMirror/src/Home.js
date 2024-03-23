@@ -34,9 +34,15 @@ const BtnSection = ({ navigation }) => {
 };
 
 // 自訂按鈕元件
-const CustomBtn = ({ bgColor, text, onPress }) => {
+const CustomBtn = ({ bgColor, text, route, navigation }) => {
+  // 按鈕點擊事件
+  const handlePress = () => {
+    navigation.navigate(route);
+  };
+
+  // 按鈕樣式
   return (
-    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]}>
+    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]} onPress={handlePress}>
       <Text style={btnStyles.btnText}>{text}</Text>
     </TouchableOpacity>
   );
@@ -50,13 +56,13 @@ const btnData = [
     bgColor: '#FFB6C1',
   },
   {
-    text: '上傳檔案',
-    route: 'Upload',
+    text: '自動輸入',
+    route: 'Auto',
     bgColor: '#98FB98',
   },
   {
-    text: '自動輸入',
-    route: 'Auto',
+    text: '查閱報表',
+    route: 'Result',
     bgColor: '#ADD8E6',
   },
   {
