@@ -1,96 +1,127 @@
 import React from 'react';
-import { View, Button, Text, Image, TouchableOpacity, Linking, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import GitHubMark from '../assets/github-mark.png';
 
-// 定義導航到 GitHub 頁面的函式
-const navigateToGitHub = () => {
-  Linking.openURL('https://github.com/RotatingPotato/WaterMirror');
+const githubUrl = 'https://github.com/RotatingPotato/WaterMirror';
+
+// 頂部區塊
+const Top = () => {
+  return (
+    <View style={topStyles.top}>
+      <Text style={topStyles.title}>WaterMirror</Text>
+      <Text style={topStyles.subtitle}>智慧化水質分析工具</Text>
+    </View>
+  );
 };
 
-// 頂部文字組件
-const TopSection = () => (
-  <View style={styles.topContainer}>
-    <Text style={styles.title}>WaterMirror</Text>
-    <Text style={styles.subtitle}>智慧化水質分析工具</Text>
-  </View>
-);
-
-// 按鈕組件
-const ButtonSection = ({ navigation }) => (
-  <View style={styles.buttonContainer}>
-    <View style={styles.buttonRow}>
-      <Button title="Button 1" onPress={() => navigation.navigate('Calc')} />
-      <View style={styles.buttonSpace} />
-      <Button title="Button 2" />
+// 按鈕區塊
+const BtnSection = ({ navigation }) => {
+  return (
+    <View style={btnStyles.btnContainer}>
+      <View style={btnStyles.btnRow}>
+        <CustomBtn {...btnData[0]} navigation={navigation} />
+        <View style={btnStyles.btnSpace} />
+        <CustomBtn {...btnData[1]} navigation={navigation} />
+      </View>
+      <View style={btnStyles.btnRow}>
+        <CustomBtn {...btnData[2]} navigation={navigation} />
+        <View style={btnStyles.btnSpace} />
+        <CustomBtn {...btnData[3]} navigation={navigation} />
+      </View>
     </View>
-    <View style={styles.buttonSpace} />
-    <View style={styles.buttonRow}>
-      <Button title="Button 3" />
-      <View style={styles.buttonSpace} />
-      <Button title="Button 4" />
-    </View>
-  </View>
-);
+  );
+};
 
-// 下部分組件
-const BottomSection = () => (
-  <View style={styles.bottomContainer}>
-    <Text style={styles.blueText}>本專案由國立臺中科技大學</Text>
-    <Text style={[styles.blueText, { marginBottom: 10 }]}>智慧生產工程系 張健勳, 吳國維 進行開發</Text>
-    <Text style={{ marginBottom: 10 }}>若有任何問題，歡迎到本專案GitHub頁面！</Text>
-    <TouchableOpacity onPress={navigateToGitHub}>
-      <Image source={GitHubMark} style={{ width: 50, height: 50 }} />
+// 自訂按鈕元件
+const CustomBtn = ({ bgColor, text, onPress }) => {
+  return (
+    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]} onPress={onPress}>
+      <Text style={styles.btnText}>{text}</Text>
     </TouchableOpacity>
-  </View>
-);
+  );
+};
 
+// 按鈕資料
+const btnData = [
+  {
+    text: '手動輸入',
+    route: 'Calc',
+    bgColor: '#FFB6C1',
+  },
+  {
+    text: '上傳檔案',
+    route: 'Upload',
+    bgColor: '#98FB98',
+  },
+  {
+    text: '自動輸入',
+    route: 'Auto',
+    bgColor: '#ADD8E6',
+  },
+  {
+    text: '使用教學',
+    route: 'Tutorial',
+    bgColor: '#FFD700',
+  },
+];
+
+// 底部區塊
+const Bottom = () => {
+  return (
+    <View style={bottomStyles.bottom}>
+      <Text style={bottomStyles.blue}>本專案由國立臺中科技大學</Text>
+      <Text style={[bottomStyles.blue, bottomStyles.bottomText]}>智慧生產工程系 張健勳, 吳國維 進行開發</Text>
+      <Text style={bottomStyles.bottomText}>若有任何問題，歡迎到本專案GitHub頁面！</Text>
+      <TouchableOpacity onPress={openGitHub}>
+        <Image source={GitHubMark} style={bottomStyles.githubImg} />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// 開啟 GitHub 連結
+const openGitHub = () => {
+  Linking.openURL(githubUrl);
+};
+
+// 畫面視窗
 export default function HomeScreen() {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <TopSection />
-      <View style={styles.contentContainer}>
-        <ButtonSection navigation={navigation} />
+      <Top />
+      <View style={styles.content}>
+        <BtnSection navigation={navigation} />
       </View>
-      <BottomSection />
+      <Bottom />
     </View>
   );
 }
 
+// 主樣式表
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 20,
   },
-  topContainer: {
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
+
+// 頂部區塊樣式表
+const topStyles = StyleSheet.create({
+  top: {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
   },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  buttonSpace: {
-    width: 20,
-  },
-  bottomContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
   title: {
-    fontSize: 24,
+    fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -98,7 +129,48 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
   },
-  blueText: {
+});
+
+// 按鈕區塊樣式表
+const btnStyles = StyleSheet.create({
+  btnContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  btnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  btn: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+  btnSpace: {
+    width: 20,
+  },
+});
+
+// 底部區塊樣式表
+const bottomStyles = StyleSheet.create({
+  bottom: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  blue: {
     color: 'blue',
+  },
+  bottomText: {
+    marginBottom: 10,
+  },
+  githubImg: {
+    width: 50,
+    height: 50,
   },
 });
