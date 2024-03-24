@@ -1,20 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert } from 'react-native';
+import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert, ScrollView } from 'react-native';
 
 // 水質輸入部分組件
 const WaterQualityInput = ({ label, value, onChangeText }) => (
-  <TextInput
-    style={styles.input}
-    placeholder={label}
-    keyboardType="numeric"
-    value={value}
-    onChangeText={onChangeText}
-  />
-);
-
-// 水質提交按鈕組件
-const SubmitButton = ({ onPress }) => (
-  <Button title="送出" onPress={onPress} />
+  <TextInput style={styles.input} placeholder={label} keyboardType="numeric" value={value} onChangeText={onChangeText} />
 );
 
 // 額外信息組件
@@ -26,12 +15,14 @@ const AdditionalInfo = ({ onPress }) => (
 
 export default function CalcScreen() {
   const [waterQualityData, setWaterQualityData] = useState({
-    // 儲存水質資料
-    DO: '', BOD: '', NH3N: '', EC: '', SS: '',
+    DO: '',
+    BOD: '',
+    NH3N: '',
+    EC: '',
+    SS: '',
   });
 
   const handleInputChange = (key, value) => {
-    // 更新水質資料
     setWaterQualityData({ ...waterQualityData, [key]: value });
   };
 
@@ -41,13 +32,12 @@ export default function CalcScreen() {
     if (filledData.length > 0) {
       const message = `已送出${filledData.join(', ')}資料`;
       Alert.alert('提示', message, [{ text: '確定' }]);
-      console.log('客戶端傳送了水質資料', waterQualityData)
-
+      console.log('客戶端傳送了水質資料', waterQualityData);
       const csvData = `DO,BOD,NH3N,EC,SS\n${waterQualityData.DO},${waterQualityData.BOD},${waterQualityData.NH3N},${waterQualityData.EC},${waterQualityData.SS}`;
       console.log(csvData);
     } else {
       Alert.alert('提示', '請填寫至少一項水質資料', [{ text: '確定' }]);
-      console.log('客戶端未填寫水質資料')
+      console.log('客戶端未填寫水質資料');
     }
     // 清空水質資料
     setWaterQualityData({ DO: '', BOD: '', NH3N: '', EC: '', SS: '' });
@@ -62,61 +52,57 @@ export default function CalcScreen() {
 
   const handleAdditionalInfo = () => {
     // 顯示提示信息
-    Alert.alert(
-      '偷偷和你說',
-      '不同的水質資料項目需要蒐集更多的水質資料，歡迎對此專案進行貢獻。',
-      [{ text: '了解' }]
-    );
+    Alert.alert('偷偷和你說', '不同的水質資料項目需要蒐集更多的水質資料，歡迎對此專案進行貢獻。', [{ text: '了解' }]);
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.container}>
-        <Text style={styles.title}>請填寫水質資料</Text>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.inputContainer}>
-          <WaterQualityInput
-            label="溶氧量（DO, %）"
-            value={waterQualityData.DO}
-            onChangeText={text => handleInputChange('DO', text)}
-          />
-          <WaterQualityInput
-            label="生物需氧量（BOD, mg/L）"
-            value={waterQualityData.BOD}
-            onChangeText={text => handleInputChange('BOD', text)}
-          />
-          <WaterQualityInput
-            label="懸浮固體（SS, mg/L）"
-            value={waterQualityData.SS}
-            onChangeText={text => handleInputChange('SS', text)}
-          />
-          <WaterQualityInput
-            label="氨氮（NH3-N, mg/L）"
-            value={waterQualityData.NH3N}
-            onChangeText={text => handleInputChange('NH3N', text)}
-          />
-          <WaterQualityInput
-            label="導電度（EC, μumho/co）"
-            value={waterQualityData.EC}
-            onChangeText={text => handleInputChange('EC', text)}
-          />
+          <Text style={styles.title}>手動輸入水質資料</Text>
+          <WaterQualityInput label="溶氧量（DO, %）" value={waterQualityData.DO} onChangeText={text => handleInputChange('DO', text)} />
+          <WaterQualityInput label="生物需氧量（BOD, mg/L）" value={waterQualityData.BOD} onChangeText={text => handleInputChange('BOD', text)} />
+          <WaterQualityInput label="懸浮固體（SS, mg/L）" value={waterQualityData.SS} onChangeText={text => handleInputChange('SS', text)} />
+          <WaterQualityInput label="氨氮（NH3-N, mg/L）" value={waterQualityData.NH3N} onChangeText={text => handleInputChange('NH3N', text)} />
+          <WaterQualityInput label="導電度（EC, μumho/co）" value={waterQualityData.EC} onChangeText={text => handleInputChange('EC', text)} />
         </View>
-        <SubmitButton onPress={handleSubmit} />
+
+        <View style={styles.dataContainer}>
+          <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
+          {/* 在這裡顯示輸入的水質資料 */}
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <Button title="新增一筆" onPress={() => {}} />
+          <Button title="修改" onPress={() => {}} />
+          <Button title="刪除" onPress={() => {}} />
+          <Button title="送出" onPress={handleSubmit} />
+        </View>
+
+        <View style={styles.separator} />
+
+        <View style={styles.buttonContainer}>
+          <Button title="上傳水質資料檔案" onPress={() => {}} />
+          <Button title="與自動化設備連線" onPress={() => {}} />
+        </View>
+
         <AdditionalInfo onPress={handleAdditionalInfo} />
-      </View>
+      </ScrollView>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 20,
   },
   title: {
     fontSize: 20,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   inputContainer: {
     width: '80%',
@@ -128,6 +114,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+  },
+  dataContainer: {
+    width: '80%',
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '80%',
+    marginBottom: 20,
+  },
+  separator: {
+    borderBottomColor: 'gray',
+    borderBottomWidth: 1,
+    width: '80%',
+    marginVertical: 20,
   },
   additionalInfo: {
     marginTop: 20,
