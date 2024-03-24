@@ -42,6 +42,9 @@ export default function CalcScreen() {
       const message = `已送出${filledData.join(', ')}資料`;
       Alert.alert('提示', message, [{ text: '確定' }]);
       console.log('客戶端傳送了水質資料', waterQualityData)
+
+      const csvData = `DO,BOD,NH3N,EC,SS\n${waterQualityData.DO},${waterQualityData.BOD},${waterQualityData.NH3N},${waterQualityData.EC},${waterQualityData.SS}`;
+      console.log(csvData);
     } else {
       Alert.alert('提示', '請填寫至少一項水質資料', [{ text: '確定' }]);
       console.log('客戶端未填寫水質資料')
