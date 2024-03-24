@@ -3,7 +3,8 @@ import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './src/Home';  // 首頁
-import WaterQualityScreen from './src/Calc';  // 水質資料填寫頁面
+import CalcScreen from './src/Calc';  // 水質資料填寫頁面
+import ResultScreen from './src/Result';  // 結果頁面
 
 const Stack = createStackNavigator();
 
@@ -13,7 +14,8 @@ export default function App() {
       <StatusBar hidden={false} />
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: '首頁' }} />
-        <Stack.Screen name="Calc" component={WaterQualityScreen} options={{ title: '水質資料填寫' }} />
+        <Stack.Screen name="Calc" component={CalcScreen} options={{ title: '水質資料填寫' }} />
+        <Stack.Screen name="Result" component={ResultScreen} options={{ title: '查閱報表' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
