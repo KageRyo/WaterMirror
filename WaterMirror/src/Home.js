@@ -39,7 +39,7 @@ const BtnSection = ({ navigation }) => {
 const CustomBtn = ({ bgColor, text, route, navigation }) => {
   // 按鈕點擊事件
   const handlePress = () => {
-    if(route === 'Calc')
+    if(route === 'Calc' || route === 'Result')
       navigation.navigate(route);
     else
       unfinishedAlert();
