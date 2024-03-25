@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert, ScrollView, Picker } from 'react-native';
+import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
