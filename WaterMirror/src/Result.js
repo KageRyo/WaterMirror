@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 // 畫面視窗
 export default function HomeScreen() {
