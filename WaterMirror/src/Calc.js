@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert, ScrollView } from 'react-native';
+import { Button, Keyboard, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View, Alert, ScrollView, Picker } from 'react-native';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -22,6 +22,9 @@ export default function CalcScreen() {
     EC: '',
     SS: '',
   });
+  const [selectedModel, setSelectedModel] = useState('');
+  const [customModelURL, setCustomModelURL] = useState('');
+  const [connectionStatus, setConnectionStatus] = useState('未連線');
 
   // 更新輸入資料
   const updateInput = (key, value) => {
@@ -60,16 +63,71 @@ export default function CalcScreen() {
     Alert.alert('偷偷和你說', '不同的水質資料項目需要蒐集更多的水質資料，歡迎對此專案進行貢獻。', [{ text: '了解' }]);
   };
 
+  // 新增自訂模型
+  const handleAddCustomModel = () => {
+    Alert.prompt(
+      '請輸入自訂模型的 API URL',
+      '',
+      [
+        {
+          text: '取消',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: '確定',
+          onPress: (customURL) => {
+            setSelectedModel('custom');
+            setCustomModelURL(customURL);
+          },
+        },
+      ],
+      'plain-text'
+    );
+  };
+
   return (
     <TouchableWithoutFeedback onPress={dismissKBD}>
       <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.headerContainer}>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedModel}
+              style={styles.picker}
+              onValueChange={(itemValue) => {
+                if (itemValue === 'custom') {
+                  handleAddCustomModel();
+                } else {
+                  setSelectedModel(itemValue);
+                }
+              }}
+            >
+              <Picker.Item label="選擇模型" value="" />
+              <Picker.Item label="Model1" value="Model1" />
+              <Picker.Item label="Model2" value="Model2" />
+              <Picker.Item label="Model3" value="Model3" />
+              <Picker.Item label="新增自己的模型" value="custom" />
+            </Picker>
+          </View>
+          <Text style={styles.connectionStatus}>連線狀況: {connectionStatus}</Text>
+        </View>
+
+        <View style={styles.separator} />
+
         <View style={styles.inputContainer}>
           <Text style={styles.title}>手動輸入水質資料</Text>
-          <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={text => updateInput('DO', text)} />
-          <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={text => updateInput('BOD', text)} />
-          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={text => updateInput('SS', text)} />
-          <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={text => updateInput('NH3N', text)} />
-          <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={text => updateInput('EC', text)} />
+          {selectedModel !== 'custom' && (
+            <>
+              <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => updateInput('DO', text)} />
+              <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => updateInput('BOD', text)} />
+              <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => updateInput('SS', text)} />
+              <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => updateInput('NH3N', text)} />
+              <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => updateInput('EC', text)} />
+            </>
+          )}
+          {selectedModel === 'custom' && (
+            <Text>自訂模型 API URL: {customModelURL}</Text>
+          )}
         </View>
 
         <View style={styles.dataContainer}>
@@ -105,6 +163,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '80%',
+    marginBottom: 10,
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    flex: 1,
+    marginRight: 10,
+  },
+  picker: {
+    height: 40,
+  },
+  connectionStatus: {
+    fontSize: 16,
   },
   title: {
     fontSize: 20,
