@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-
+import RNPickerSelect from 'react-native-picker-select';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -93,23 +92,24 @@ export default function CalcScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
           <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedModel}
-              style={styles.picker}
-              onValueChange={(itemValue) => {
-                if (itemValue === 'custom') {
+            <RNPickerSelect
+              value={selectedModel}
+              onValueChange={(value) => {
+                if (value === 'custom') {
                   handleAddCustomModel();
                 } else {
-                  setSelectedModel(itemValue);
+                  setSelectedModel(value);
                 }
               }}
-            >
-              <Picker.Item label="選擇模型" value="" />
-              <Picker.Item label="Model1" value="Model1" />
-              <Picker.Item label="Model2" value="Model2" />
-              <Picker.Item label="Model3" value="Model3" />
-              <Picker.Item label="新增自己的模型" value="custom" />
-            </Picker>
+              items={[
+                { label: '選擇模型', value: '' },
+                { label: 'Model1', value: 'Model1' },
+                { label: 'Model2', value: 'Model2' },
+                { label: 'Model3', value: 'Model3' },
+                { label: '新增自己的模型', value: 'custom' },
+              ]}
+              style={pickerSelectStyles}
+            />
           </View>
           <Text style={styles.connectionStatus}>連線狀況: {connectionStatus}</Text>
         </View>
@@ -138,17 +138,17 @@ export default function CalcScreen() {
         </View>
 
         <View style={styles.btnContainer}>
-          <Button title="新增一筆" onPress={() => {}} />
-          <Button title="修改" onPress={() => {}} />
-          <Button title="刪除" onPress={() => {}} />
+          <Button title="新增一筆" onPress={() => { }} />
+          <Button title="修改" onPress={() => { }} />
+          <Button title="刪除" onPress={() => { }} />
           <Button title="送出" onPress={handleSubmit} />
         </View>
 
         <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
-          <Button title="上傳水質資料檔案" onPress={() => {}} />
-          <Button title="與自動化設備連線" onPress={() => {}} />
+          <Button title="上傳水質資料檔案" onPress={() => { }} />
+          <Button title="與自動化設備連線" onPress={() => { }} />
         </View>
 
         <AdditionalInfo onPress={handleAdditionalInfo} />
@@ -174,17 +174,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   pickerContainer: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    flex: 1,
-    marginRight: 10,
-  },
-  picker: {
-    height: 40,
+    padding: 5,
   },
   connectionStatus: {
     fontSize: 16,
+    padding: 5,
   },
   title: {
     fontSize: 20,
@@ -220,11 +214,38 @@ const styles = StyleSheet.create({
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
     width: '80%',
-    marginVertical: 20,
+    marginVertical: 10,
   },
   additionalInfo: {
     marginTop: 20,
     color: 'blue',
     textDecorationLine: 'underline',
+  },
+});
+
+// Picker 樣式表
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    height: 40,
+    backgroundColor: '#f2f2f2',
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    height: 40,
   },
 });
