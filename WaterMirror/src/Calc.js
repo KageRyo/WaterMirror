@@ -33,7 +33,7 @@ export default function CalcScreen() {
   };
 
   // 送出資料
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const filledData = Object.keys(data).filter(key => data[key] !== '');
     if (filledData.length > 0) {
       const message = `已送出${filledData.join(', ')}資料`;
@@ -41,12 +41,46 @@ export default function CalcScreen() {
       console.log('客戶端傳送了水質資料', data);
       const csvData = `DO,BOD,NH3N,EC,SS\n${data.DO},${data.BOD},${data.NH3N},${data.EC},${data.SS}`;
       console.log(csvData);
+
+      // 上傳CSV檔案到後端
+      await uploadCSVFile(csvData);
     } else {
       Alert.alert('提示', '請填寫至少一項水質資料', [{ text: '確定' }]);
       console.log('客戶端未填寫水質資料');
     }
     clearInput();
     dismissKBD();
+  };
+
+// 上傳水質資料檔案按鈕處理函式
+const handleUploadFile = async () => {
+  try {
+    const document = await DocumentPicker.getDocumentAsync({ type: 'text/csv' });
+    if (document.type === 'success') {
+      const fileData = await FileSystem.readAsStringAsync(document.uri, { encoding: FileSystem.EncodingType.UTF8 });
+      await uploadCSVFile(fileData);
+      console.log('已上傳水質資料檔案');
+    }
+  } catch (error) {
+    console.error('選擇檔案時出錯：', error);
+  }
+};
+
+  // 上傳CSV檔案到後端
+  const uploadCSVFile = async (csvData) => {
+    const formData = new FormData();
+    formData.append('file', new Blob([csvData], { type: 'text/csv' }), 'data.csv');
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/score/all/?csv=data.csv', {
+        method: 'POST',
+        body: formData,
+      });
+      const responseData = await response.json();
+      console.log('後端回應：', responseData);
+    } catch (error) {
+      console.error('上傳 CSV 檔案時出錯：', error);
+    }
   };
 
   // 清除輸入資料
@@ -147,7 +181,7 @@ export default function CalcScreen() {
         <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
-          <Button title="上傳水質資料檔案" onPress={() => { }} />
+          <Button title="上傳水質資料檔案" onPress={() => {}} />
           <Button title="與自動化設備連線" onPress={() => { }} />
         </View>
 
