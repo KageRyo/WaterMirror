@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -51,100 +50,21 @@ export default function CalcScreen() {
     clearInput();
     dismissKBD();
   };
-
-// 上傳水質資料檔案按鈕處理函式
-const handleUploadFile = async () => {
-  try {
-    const document = await DocumentPicker.getDocumentAsync({ type: 'text/csv' });
-    if (document.type === 'success') {
-      const fileData = await FileSystem.readAsStringAsync(document.uri, { encoding: FileSystem.EncodingType.UTF8 });
-      await uploadCSVFile(fileData);
-      console.log('已上傳水質資料檔案');
-    }
-  } catch (error) {
-    console.error('選擇檔案時出錯：', error);
-  }
-};
-
-  // 上傳CSV檔案到後端
-  const uploadCSVFile = async (csvData) => {
-    const formData = new FormData();
-    formData.append('file', new Blob([csvData], { type: 'text/csv' }), 'data.csv');
-
-    try {
-      const response = await fetch('http://127.0.0.1:8000/score/all/?csv=data.csv', {
-        method: 'POST',
-        body: formData,
-      });
-      const responseData = await response.json();
-      console.log('後端回應：', responseData);
-    } catch (error) {
-      console.error('上傳 CSV 檔案時出錯：', error);
-    }
-  };
-
-  // 清除輸入資料
+  
+  // 清除輸入資料的函式
   const clearInput = () => {
     setData({ DO: '', BOD: '', NH3N: '', EC: '', SS: '' });
   };
 
-  // 隱藏鍵盤
+  // 隱藏鍵盤的函式
   const dismissKBD = () => {
     Keyboard.dismiss();
-  };
-
-  // 補充訊息處理
-  const handleAdditionalInfo = () => {
-    Alert.alert('偷偷和你說', '不同的水質資料項目需要蒐集更多的水質資料，歡迎對此專案進行貢獻。', [{ text: '了解' }]);
-  };
-
-  // 新增自訂模型
-  const handleAddCustomModel = () => {
-    Alert.prompt(
-      '請輸入自訂模型的 API URL',
-      '',
-      [
-        {
-          text: '取消',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: '確定',
-          onPress: (customURL) => {
-            setSelectedModel('custom');
-            setCustomModelURL(customURL);
-          },
-        },
-      ],
-      'plain-text'
-    );
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKBD}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
-          <View style={styles.pickerContainer}>
-            <RNPickerSelect
-              value={selectedModel}
-              onValueChange={(value) => {
-                if (value === 'custom') {
-                  handleAddCustomModel();
-                } else {
-                  setSelectedModel(value);
-                }
-              }}
-              items={[
-                { label: '選擇模型', value: '' },
-                { label: 'Model1', value: 'Model1' },
-                { label: 'Model2', value: 'Model2' },
-                { label: 'Model3', value: 'Model3' },
-                { label: '新增自己的模型', value: 'custom' },
-              ]}
-              style={pickerSelectStyles}
-            />
-          </View>
           <Text style={styles.connectionStatus}>連線狀況: {connectionStatus}</Text>
         </View>
 
@@ -152,44 +72,40 @@ const handleUploadFile = async () => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.title}>手動輸入水質資料</Text>
-          {selectedModel !== 'custom' && (
-            <>
-              <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => updateInput('DO', text)} />
-              <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => updateInput('BOD', text)} />
-              <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => updateInput('SS', text)} />
-              <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => updateInput('NH3N', text)} />
-              <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => updateInput('EC', text)} />
-            </>
-          )}
-          {selectedModel === 'custom' && (
-            <Text>自訂模型 API URL: {customModelURL}</Text>
-          )}
+            <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => updateInput('DO', text)} />
+            <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => updateInput('BOD', text)} />
+            <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => updateInput('SS', text)} />
+            <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => updateInput('NH3N', text)} />
+            <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => updateInput('EC', text)} />
         </View>
 
         <View style={styles.dataContainer}>
           <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
-          {/* 在這裡顯示輸入的水質資料 */}
+          <Text>
+            {data.DO || data.BOD || data.NH3N || data.EC || data.SS ? 
+            `DO: ${data.DO}% BOD: ${data.BOD}mg/L SS: ${data.SS}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co` : 
+            "請在上方輸入框輸入水質資料或上傳CSV檔案"}
+          </Text>
         </View>
 
         <View style={styles.btnContainer}>
-          <Button title="新增一筆" onPress={() => { }} />
-          <Button title="修改" onPress={() => { }} />
-          <Button title="刪除" onPress={() => { }} />
+          <Button title="刪除" onPress={clearInput} />
           <Button title="送出" onPress={handleSubmit} />
         </View>
 
         <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
-          <Button title="上傳水質資料檔案" onPress={() => {}} />
+          <Button title="上傳水質資料檔案" onPress={() => { }} />
           <Button title="與自動化設備連線" onPress={() => { }} />
         </View>
 
-        <AdditionalInfo onPress={handleAdditionalInfo} />
+        <AdditionalInfo onPress={() => { }} />
       </ScrollView>
     </TouchableWithoutFeedback>
   );
 }
+
 
 // 主樣式表
 const styles = StyleSheet.create({
@@ -206,9 +122,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '80%',
     marginBottom: 10,
-  },
-  pickerContainer: {
-    padding: 5,
   },
   connectionStatus: {
     fontSize: 16,
@@ -254,32 +167,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: 'blue',
     textDecorationLine: 'underline',
-  },
-});
-
-// Picker 樣式表
-const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30,
-    height: 40,
-    backgroundColor: '#f2f2f2',
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    color: 'black',
-    paddingRight: 30,
-    height: 40,
   },
 });
