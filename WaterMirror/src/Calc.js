@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 // 水質輸入元件
@@ -22,9 +22,27 @@ export default function CalcScreen() {
     EC: '',
     SS: '',
   });
-  const [selectedModel, setSelectedModel] = useState('');
-  const [customModelURL, setCustomModelURL] = useState('');
-  const [connectionStatus, setConnectionStatus] = useState('未連線');
+  const [connectionStatus, setConnectionStatus] = useState('MPR水質分析伺服器未開啟');
+
+  useEffect(() => {
+    const intervalId = setInterval(checkConnection, 30000); // 每30秒檢查一次連線狀態
+    return () => clearInterval(intervalId); 
+  }, []);
+
+  const checkConnection = async () => {
+    try {
+      const response = await fetch('http://192.168.10.101:8000/');
+      const jsonResponse = await response.json();
+      if (jsonResponse.message === '成功與 API 連線!') {
+        setConnectionStatus('已連線到MPR水質分析模型');
+      } else {
+        setConnectionStatus('與MPR水質分析模型連線失敗');
+      }
+    } catch (error) {
+      console.error('連線錯誤:', error);
+      setConnectionStatus('MPR水質分析伺服器未開啟');
+    }
+  };
 
   // 更新輸入資料
   const updateInput = (key, value) => {
@@ -50,7 +68,7 @@ export default function CalcScreen() {
     clearInput();
     dismissKBD();
   };
-  
+
   // 清除輸入資料的函式
   const clearInput = () => {
     setData({ DO: '', BOD: '', NH3N: '', EC: '', SS: '' });
@@ -65,7 +83,10 @@ export default function CalcScreen() {
     <TouchableWithoutFeedback onPress={dismissKBD}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={styles.connectionStatus}>連線狀況: {connectionStatus}</Text>
+          <Text style={[styles.connectionStatus,
+            connectionStatus === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
+            連線狀況: {connectionStatus}
+          </Text>
         </View>
 
         <View style={styles.separator} />
@@ -126,6 +147,12 @@ const styles = StyleSheet.create({
   connectionStatus: {
     fontSize: 16,
     padding: 5,
+  },
+  connected: {
+    color: 'green', // 連線成功顯示綠色
+  },
+  notConnected: {
+    color: 'red', // 連線失敗或錯誤顯示紅色
   },
   title: {
     fontSize: 20,
