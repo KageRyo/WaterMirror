@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -25,7 +26,7 @@ export default function CalcScreen() {
   const [connectionStatus, setConnectionStatus] = useState('MPR水質分析伺服器未開啟');
 
   useEffect(() => {
-    const intervalId = setInterval(checkConnection, 30000); // 每30秒檢查一次連線狀態
+    const intervalId = setInterval(checkConnection, 5000); // 每5秒檢查一次連線狀態
     return () => clearInterval(intervalId); 
   }, []);
 
@@ -53,21 +54,60 @@ export default function CalcScreen() {
   const handleSubmit = async () => {
     const filledData = Object.keys(data).filter(key => data[key] !== '');
     if (filledData.length > 0) {
-      const message = `已送出${filledData.join(', ')}資料`;
-      Alert.alert('提示', message, [{ text: '確定' }]);
-      console.log('客戶端傳送了水質資料', data);
+      Alert.alert('提示', `正在處理資料並建立CSV檔案`, [{ text: '確定' }]);
       const csvData = `DO,BOD,NH3N,EC,SS\n${data.DO},${data.BOD},${data.NH3N},${data.EC},${data.SS}`;
-      console.log(csvData);
-
-      // 上傳CSV檔案到後端
-      await uploadCSVFile(csvData);
+      console.log('客戶端傳送了水質資料:', data);
+      console.log('CSV Data:', csvData);
+    
+      const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
+      await FileSystem.writeAsStringAsync(fileName, csvData, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+  
+      console.log(`CSV file created at ${fileName}`);
+    
+      const fileContent = await FileSystem.readAsStringAsync(fileName, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      console.log('File content:', fileContent);
+      Alert.alert('檔案建立', `CSV檔案已建立並暫存於：${fileName}`, [{ text: '確定' }]);
+  
+      const formData = new FormData();
+      formData.append('file', {
+        uri: fileName,
+        name: 'water_quality_data.csv',
+        type: 'text/csv',
+      });
+  
+      console.log('Sending data to the server...');
+      fetch('http://192.168.10.101:8000/score/all/', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+        Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
+      });
     } else {
       Alert.alert('提示', '請填寫至少一項水質資料', [{ text: '確定' }]);
       console.log('客戶端未填寫水質資料');
     }
     clearInput();
     dismissKBD();
-  };
+  };  
 
   // 清除輸入資料的函式
   const clearInput = () => {
