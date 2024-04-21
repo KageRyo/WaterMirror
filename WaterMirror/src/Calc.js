@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
+import * as MediaLibrary from 'expo-media-library';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -26,11 +27,22 @@ export default function CalcScreen() {
   });
   const [connectionStatus, setConnectionStatus] = useState('MPR水質分析伺服器未開啟');
 
+  // 元件載入時執行
   useEffect(() => {
+    requestStoragePermission();
     const intervalId = setInterval(checkConnection, 5000); // 每5秒檢查一次連線狀態
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, []);
 
+  // 請求存儲權限的函式
+  async function requestStoragePermission() {
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert('需要權限以訪問您的媒體庫！');
+    }
+  }
+
+  // 檢查與伺服器的連線
   const checkConnection = async () => {
     try {
       const response = await fetch('http://192.168.10.101:8000/');
@@ -54,35 +66,49 @@ export default function CalcScreen() {
   // 選擇CSV檔案
   const handleFileUpload = async () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({ type: 'text/csv' });
-      if (result.type === 'success') {
+      // 請求用戶選擇檔案
+      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+      console.log('Document picker result:', result);
+  
+      if (!result.cancelled) {
+        // 確保取得assets陣列中的第一個元素
+        const pickedFile = result.assets[0];
+        console.log('Picked file URI:', pickedFile.uri);
+  
         const formData = new FormData();
         formData.append('file', {
-          uri: result.uri,
-          name: 'water_quality_data.csv',
-          type: 'text/csv'
+          uri: pickedFile.uri,
+          name: pickedFile.name,
+          type: pickedFile.mimeType
         });
+        console.log('FormData prepared:', formData);
   
-        fetch('http://192.168.10.101:8000/score/all/', {
+        // 上傳檔案至伺服器
+        const response = await fetch('http://192.168.10.101:8000/score/all/', {
           method: 'POST',
           body: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-        })
-        .then(response => response.json())
-        .then(data => {
-          Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
         });
+  
+        // 處理伺服器回應
+        const responseData = await response.json();
+        console.log('Response from server:', responseData); // 伺服器回應
+        if (response.ok) {
+          Alert.alert('上傳成功', `分析結果: ${JSON.stringify(responseData)}`, [{ text: 'OK' }]);
+        } else {
+          throw new Error('Network response was not ok');
+        }
+      } else {
+        console.log('Operation cancelled by the user.'); // 用戶取消操作
+        Alert.alert('取消操作', '您沒有選擇任何檔案。', [{ text: 'OK' }]);
       }
     } catch (error) {
-      console.error('Error picking a file:', error);
+      console.error('Error during file upload:', error); // 上傳檔案時出錯
+      Alert.alert('上傳失敗', `無法上傳資料至伺服器。請檢查您的網絡連接。錯誤信息：${error}`, [{ text: '確定' }]);
     }
-  };
+  };  
 
   // 送出資料
   const handleSubmit = async () => {
@@ -92,27 +118,28 @@ export default function CalcScreen() {
       const csvData = `DO,BOD,NH3N,EC,SS\n${data.DO},${data.BOD},${data.NH3N},${data.EC},${data.SS}`;
       console.log('客戶端傳送了水質資料:', data);
       console.log('CSV Data:', csvData);
-    
+
+      // 建立CSV檔案
       const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
       await FileSystem.writeAsStringAsync(fileName, csvData, {
         encoding: FileSystem.EncodingType.UTF8,
       });
-  
       console.log(`CSV file created at ${fileName}`);
-    
+
+      // 讀取CSV檔案內容
       const fileContent = await FileSystem.readAsStringAsync(fileName, {
         encoding: FileSystem.EncodingType.UTF8,
       });
       console.log('File content:', fileContent);
       Alert.alert('檔案建立', `CSV檔案已建立並暫存於：${fileName}`, [{ text: '確定' }]);
-  
+
+      // 上傳CSV檔案至伺服器
       const formData = new FormData();
       formData.append('file', {
         uri: fileName,
         name: 'water_quality_data.csv',
         type: 'text/csv',
       });
-  
       console.log('Sending data to the server...');
       fetch('http://192.168.10.101:8000/score/all/', {
         method: 'POST',
@@ -121,27 +148,29 @@ export default function CalcScreen() {
           'Content-Type': 'multipart/form-data',
         },
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Success:', data);
-        Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
-      });
+        // 處理伺服器回應
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Success:', data);
+          Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
+        });
     } else {
-      Alert.alert('提示', '請填寫至少一項水質資料', [{ text: '確定' }]);
+      // 提示用戶未填寫水質資料
+      Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
       console.log('客戶端未填寫水質資料');
     }
     clearInput();
     dismissKBD();
-  };  
+  };
 
   // 清除輸入資料的函式
   const clearInput = () => {
@@ -158,7 +187,7 @@ export default function CalcScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
           <Text style={[styles.connectionStatus,
-            connectionStatus === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
+          connectionStatus === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
             連線狀況: {connectionStatus}
           </Text>
         </View>
@@ -167,19 +196,19 @@ export default function CalcScreen() {
 
         <View style={styles.inputContainer}>
           <Text style={styles.title}>手動輸入水質資料</Text>
-            <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => updateInput('DO', text)} />
-            <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => updateInput('BOD', text)} />
-            <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => updateInput('SS', text)} />
-            <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => updateInput('NH3N', text)} />
-            <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => updateInput('EC', text)} />
+          <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => updateInput('DO', text)} />
+          <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => updateInput('BOD', text)} />
+          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => updateInput('SS', text)} />
+          <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => updateInput('NH3N', text)} />
+          <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => updateInput('EC', text)} />
         </View>
 
         <View style={styles.dataContainer}>
           <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
           <Text>
-            {data.DO || data.BOD || data.NH3N || data.EC || data.SS ? 
-            `DO: ${data.DO}% BOD: ${data.BOD}mg/L SS: ${data.SS}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co` : 
-            "請在上方輸入框輸入水質資料或上傳CSV檔案"}
+            {data.DO || data.BOD || data.NH3N || data.EC || data.SS ?
+              `DO: ${data.DO}% BOD: ${data.BOD}mg/L SS: ${data.SS}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co` :
+              "請在上方輸入框輸入水質資料或上傳CSV檔案"}
           </Text>
         </View>
 
