@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -48,6 +49,39 @@ export default function CalcScreen() {
   // 更新輸入資料
   const updateInput = (key, value) => {
     setData({ ...data, [key]: value });
+  };
+
+  // 選擇CSV檔案
+  const handleFileUpload = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({ type: 'text/csv' });
+      if (result.type === 'success') {
+        const formData = new FormData();
+        formData.append('file', {
+          uri: result.uri,
+          name: 'water_quality_data.csv',
+          type: 'text/csv'
+        });
+  
+        fetch('http://192.168.10.101:8000/score/all/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
+        });
+      }
+    } catch (error) {
+      console.error('Error picking a file:', error);
+    }
   };
 
   // 送出資料
@@ -157,7 +191,7 @@ export default function CalcScreen() {
         <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
-          <Button title="上傳水質資料檔案" onPress={() => { }} />
+          <Button title="上傳水質資料檔案" onPress={handleFileUpload} />
           <Button title="與自動化設備連線" onPress={() => { }} />
         </View>
 
