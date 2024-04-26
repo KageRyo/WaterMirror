@@ -3,6 +3,7 @@ import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, Touch
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
+import config from './config.json';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -25,12 +26,12 @@ export default function CalcScreen() {
     EC: '',
     SS: '',
   });
-  const [connectionStatus, setConnectionStatus] = useState('MPR水質分析伺服器未開啟');
+  const [connectionStatus, setConnectionStatus] = useState('與MPR水質分析伺服器連線中...');
 
   // 元件載入時執行
   useEffect(() => {
     requestStoragePermission();
-    const intervalId = setInterval(checkConnection, 5000); // 每5秒檢查一次連線狀態
+    const intervalId = setInterval(() => checkConnection(config.api_url), 5000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -43,9 +44,9 @@ export default function CalcScreen() {
   }
 
   // 檢查與伺服器的連線
-  const checkConnection = async () => {
+  const checkConnection = async (apiUrl) => {
     try {
-      const response = await fetch('http://192.168.10.101:8000/');
+      const response = await fetch(`${apiUrl}/`);
       const jsonResponse = await response.json();
       if (jsonResponse.message === '成功與 API 連線!') {
         setConnectionStatus('已連線到MPR水質分析模型');
@@ -66,49 +67,38 @@ export default function CalcScreen() {
   // 選擇CSV檔案
   const handleFileUpload = async () => {
     try {
-      // 請求用戶選擇檔案
       const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-      console.log('Document picker result:', result);
-  
       if (!result.cancelled) {
-        // 確保取得assets陣列中的第一個元素
         const pickedFile = result.assets[0];
-        console.log('Picked file URI:', pickedFile.uri);
-  
         const formData = new FormData();
         formData.append('file', {
           uri: pickedFile.uri,
           name: pickedFile.name,
           type: pickedFile.mimeType
         });
-        console.log('FormData prepared:', formData);
-  
-        // 上傳檔案至伺服器
-        const response = await fetch('http://192.168.10.101:8000/score/all/', {
+
+        const response = await fetch(`${config.api_url}/score/all/`, {  // Use API URL from config
           method: 'POST',
           body: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-  
-        // 處理伺服器回應
+
         const responseData = await response.json();
-        console.log('Response from server:', responseData); // 伺服器回應
         if (response.ok) {
           Alert.alert('上傳成功', `分析結果: ${JSON.stringify(responseData)}`, [{ text: 'OK' }]);
         } else {
           throw new Error('Network response was not ok');
         }
       } else {
-        console.log('Operation cancelled by the user.'); // 用戶取消操作
         Alert.alert('取消操作', '您沒有選擇任何檔案。', [{ text: 'OK' }]);
       }
     } catch (error) {
-      console.error('Error during file upload:', error); // 上傳檔案時出錯
+      console.error('Error during file upload:', error);
       Alert.alert('上傳失敗', `無法上傳資料至伺服器。請檢查您的網絡連接。錯誤信息：${error}`, [{ text: '確定' }]);
     }
-  };  
+  };
 
   // 送出資料
   const handleSubmit = async () => {
@@ -116,60 +106,39 @@ export default function CalcScreen() {
     if (filledData.length > 0) {
       Alert.alert('提示', `正在處理資料並建立CSV檔案`, [{ text: '確定' }]);
       const csvData = `DO,BOD,NH3N,EC,SS\n${data.DO},${data.BOD},${data.NH3N},${data.EC},${data.SS}`;
-      console.log('客戶端傳送了水質資料:', data);
-      console.log('CSV Data:', csvData);
-
-      // 建立CSV檔案
       const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
       await FileSystem.writeAsStringAsync(fileName, csvData, {
         encoding: FileSystem.EncodingType.UTF8,
       });
-      console.log(`CSV file created at ${fileName}`);
 
-      // 讀取CSV檔案內容
-      const fileContent = await FileSystem.readAsStringAsync(fileName, {
-        encoding: FileSystem.EncodingType.UTF8,
-      });
-      console.log('File content:', fileContent);
-      Alert.alert('檔案建立', `CSV檔案已建立並暫存於：${fileName}`, [{ text: '確定' }]);
-
-      // 上傳CSV檔案至伺服器
       const formData = new FormData();
       formData.append('file', {
         uri: fileName,
         name: 'water_quality_data.csv',
         type: 'text/csv',
       });
-      console.log('Sending data to the server...');
-      fetch('http://192.168.10.101:8000/score/all/', {
+
+      fetch(`${config.api_url}/score/all/`, {  // Use API URL from config
         method: 'POST',
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      })
-        // 處理伺服器回應
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('Success:', data);
-          Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
-        });
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      }).then(data => {
+        Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
+      }).catch((error) => {
+        console.error('Error:', error);
+        Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
+      });
     } else {
-      // 提示用戶未填寫水質資料
       Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
-      console.log('客戶端未填寫水質資料');
     }
     clearInput();
-    dismissKBD();
   };
 
   // 清除輸入資料的函式
