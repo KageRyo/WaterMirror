@@ -56,7 +56,7 @@ const useServerConnection = (apiUrl) => {
 };
 
 // 畫面視窗
-export default function CalcScreen() {
+export default function CalcScreen({ navigation }) {
   const apiUrl = `${config.api_url}:${config.port}`;
   const status = useServerConnection(apiUrl);
   const [data, setData] = useState({
@@ -78,6 +78,22 @@ export default function CalcScreen() {
       alert('需要權限以訪問您的媒體庫！');
     }
   }
+
+  // 處理上傳成功時的操作
+  const handleUploadSuccess = (data) => {
+    Alert.alert(
+      '上傳成功',
+      '您的水質資料已上傳成功。',
+      [
+        { text: '取消', onPress: () => {} },
+        {
+          text: '查看報表',
+          onPress: () => navigation.navigate('Result', { data }), // 使用navigation prop
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   // 處理上傳的CSV水質資料檔案
   const handleFileUpload = async () => {
@@ -102,18 +118,24 @@ export default function CalcScreen() {
         });
         
         // 處理伺服器回應
-        const responseData = await response.json();
-        if (response.ok) {
-          console.log('Success:', responseData);
-          Alert.alert('上傳成功', `分析結果: ${JSON.stringify(responseData)}`, [{ text: 'OK' }]);
-        } else {
-          console.error('Error during file upload:', responseData);
-          throw new Error('Network response was not ok');
+        try {
+          const response = await fetch(`${apiUrl}/score/all/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          const responseData = await response.json();
+          if (response.ok) {
+            handleUploadSuccess(responseData); // 這裡傳遞responseData
+          } else {
+            throw new Error('Network response was not ok');
+          }
+        } catch (error) {
+          Alert.alert('上傳失敗', '發生錯誤，請稍後重試。', [{ text: '確定' }]);
         }
-      } else {
-        console.log('No file selected');
-        Alert.alert('取消操作', '您沒有選擇任何檔案。', [{ text: 'OK' }]);
-      }
+      };
     } catch (error) {
       console.error('Error during file upload:', error);
       Alert.alert('上傳失敗', `無法上傳資料至伺服器。請檢查您的網絡連接。錯誤信息：${error}`, [{ text: '確定' }]);
@@ -138,25 +160,24 @@ export default function CalcScreen() {
         type: 'text/csv',
       });
 
-      // 上傳文件並處理伺服器回應
-      fetch(`${apiUrl}/score/all/`, {
+    // 上傳文件並處理伺服器回應
+    try {
+      const response = await fetch(`${apiUrl}/score/all/`, {
         method: 'POST',
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      }).then(data => {
-        console.log('Success:', data);
-        Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
-      }).catch((error) => {
-        console.error('Error:', error);
-        Alert.alert('上傳失敗', '無法上傳資料至伺服器。請檢查您的網絡連接。', [{ text: '確定' }]);
       });
+      const responseData = await response.json();
+      if (response.ok) {
+        handleUploadSuccess(responseData); // 這裡傳遞responseData
+      } else {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      Alert.alert('上傳失敗', '發生錯誤，請稍後重試。', [{ text: '確定' }]);
+    }
     } else {
       Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
     }
