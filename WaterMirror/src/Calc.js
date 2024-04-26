@@ -27,8 +27,8 @@ export default function CalcScreen() {
     SS: '',
   });
   const [connectionStatus, setConnectionStatus] = useState('與MPR水質分析伺服器連線中...');
-  const apiUrl = `${apiUrl}:${config.port}`;
-
+  const apiUrl = `${config.api_url}:${config.port}`;
+  
   // 元件載入時執行
   useEffect(() => {
     requestStoragePermission();
