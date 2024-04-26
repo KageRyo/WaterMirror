@@ -27,11 +27,12 @@ export default function CalcScreen() {
     SS: '',
   });
   const [connectionStatus, setConnectionStatus] = useState('與MPR水質分析伺服器連線中...');
+  const apiUrl = `${apiUrl}:${config.port}`;
 
   // 元件載入時執行
   useEffect(() => {
     requestStoragePermission();
-    const intervalId = setInterval(() => checkConnection(config.api_url), 5000);
+    const intervalId = setInterval(() => checkConnection(apiUrl), 5000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -77,7 +78,7 @@ export default function CalcScreen() {
           type: pickedFile.mimeType
         });
 
-        const response = await fetch(`${config.api_url}/score/all/`, {  // Use API URL from config
+        const response = await fetch(`${apiUrl}/score/all/`, {  // Use API URL from config
           method: 'POST',
           body: formData,
           headers: {
@@ -118,7 +119,7 @@ export default function CalcScreen() {
         type: 'text/csv',
       });
 
-      fetch(`${config.api_url}/score/all/`, {  // Use API URL from config
+      fetch(`${apiUrl}/score/all/`, {  // Use API URL from config
         method: 'POST',
         body: formData,
         headers: {
