@@ -7,7 +7,13 @@ import config from './config.json';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
-  <TextInput style={styles.input} placeholder={label} keyboardType="numeric" value={value} onChangeText={onChangeText} />
+  <TextInput
+    style={styles.input}
+    placeholder={label}
+    keyboardType="numeric"
+    value={value}
+    onChangeText={onChangeText}
+  />
 );
 
 // 補充訊息元件
@@ -17,8 +23,42 @@ const AdditionalInfo = ({ onPress }) => (
   </Text>
 );
 
+// 連接狀態元件
+const ConnectionStatus = ({ status }) => (
+  <Text style={[styles.status, status === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
+    連線狀況: {status}
+  </Text>
+);
+
+// 用於檢查與伺服器的連線狀態的 Hook
+const useServerConnection = (apiUrl) => {
+  const [status, setStatus] = useState('與MPR水質分析伺服器連線中...');
+
+  useEffect(() => {
+    const checkTimeout = 5000
+    const intervalId = setInterval(() => checkConnection(), checkTimeout);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // 檢查與伺服器的連線狀態
+  const checkConnection = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/`);
+      const jsonResponse = await response.json();
+      setStatus(jsonResponse.message === '成功與 API 連線!' ? '已連線到MPR水質分析模型' : '與MPR水質分析模型連線失敗');
+    } catch (error) {
+      console.error('連線錯誤:', error);
+      setStatus('MPR水質分析伺服器未開啟');
+    }
+  };
+
+  return status;
+};
+
 // 畫面視窗
 export default function CalcScreen() {
+  const apiUrl = `${config.api_url}:${config.port}`;
+  const status = useServerConnection(apiUrl);
   const [data, setData] = useState({
     DO: '',
     BOD: '',
@@ -26,17 +66,12 @@ export default function CalcScreen() {
     EC: '',
     SS: '',
   });
-  const [connectionStatus, setConnectionStatus] = useState('與MPR水質分析伺服器連線中...');
-  const apiUrl = `${config.api_url}:${config.port}`;
-  
-  // 元件載入時執行
+
   useEffect(() => {
     requestStoragePermission();
-    const intervalId = setInterval(() => checkConnection(apiUrl), 5000);
-    return () => clearInterval(intervalId);
   }, []);
 
-  // 請求存儲權限的函式
+  // 請求存儲權限
   async function requestStoragePermission() {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== 'granted') {
@@ -44,28 +79,7 @@ export default function CalcScreen() {
     }
   }
 
-  // 檢查與伺服器的連線
-  const checkConnection = async (apiUrl) => {
-    try {
-      const response = await fetch(`${apiUrl}/`);
-      const jsonResponse = await response.json();
-      if (jsonResponse.message === '成功與 API 連線!') {
-        setConnectionStatus('已連線到MPR水質分析模型');
-      } else {
-        setConnectionStatus('與MPR水質分析模型連線失敗');
-      }
-    } catch (error) {
-      console.error('連線錯誤:', error);
-      setConnectionStatus('MPR水質分析伺服器未開啟');
-    }
-  };
-
-  // 更新輸入資料
-  const updateInput = (key, value) => {
-    setData({ ...data, [key]: value });
-  };
-
-  // 選擇CSV檔案
+  // 處理上傳的CSV水質資料檔案
   const handleFileUpload = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
@@ -78,21 +92,26 @@ export default function CalcScreen() {
           type: pickedFile.mimeType
         });
 
-        const response = await fetch(`${apiUrl}/score/all/`, {  // Use API URL from config
+        // 上傳文件
+        const response = await fetch(`${apiUrl}/score/all/`, {
           method: 'POST',
           body: formData,
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-
+        
+        // 處理伺服器回應
         const responseData = await response.json();
         if (response.ok) {
+          console.log('Success:', responseData);
           Alert.alert('上傳成功', `分析結果: ${JSON.stringify(responseData)}`, [{ text: 'OK' }]);
         } else {
+          console.error('Error during file upload:', responseData);
           throw new Error('Network response was not ok');
         }
       } else {
+        console.log('No file selected');
         Alert.alert('取消操作', '您沒有選擇任何檔案。', [{ text: 'OK' }]);
       }
     } catch (error) {
@@ -101,12 +120,12 @@ export default function CalcScreen() {
     }
   };
 
-  // 送出資料
+  // 處理手動輸入的水質資料
   const handleSubmit = async () => {
-    const filledData = Object.keys(data).filter(key => data[key] !== '');
+    const filledData = Object.values(data).filter(value => value !== '');
     if (filledData.length > 0) {
       Alert.alert('提示', `正在處理資料並建立CSV檔案`, [{ text: '確定' }]);
-      const csvData = `DO,BOD,NH3N,EC,SS\n${data.DO},${data.BOD},${data.NH3N},${data.EC},${data.SS}`;
+      const csvData = `DO,BOD,NH3N,EC,SS\n${Object.values(data).join(',')}`;
       const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
       await FileSystem.writeAsStringAsync(fileName, csvData, {
         encoding: FileSystem.EncodingType.UTF8,
@@ -119,7 +138,8 @@ export default function CalcScreen() {
         type: 'text/csv',
       });
 
-      fetch(`${apiUrl}/score/all/`, {  // Use API URL from config
+      // 上傳文件並處理伺服器回應
+      fetch(`${apiUrl}/score/all/`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -131,6 +151,7 @@ export default function CalcScreen() {
         }
         return response.json();
       }).then(data => {
+        console.log('Success:', data);
         Alert.alert('上傳成功', `分析結果: ${JSON.stringify(data)}`, [{ text: 'OK' }]);
       }).catch((error) => {
         console.error('Error:', error);
@@ -142,41 +163,38 @@ export default function CalcScreen() {
     clearInput();
   };
 
-  // 清除輸入資料的函式
+  // 清空輸入框
   const clearInput = () => {
     setData({ DO: '', BOD: '', NH3N: '', EC: '', SS: '' });
   };
 
-  // 隱藏鍵盤的函式
-  const dismissKBD = () => {
+  // 關閉鍵盤
+  const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKBD}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={[styles.connectionStatus,
-          connectionStatus === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
-            連線狀況: {connectionStatus}
-          </Text>
+          <ConnectionStatus status={status} />
         </View>
 
         <View style={styles.separator} />
 
         <View style={styles.inputContainer}>
           <Text style={styles.title}>手動輸入水質資料</Text>
-          <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => updateInput('DO', text)} />
-          <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => updateInput('BOD', text)} />
-          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => updateInput('SS', text)} />
-          <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => updateInput('NH3N', text)} />
-          <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => updateInput('EC', text)} />
+          <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => setData({ ...data, DO: text })} />
+          <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => setData({ ...data, BOD: text })} />
+          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => setData({ ...data, SS: text })} />
+          <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => setData({ ...data, NH3N: text })} />
+          <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => setData({ ...data, EC: text })} />
         </View>
 
         <View style={styles.dataContainer}>
           <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
           <Text>
-            {data.DO || data.BOD || data.NH3N || data.EC || data.SS ?
+            {Object.values(data).some(value => value) ?
               `DO: ${data.DO}% BOD: ${data.BOD}mg/L SS: ${data.SS}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co` :
               "請在上方輸入框輸入水質資料或上傳CSV檔案"}
           </Text>
@@ -200,8 +218,6 @@ export default function CalcScreen() {
   );
 }
 
-
-// 主樣式表
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
@@ -222,10 +238,10 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   connected: {
-    color: 'green', // 連線成功顯示綠色
+    color: 'green',
   },
   notConnected: {
-    color: 'red', // 連線失敗或錯誤顯示紅色
+    color: 'red',
   },
   title: {
     fontSize: 20,
