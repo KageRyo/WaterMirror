@@ -33,5 +33,6 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
-WaterMirror/src/config.json
-WaterMirror/src/config.json
+
+# API config file
+./WaterMirror/src/config.json
