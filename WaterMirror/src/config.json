@@ -1,4 +1,4 @@
 {
-    "api_url": "http://192.168.10.101",
-    "port": "8000"
+    "api_url": "請修改成您的 APIurl",
+    "port": "請修改成您的 port。"
 }
