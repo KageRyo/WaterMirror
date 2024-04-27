@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import GitHubMark from '../assets/github-mark.png';
@@ -12,6 +12,7 @@ const TopSection = () => {
     <View style={topStyles.top}>
       <Text style={topStyles.title}>WaterMirror</Text>
       <Text style={topStyles.subtitle}>智慧化水質分析工具</Text>
+      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-v1.0.0</Text>
     </View>
   );
 };
@@ -147,6 +148,10 @@ const topStyles = StyleSheet.create({
   subtitle: {
     fontSize: 18,
     marginBottom: 20,
+  },
+  platform: {
+    fontSize: 16,
+    color: 'blue',
   },
 });
 
