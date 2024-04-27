@@ -2,9 +2,9 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './src/Home';  // 首頁
-import CalcScreen from './src/Calc';  // 水質資料填寫頁面
-import ResultScreen from './src/Result';  // 結果頁面
+import HomeScreen from './src/Home';      // 首頁
+import CalcScreen from './src/Calc';      // 水質資料填寫頁面
+import ResultScreen from './src/Result';  // 查閱報表頁面
 
 const Stack = createStackNavigator();
 

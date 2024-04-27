@@ -1,1 +1,5 @@
+# node.js dependencies
 node_modules
+
+# config files
+./src/config.json
