@@ -107,15 +107,6 @@ export default function CalcScreen({ navigation }) {
           name: pickedFile.name,
           type: pickedFile.mimeType
         });
-
-        // 上傳文件
-        const response = await fetch(`${apiUrl}/score/all/`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
         
         // 處理伺服器回應
         try {
