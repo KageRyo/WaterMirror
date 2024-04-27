@@ -110,7 +110,7 @@ export default function CalcScreen({ navigation }) {
         
         // 處理伺服器回應
         try {
-          const response = await fetch(`${apiUrl}/score/all/`, {
+          const response = await fetch(`${apiUrl}/score/total/`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -153,7 +153,7 @@ export default function CalcScreen({ navigation }) {
 
     // 上傳文件並處理伺服器回應
     try {
-      const response = await fetch(`${apiUrl}/score/all/`, {
+      const response = await fetch(`${apiUrl}/score/total/`, {
         method: 'POST',
         body: formData,
         headers: {
