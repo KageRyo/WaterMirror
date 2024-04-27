@@ -36,3 +36,4 @@ yarn-error.*
 
 # API config file
 ./WaterMirror/src/config.json
+WaterMirror/src/config.json
