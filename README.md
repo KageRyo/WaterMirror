@@ -10,13 +10,22 @@
 git clone https://github.com/RotatingPotato/WaterMirror.git
 git clone https://github.com/RotatingPotato/MPR_Model.git
 ```
-2. 將 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 伺服器建立於您的裝置或雲端平臺。
-3. 安裝 WaterMirror 所需的函示庫。
+2. 於 [WaterMirror/src/config.json](WaterMirror/src/config.json) 中將 API 與 port 更換成您 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 的伺服器位址。  
+   範例如下：
+```json
+{
+    "api_url": "https://192.168.0.1",
+    "port": "8000"
+}
+```
+> 請將 api_url 與 port 依據您的真實情況更改。  
+4. 將 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 伺服器建立於您的裝置或雲端平臺。
+5. 安裝 WaterMirror 所需的函示庫。
 ```bash
 cd WaterMirror
 npm install
 ```
-4. 透過以下指令透過 Expo 開啟 WaterMirror，並進入「輸入資料」頁面，應於 5 秒內顯示「連線成功」提示訊息。
+5. 透過以下指令透過 Expo 開啟 WaterMirror，並進入「輸入資料」頁面，應於 5 秒內顯示「連線成功」提示訊息。
 ```bash
 npx expo start
 ```
@@ -52,3 +61,8 @@ WaterMirror 支援以下語言：
 ## LICENSE  
 本程式採用 Apache License 2.0 授權 - 有關詳細信息，請參閱 [LICENSE](LICENSE) 文件。  
 有任何疑問請洽 kageryo@coderyo.com
++ 張健勳 Chien-Hsun, Chang [@KageRyo](https://github.com/KageRyo)   
++ 吳國維 Kuo-Wei, Wu [@RRAaru](https://github.com/RRAaru)
+
+${{\color{orange}{\textsf{本作品為 張健勳 與 吳國維 用於「國立臺中科技大學智慧生產工程系」畢業專題之作品，其著作權由兩人共同擁有。}}}}\$  
+${{\color{yellow}{\textsf{特別感謝「國立臺中科技大學智慧生產工程系」蔡文宗 教授指導。}}}}\$  
