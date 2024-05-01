@@ -15,7 +15,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kaeryo.watermirror",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan documents.",
+        "NSPhotoLibraryAddUsageDescription": "This app needs access to the photo library to save photos.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos."
+      }
     },
     "android": {
       "adaptiveIcon": {
