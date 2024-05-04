@@ -1,10 +1,29 @@
-import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import config from './config.json';
 
-// 結果頁面
 export default function ResultScreen({ navigation, route }) {
-    // 取得資料並檢查資料
     const { data } = route.params ?? {};
+    const [percentile, setPercentile] = useState(null);
+
+    useEffect(() => {
+        if (typeof data === 'number') {
+            fetch(`${config.api_url}:${config.port}/percentile?score=${data}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.percentile !== undefined) {
+                        setPercentile(data.percentile);
+                    } else {
+                        throw new Error('無法獲取百分位數');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching percentile data:', error);
+                    Alert.alert('錯誤', '無法從伺服器獲取百分位數。');
+                });
+        }
+    }, [data]);
+
     if (data === undefined) {
         console.error("No data passed to ResultScreen.");
         return (
@@ -14,15 +33,12 @@ export default function ResultScreen({ navigation, route }) {
             </View>
         );
     }
-    const dataValue = typeof data === 'number' ? data : null;
 
-    // 計算水質等級的函式
     const countWaterQuality = (wqi5) => {
         let rating = '';
         let comment = '';
         let color = styles.defaultColor;
 
-        // 依據 WQI5 判斷水質等級
         if (wqi5 > 100) {
             rating = '輸入的資料可能有誤';
             comment = '請檢查並重新輸入正確的資料。';
@@ -60,14 +76,16 @@ export default function ResultScreen({ navigation, route }) {
         return { rating, comment, color };
     };
 
-    const { rating, comment, color } = dataValue !== null ? countWaterQuality(dataValue) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。', color: styles.defaultColor };
+    const { rating, comment, color } = data !== null ? countWaterQuality(data) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。', color: styles.defaultColor };
 
-    // 顯示結果
     return (
         <View style={styles.container}>
-            <Text style={styles.content}>{dataValue !== null ? `綜合評分：${dataValue}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
-            <Text style={[styles.rating, color]}>{rating}</Text>
+            <Text style={styles.content}>{data !== null ? `綜合評分：${data}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
+            <Text style={[styles.rating, { color }]}>{rating}</Text>
             <Text style={styles.comment}>{comment}</Text>
+            {percentile !== null && (
+                <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
+            )}
             <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
         </View>
     );
@@ -94,6 +112,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 20,
         color: 'black',
+    },
+    percentile: {
+        fontSize: 16,
+        color: 'blue',
+        marginBottom: 10,
     },
     error: {
         color: 'red',
