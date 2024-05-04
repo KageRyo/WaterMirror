@@ -1,4 +1,4 @@
-import React, { version } from 'react';
+import React from 'react';
 import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
