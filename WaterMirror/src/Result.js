@@ -81,7 +81,7 @@ export default function ResultScreen({ navigation, route }) {
     return (
         <View style={styles.container}>
             <Text style={styles.content}>{data !== null ? `綜合評分：${data}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
-            <Text style={[styles.rating, { color }]}>{rating}</Text>
+            <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
             <Text style={styles.comment}>{comment}</Text>
             {percentile !== null && (
                 <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
         color: 'green',
     },
     gold: {
-        color: '#FFD700',
+        color: '#D4AF37',
     },
     red: {
         color: 'red',
