@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, Dimensions } from 'react-native';
+import { PieChart, BarChart } from 'react-native-chart-kit';
 import config from './config.json';
 
 export default function ResultScreen({ navigation, route }) {
     const { data } = route.params ?? {};
     const [percentile, setPercentile] = useState(null);
+    const [categoryData, setCategoryData] = useState([]);
+
+    const chartConfig = {
+        backgroundColor: '#ffffff',
+        backgroundGradientFrom: '#ffffff',
+        backgroundGradientTo: '#ffffff',
+        decimalPlaces: 2,
+        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        style: {
+            borderRadius: 16,
+        },
+    };
 
     useEffect(() => {
         if (typeof data === 'number') {
@@ -13,6 +26,7 @@ export default function ResultScreen({ navigation, route }) {
                 .then(data => {
                     if (data.percentile !== undefined) {
                         setPercentile(data.percentile);
+                        fetchCategories();  // Fetch categories from the backend
                     } else {
                         throw new Error('無法獲取百分位數');
                     }
@@ -24,15 +38,35 @@ export default function ResultScreen({ navigation, route }) {
         }
     }, [data]);
 
-    if (data === undefined) {
-        console.error("No data passed to ResultScreen.");
-        return (
-            <View style={styles.container}>
-                <Text style={styles.error}>未接收到水質資料，請返回並重新嘗試。</Text>
-                <Button title="回到主畫面" onPress={() => navigation.goBack()} />
-            </View>
-        );
-    }
+    const fetchCategories = () => {
+        fetch(`${config.api_url}:${config.port}/categories/`)
+            .then(response => response.json())
+            .then(data => {
+                setCategoryData(data.data.map(item => ({
+                    name: item.category,
+                    population: item.rating,
+                    color: getColor(item.category),
+                    legendFontColor: "#7F7F7F",
+                    legendFontSize: 15
+                })));
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+                Alert.alert('錯誤', '無法從伺服器獲取類別數據。');
+            });
+    };
+
+    const getColor = (category) => {
+        const colors = {
+            '優良': 'green',
+            '良好': 'blue',
+            '中等': '#FFD700',
+            '不良': 'orange',
+            '糟糕': 'red',
+            '惡劣': 'darkred'
+        };
+        return colors[category] || '#ccc';
+    };
 
     const countWaterQuality = (wqi5) => {
         let rating = '';
@@ -84,14 +118,41 @@ export default function ResultScreen({ navigation, route }) {
             <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
             <Text style={styles.comment}>{comment}</Text>
             {percentile !== null && (
-                <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
+                <>
+                    <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
+                    <BarChart
+                        data={{
+                            labels: ["低於您的百分位數", "高於您的百分位數"],
+                            datasets: [{
+                                data: [100 - percentile, percentile]
+                            }]
+                        }}
+                        width={Dimensions.get('window').width - 30}
+                        height={220}
+                        yAxisLabel="%"
+                        chartConfig={chartConfig}
+                        verticalLabelRotation={0}
+                        fromZero={true}
+                        showBarTops={false}
+                        showValuesOnTopOfBars={true}
+                    />
+                    <PieChart
+                        data={categoryData}
+                        width={Dimensions.get('window').width - 16}
+                        height={220}
+                        chartConfig={chartConfig}
+                        accessor={"population"}
+                        backgroundColor={"transparent"}
+                        paddingLeft={"15"}
+                        absolute
+                    />
+                </>
             )}
             <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
         </View>
     );
 }
 
-// 主樣式表
 const styles = StyleSheet.create({
     container: {
         flex: 1,
