@@ -119,6 +119,9 @@ export default function ResultScreen({ navigation, route }) {
         return { rating, comment, color };
     };
 
+    // 獲取經 WQI5 評估後的水質狀態資訊
+    const { rating, comment, color } = data !== null ? countWaterQuality(data) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。', color: styles.defaultColor };
+
     // 顯示警語
     const showWarningAlert = () => {
         Alert.alert(
