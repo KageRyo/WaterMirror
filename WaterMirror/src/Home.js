@@ -39,10 +39,11 @@ const BtnSection = ({ navigation }) => {
 const CustomBtn = ({ bgColor, text, route, navigation }) => {
   // 按鈕點擊事件
   const handlePress = () => {
-    if(route === 'Calc' || route === 'Result')
-      navigation.navigate(route);
-    else
-      unfinishedAlert();
+    if (route.startsWith('http')) {
+      Linking.openURL(route); // 如果 route 是 URL，直接打開
+    } else {
+      navigation.navigate(route); // 否則，使用 navigation 導航
+    }
   };
 
   // 按鈕樣式
@@ -66,13 +67,13 @@ const btnData = [
     bgColor: '#98FB98',
   },
   {
-    text: '切換色系',
-    route: 'ColorScheme',
+    text: '聯繫作者',
+    route: 'https://kageryo.coderyo.com/',
     bgColor: '#ADD8E6',
   },
   {
     text: '使用教學',
-    route: 'Tutorial',
+    route: 'https://www.youtube.com/@WaterMirror-NUTC',
     bgColor: '#FFD700',
   },
 ];
