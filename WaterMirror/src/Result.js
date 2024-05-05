@@ -111,8 +111,8 @@ export default function ResultScreen({ navigation, route }) {
             comment = '您的水質狀況惡劣，可能發生臭味。';
             color = styles.red;
         } else {
-            rating = '沒有接收到數值';
-            comment = '請先至「輸入資料」頁面完成水質資料輸入。';
+            rating = '異常';
+            comment = '您所輸入的水質資料可能有誤，也有可能是您尚未至「輸入資料」頁面輸入水質資料，請檢查並重新輸入資料。';
             color = styles.red;
         }
 
