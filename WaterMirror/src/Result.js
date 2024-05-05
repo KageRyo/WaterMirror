@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Alert, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Button, Alert, Dimensions } from 'react-native';
 import { PieChart, BarChart } from 'react-native-chart-kit';
 import config from './config.json';
 
@@ -102,8 +102,8 @@ export default function ResultScreen({ navigation, route }) {
             comment = '您的水質狀況惡劣，可能發生臭味。';
             color = styles.red;
         } else {
-            rating = '無效數值';
-            comment = '此數值無法進行分析，請檢查後再試。';
+            rating = '沒有接收到數值';
+            comment = '請先至「輸入資料」頁面完成水質資料輸入。';
             color = styles.red;
         }
 
@@ -112,8 +112,17 @@ export default function ResultScreen({ navigation, route }) {
 
     const { rating, comment, color } = data !== null ? countWaterQuality(data) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。', color: styles.defaultColor };
 
+    // 顯示警語
+    const showWarningAlert = () => {
+        Alert.alert(
+        "免責聲明",
+        "人工智慧分析系統如WaterMirror在處理水質數據時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
+        [{ text: "我知道了" }]
+        );
+    };
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.content}>{data !== null ? `綜合評分：${data}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
             <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
             <Text style={styles.comment}>{comment}</Text>
@@ -149,7 +158,15 @@ export default function ResultScreen({ navigation, route }) {
                 </>
             )}
             <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
-        </View>
+
+            <View style={styles.warningContainer}>
+                <TouchableOpacity onPress={showWarningAlert}>
+                    <Text style={styles.warningText}>
+                    WaterMirror 仍可能會出現錯誤，請謹慎使用。
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
     );
 }
 
@@ -194,5 +211,15 @@ const styles = StyleSheet.create({
     },
     defaultColor: {
         color: 'black',
-    }
+    },
+    warningContainer: {
+        marginTop: 10,
+        marginBottom: 10,
+      },
+      warningText: {
+        fontSize: 14,
+        color: 'red',
+        textDecorationLine: 'underline',
+        textAlign: 'center',
+      },
 });
