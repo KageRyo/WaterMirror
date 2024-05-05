@@ -16,13 +16,6 @@ const Input = ({ label, value, onChangeText }) => (
   />
 );
 
-// 補充訊息元件
-const AdditionalInfo = ({ onPress }) => (
-  <Text style={styles.additionalInfo} onPress={onPress}>
-    我找不到我的水質項目
-  </Text>
-);
-
 // 連接狀態元件
 const ConnectionStatus = ({ status }) => (
   <Text style={[styles.status, status === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
@@ -221,10 +214,7 @@ export default function CalcScreen({ navigation }) {
 
         <View style={styles.btnContainer}>
           <Button title="上傳水質資料檔案" onPress={handleFileUpload} />
-          <Button title="與自動化設備連線" onPress={() => { }} />
         </View>
-
-        <AdditionalInfo onPress={() => { }} />
       </ScrollView>
     </TouchableWithoutFeedback>
   );
