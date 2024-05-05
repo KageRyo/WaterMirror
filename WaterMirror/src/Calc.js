@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
@@ -173,6 +173,15 @@ export default function CalcScreen({ navigation }) {
     setData({ DO: '', BOD: '', NH3N: '', EC: '', SS: '' });
   };
 
+  // 顯示警語
+  const showWarningAlert = () => {
+    Alert.alert(
+      "免責聲明",
+      "人工智慧分析系統如WaterMirror在處理水質數據時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
+      [{ text: "我知道了" }]
+    );
+  };
+
   // 關閉鍵盤
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -214,6 +223,14 @@ export default function CalcScreen({ navigation }) {
 
         <View style={styles.btnContainer}>
           <Button title="上傳水質資料檔案" onPress={handleFileUpload} />
+        </View>
+
+        <View style={styles.warningContainer}>
+          <TouchableOpacity onPress={showWarningAlert}>
+            <Text style={styles.warningText}>
+              WaterMirror 仍可能會出現錯誤，請謹慎使用。
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </TouchableWithoutFeedback>
@@ -281,9 +298,14 @@ const styles = StyleSheet.create({
     width: '80%',
     marginVertical: 10,
   },
-  additionalInfo: {
-    marginTop: 20,
-    color: 'blue',
+  warningContainer: {
+    width: '80%',
+    marginBottom: 10,
+  },
+  warningText: {
+    fontSize: 14,
+    color: 'red',
     textDecorationLine: 'underline',
+    textAlign: 'center',
   },
 });
