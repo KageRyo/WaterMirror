@@ -200,16 +200,16 @@ export default function CalcScreen({ navigation }) {
           <Text style={styles.title}>手動輸入水質資料</Text>
           <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => setData({ ...data, DO: text })} />
           <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => setData({ ...data, BOD: text })} />
-          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => setData({ ...data, SS: text })} />
           <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => setData({ ...data, NH3N: text })} />
           <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => setData({ ...data, EC: text })} />
+          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => setData({ ...data, SS: text })} />
         </View>
 
         <View style={styles.dataContainer}>
           <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
           <Text>
             {Object.values(data).some(value => value) ?
-              `DO: ${data.DO}% BOD: ${data.BOD}mg/L SS: ${data.SS}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co` :
+              `DO: ${data.DO}% BOD: ${data.BOD}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co SS: ${data.SS}mg/L` :
               "請在上方輸入框輸入水質資料或上傳CSV檔案"}
           </Text>
         </View>
