@@ -3,6 +3,7 @@ import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, Touch
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from './config.json';
 
 // 水質輸入元件
@@ -28,7 +29,7 @@ const useServerConnection = (apiUrl) => {
   const [status, setStatus] = useState('與MPR水質分析伺服器連線中...');
 
   useEffect(() => {
-    const checkTimeout = 5000
+    const checkTimeout = 5000;
     const intervalId = setInterval(() => checkConnection(), checkTimeout);
     return () => clearInterval(intervalId);
   }, []);
@@ -62,6 +63,7 @@ export default function CalcScreen({ navigation }) {
 
   useEffect(() => {
     requestStoragePermission();
+    loadStoredData();
   }, []);
 
   // 請求存儲權限
@@ -72,6 +74,27 @@ export default function CalcScreen({ navigation }) {
     }
   }
 
+  // 載入暫存資料
+  const loadStoredData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('waterQualityData');
+      if (storedData) {
+        setData(JSON.parse(storedData));
+      }
+    } catch (error) {
+      console.error('Failed to load stored data:', error);
+    }
+  };
+
+  // 暫存資料
+  const storeData = async (data) => {
+    try {
+      await AsyncStorage.setItem('waterQualityData', JSON.stringify(data));
+    } catch (error) {
+      console.error('Failed to store data:', error);
+    }
+  };
+
   // 處理上傳成功時的操作
   const handleUploadSuccess = (data) => {
     Alert.alert(
@@ -81,7 +104,10 @@ export default function CalcScreen({ navigation }) {
         { text: '取消', onPress: () => {} },
         {
           text: '查看報表',
-          onPress: () => navigation.navigate('Result', { data }), // 使用navigation prop
+          onPress: () => {
+            storeData(data);
+            navigation.navigate('Result', { data });
+          },
         },
       ],
       { cancelable: false }
@@ -165,6 +191,7 @@ export default function CalcScreen({ navigation }) {
     } else {
       Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
     }
+    storeData(data);
     clearInput();
   };
 

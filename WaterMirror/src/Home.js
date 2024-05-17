@@ -1,6 +1,7 @@
 import React from 'react';
 import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import GitHubMark from '../assets/github-mark.png';
 
@@ -12,43 +13,48 @@ const TopSection = () => {
     <View style={topStyles.top}>
       <Text style={topStyles.title}>WaterMirror</Text>
       <Text style={topStyles.subtitle}>智慧化水質分析工具</Text>
-      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-alpha-1.2.1</Text>
+      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-alpha-1.3.0</Text>
     </View>
   );
 };
 
 // 按鈕區塊
 const BtnSection = ({ navigation }) => {
+  const handlePress = async (route) => {
+    if (route === 'Result') {
+      const data = await AsyncStorage.getItem('waterQualityData');
+      if (data === null) {
+        Alert.alert('提示', '請先至輸入資料頁面填寫水質資料。');
+      } else {
+        navigation.navigate(route, { data: JSON.parse(data) });
+      }
+    } else if (route.startsWith('http')) {
+      Linking.openURL(route);
+    } else {
+      navigation.navigate(route);
+    }
+  };
+
   return (
     <View style={btnStyles.btnContainer}>
       <View style={btnStyles.btnRow}>
-        <CustomBtn {...btnData[0]} navigation={navigation} />
+        <CustomBtn {...btnData[0]} onPress={() => handlePress(btnData[0].route)} />
         <View style={btnStyles.btnSpace} />
-        <CustomBtn {...btnData[1]} navigation={navigation} />
+        <CustomBtn {...btnData[1]} onPress={() => handlePress(btnData[1].route)} />
       </View>
       <View style={btnStyles.btnRow}>
-        <CustomBtn {...btnData[2]} navigation={navigation} />
+        <CustomBtn {...btnData[2]} onPress={() => handlePress(btnData[2].route)} />
         <View style={btnStyles.btnSpace} />
-        <CustomBtn {...btnData[3]} navigation={navigation} />
+        <CustomBtn {...btnData[3]} onPress={() => handlePress(btnData[3].route)} />
       </View>
     </View>
   );
 };
 
 // 自訂按鈕元件
-const CustomBtn = ({ bgColor, text, route, navigation }) => {
-  // 按鈕點擊事件
-  const handlePress = () => {
-    if (route.startsWith('http')) {
-      Linking.openURL(route); // 如果 route 是 URL，直接打開
-    } else {
-      navigation.navigate(route); // 否則，使用 navigation 導航
-    }
-  };
-
-  // 按鈕樣式
+const CustomBtn = ({ bgColor, text, onPress }) => {
   return (
-    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]} onPress={handlePress}>
+    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]} onPress={onPress}>
       <Text style={btnStyles.btnText}>{text}</Text>
     </TouchableOpacity>
   );
