@@ -97,9 +97,11 @@ export default function CalcScreen({ navigation }) {
 
   // 處理上傳成功時的操作
   const handleUploadSuccess = (data) => {
+    const dataString = JSON.stringify(data, null, 2);
+
     Alert.alert(
-      '上傳成功',
-      '您的水質資料已上傳成功。',
+      '分析完成',
+      `您的水質資料已分析完成。\n綜合評分為：${dataString}`,
       [
         { text: '取消', onPress: () => {} },
         {
