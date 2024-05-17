@@ -56,7 +56,7 @@ export default function ResultScreen({ navigation, route }) {
             .then(data => {
                 const categories = data.data.map(item => ({
                     name: item.category,
-                    population: item.rating,
+                    wqiRange: item.rating,
                     color: getColor(item.category),
                     legendFontColor: "#7F7F7F",
                     legendFontSize: 15
@@ -160,7 +160,7 @@ export default function ResultScreen({ navigation, route }) {
                             labels: ["仍有的水質改善空間", "您贏過的水質資料"],
                             datasets: [{
                                 data: [(100 - percentile).toFixed(2), (percentile).toFixed(2)],
-                                colors: [(opacity = 1) => `pink`, (opacity = 1) => `lightgreen`]
+                                colors: [(opacity = 1) => `rgba(255, 99, 132, ${opacity})`, (opacity = 1) => `rgba(75, 192, 192, ${opacity})`]
                             }]
                         }}
                         width={Dimensions.get('window').width - 30}
@@ -185,10 +185,10 @@ export default function ResultScreen({ navigation, route }) {
                         width={Dimensions.get('window').width - 16}
                         height={220}
                         chartConfig={chartConfig}
-                        accessor={"population"}
+                        accessor={"wqiRange"}
                         backgroundColor={"transparent"}
                         paddingLeft={"15"}
-                        absolute
+                        absolute={true}
                         style={styles.pieChart}
                     />
                     <Text style={styles.percentileNote}>
