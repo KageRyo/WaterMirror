@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions, Button } from 'react-native';
 import { PieChart, BarChart } from 'react-native-chart-kit';
 import config from './config.json';
 
@@ -11,13 +11,17 @@ export default function ResultScreen({ navigation, route }) {
     const [percentile, setPercentile] = useState(null);
     // 分類資料狀態
     const [categoryData, setCategoryData] = useState([]);
+    // 綜合評分狀態
+    const [score, setScore] = useState(null);
+    // 類別狀態
+    const [category, setCategory] = useState('');
 
     // 圖表設定
     const chartConfig = {
         backgroundColor: '#ffffff',
         backgroundGradientFrom: '#ffffff',
         backgroundGradientTo: '#ffffff',
-        decimalPlaces: 2,
+        decimalPlaces: 0,
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         style: {
             borderRadius: 16,
@@ -27,6 +31,7 @@ export default function ResultScreen({ navigation, route }) {
     // 獲取百分位數和相關類別資料
     useEffect(() => {
         if (typeof data === 'number') {
+            setScore(data.toFixed(2)); // 修正綜合評分顯示至小數點後兩位
             fetch(`${config.api_url}:${config.port}/percentile?score=${data}`)
                 .then(response => response.json())
                 .then(data => {
@@ -49,13 +54,15 @@ export default function ResultScreen({ navigation, route }) {
         fetch(`${config.api_url}:${config.port}/categories/`)
             .then(response => response.json())
             .then(data => {
-                setCategoryData(data.data.map(item => ({
+                const categories = data.data.map(item => ({
                     name: item.category,
                     population: item.rating,
                     color: getColor(item.category),
                     legendFontColor: "#7F7F7F",
                     legendFontSize: 15
-                })));
+                }));
+                setCategoryData(categories);
+                determineCategory(data.data);
             })
             .catch(error => {
                 console.error('Error fetching categories:', error);
@@ -119,22 +126,28 @@ export default function ResultScreen({ navigation, route }) {
         return { rating, comment, color };
     };
 
+    // 確定類別
+    const determineCategory = (categories) => {
+        const category = categories.find(category => category.rating >= data);
+        setCategory(category ? category.category : '未知');
+    };
+
     // 獲取經 WQI5 評估後的水質狀態資訊
     const { rating, comment, color } = data !== null ? countWaterQuality(data) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。', color: styles.defaultColor };
 
     // 顯示警語
     const showWarningAlert = () => {
         Alert.alert(
-        "免責聲明",
-        "人工智慧分析系統如WaterMirror在處理水質資料時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
-        [{ text: "我知道了" }]
+            "免責聲明",
+            "人工智慧分析系統如WaterMirror在處理水質資料時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
+            [{ text: "我知道了" }]
         );
     };
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.score}>{data !== null ? `綜合評分：${data}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
+                <Text style={styles.score}>{score !== null ? `綜合評分：${score}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
                 <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
             </View>
 
@@ -142,47 +155,57 @@ export default function ResultScreen({ navigation, route }) {
 
             {percentile !== null && (
                 <View style={styles.chartContainer}>
-                <BarChart
-                    data={{
-                    labels: ["低於您的百分位數", "高於您的百分位數"],
-                    datasets: [{
-                        data: [100 - percentile, percentile]
-                    }]
-                    }}
-                    width={Dimensions.get('window').width - 30}
-                    height={220}
-                    yAxisLabel="%"
-                    chartConfig={chartConfig}
-                    verticalLabelRotation={0}
-                    fromZero={true}
-                    showBarTops={false}
-                    showValuesOnTopOfBars={true}
-                    style={styles.barChart}
-                />
-                <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
-                <PieChart
-                    data={categoryData}
-                    width={Dimensions.get('window').width - 16}
-                    height={220}
-                    chartConfig={chartConfig}
-                    accessor={"population"}
-                    backgroundColor={"transparent"}
-                    paddingLeft={"15"}
-                    absolute
-                    style={styles.pieChart}
-                />
+                    <BarChart
+                        data={{
+                            labels: ["仍有的水質改善空間", "您贏過的水質資料"],
+                            datasets: [{
+                                data: [(100 - percentile).toFixed(2), (percentile).toFixed(2)],
+                                colors: [(opacity = 1) => `pink`, (opacity = 1) => `lightgreen`]
+                            }]
+                        }}
+                        width={Dimensions.get('window').width - 30}
+                        height={220}
+                        yAxisLabel=""
+                        yAxisSuffix="%"
+                        chartConfig={{
+                            ...chartConfig,
+                            decimalPlaces: 0,
+                        }}
+                        verticalLabelRotation={0}
+                        fromZero={true}
+                        withCustomBarColorFromData={true}
+                        showBarTops={true}
+                        showValuesOnTopOfBars={true}
+                        formatYLabel={(yValue) => `${yValue}%`}
+                        style={styles.barChart}
+                    />
+                    <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
+                    <PieChart
+                        data={categoryData}
+                        width={Dimensions.get('window').width - 16}
+                        height={220}
+                        chartConfig={chartConfig}
+                        accessor={"population"}
+                        backgroundColor={"transparent"}
+                        paddingLeft={"15"}
+                        absolute
+                        style={styles.pieChart}
+                    />
+                    <Text style={styles.percentileNote}>
+                        <Text>您的水質資料目前位於 </Text>
+                        <Text style={{ color: color.color }}>⬤</Text>
+                        <Text> 區</Text>
+                    </Text>
                 </View>
             )}
 
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Calc')}>
-                <Text style={styles.buttonText}>重新輸入資料</Text>
-            </TouchableOpacity>
+            <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
 
             <View style={styles.warningContainer}>
                 <TouchableOpacity onPress={showWarningAlert}>
-                <Text style={styles.warningText}>
-                    WaterMirror 仍可能會出現錯誤，請謹慎使用。
-                </Text>
+                    <Text style={styles.warningText}>
+                        WaterMirror 仍可能會出現錯誤，請謹慎使用。
+                    </Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -191,70 +214,65 @@ export default function ResultScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flexGrow: 1,
         alignItems: 'center',
         padding: 20,
         backgroundColor: '#F5F5F5',
-      },
-      header: {
+    },
+    header: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
-      },
-      score: {
+        marginBottom: 10,
+    },
+    score: {
         fontSize: 18,
         marginRight: 10,
-      },
-      rating: {
+    },
+    rating: {
         fontSize: 22,
         fontWeight: 'bold',
-      },
-      comment: {
+    },
+    comment: {
         fontSize: 16,
-        marginBottom: 20,
+        marginBottom: 10,
         textAlign: 'center',
-      },
-      chartContainer: {
-        marginBottom: 20,
-      },
-      barChart: {
+    },
+    chartContainer: {
+        marginBottom: 10,
+        alignItems: 'center',
+    },
+    barChart: {
         borderRadius: 10,
         overflow: 'hidden',
         marginBottom: 10,
-      },
-      percentile: {
+    },
+    percentile: {
         fontSize: 16,
         color: 'blue',
         textAlign: 'center',
         marginBottom: 10,
-      },
-      pieChart: {
+    },
+    pieChart: {
         borderRadius: 10,
         overflow: 'hidden',
-      },
-      button: {
-        backgroundColor: '#2196F3',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginBottom: 10,
-      },
-      buttonText: {
-        color: '#FFFFFF',
-        fontSize: 16,
-        fontWeight: 'bold',
-      },
-      warningContainer: {
+    },
+    percentileNote: {
+        fontSize: 14,
+        color: 'black',
+        textAlign: 'center',
+        marginTop: 10,
+    },
+    warningContainer: {
         marginTop: 10,
         marginBottom: 10,
-      },
-      warningText: {
+    },
+    warningText: {
         fontSize: 14,
         color: 'red',
         textDecorationLine: 'underline',
         textAlign: 'center',
-      },
+    },
     error: {
         color: 'red',
         fontSize: 18,
