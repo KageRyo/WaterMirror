@@ -194,7 +194,9 @@ export default function ResultScreen({ navigation, route }) {
                     <Text style={styles.percentileNote}>
                         <Text>您的水質資料目前位於 </Text>
                         <Text style={{ color: color.color }}>⬤</Text>
-                        <Text> 區</Text>
+                        <Text> 區，狀態為</Text>
+                        <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
+                        <Text>。</Text>
                     </Text>
                 </View>
             )}
