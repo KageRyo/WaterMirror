@@ -12,7 +12,7 @@ const TopSection = () => {
     <View style={topStyles.top}>
       <Text style={topStyles.title}>WaterMirror</Text>
       <Text style={topStyles.subtitle}>智慧化水質分析工具</Text>
-      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-alpha-1.2.0</Text>
+      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-alpha-1.2.1</Text>
     </View>
   );
 };
@@ -95,15 +95,6 @@ const BottomSection = () => {
 // 開啟 GitHub 連結
 const openGitHub = () => {
   Linking.openURL(githubUrl);
-};
-
-// 未完成功能提示
-const unfinishedAlert = () => {
-  Alert.alert(
-    '提示',
-    '這個功能目前尚未開放。',
-    [{ text: '確定' }]
-  );
 };
 
 // 畫面視窗
