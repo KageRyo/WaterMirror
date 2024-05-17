@@ -75,11 +75,11 @@ export default function ResultScreen({ navigation, route }) {
         const colors = {
             '優良': 'green',
             '良好': 'blue',
-            '中等': '#FFD700',
+            '中等': 'gold',
             '不良': 'orange',
             '糟糕': 'red',
-            '惡劣': 'darkred'
-        };
+            '惡劣': 'brown'
+        };           
         return colors[category] || '#ccc';
     };
 
@@ -87,43 +87,34 @@ export default function ResultScreen({ navigation, route }) {
     const countWaterQuality = (wqi5) => {
         let rating = '';
         let comment = '';
-        let color = styles.defaultColor;
 
         if (wqi5 > 100) {
             rating = '輸入的資料可能有誤';
             comment = '請檢查並重新輸入正確的資料。';
-            color = styles.red;
         } else if (wqi5 > 85) {
             rating = '優良';
             comment = '您的水質狀況優良，可做各種用途，加氯消毒可直接飲用。';
-            color = styles.green;
         } else if (wqi5 > 70) {
             rating = '良好';
             comment = '您的水質狀況良好，可做為自來水水源、水產、工業、遊樂及灌溉用途。';
-            color = styles.green;
         } else if (wqi5 > 50) {
             rating = '中等';
             comment = '您的水質狀況尚可，可做為自來水水源，但需經特別處理，可養殖粗魚，可供工業，遊憩及灌溉用水。';
-            color = styles.gold;
         } else if (wqi5 > 30) {
             rating = '不良';
             comment = '您的水質狀況屬於中下等，僅適合做灌溉或工業冷卻。';
-            color = styles.gold;
         } else if (wqi5 > 15) {
             rating = '糟糕';
             comment = '您的水質狀況不佳，但仍不會引起厭惡，可作環境保育之用。';
-            color = styles.red;
         } else if (wqi5 > 0) {
             rating = '惡劣';
             comment = '您的水質狀況惡劣，可能發生臭味。';
-            color = styles.red;
         } else {
             rating = '異常';
             comment = '您所輸入的水質資料可能有誤，也有可能是您尚未至「輸入資料」頁面輸入水質資料，請檢查並重新輸入資料。';
-            color = styles.red;
         }
 
-        return { rating, comment, color };
+        return { rating, comment };
     };
 
     // 確定類別
@@ -133,7 +124,7 @@ export default function ResultScreen({ navigation, route }) {
     };
 
     // 獲取經 WQI5 評估後的水質狀態資訊
-    const { rating, comment, color } = data !== null ? countWaterQuality(data) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。', color: styles.defaultColor };
+    const { rating, comment } = data !== null ? countWaterQuality(data) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。' };
 
     // 顯示警語
     const showWarningAlert = () => {
@@ -148,7 +139,7 @@ export default function ResultScreen({ navigation, route }) {
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.score}>{`綜合評分：${score}`}</Text>
-                <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
+                <Text style={[styles.rating, {color: getColor(rating)}]}>{rating}</Text>
             </View>
 
             <Text style={styles.comment}>{comment}</Text>
@@ -193,9 +184,9 @@ export default function ResultScreen({ navigation, route }) {
                     />
                     <Text style={styles.percentileNote}>
                         <Text>您的水質資料目前位於 </Text>
-                        <Text style={{ color: color.color }}>⬤</Text>
+                        <Text style={{color: getColor(rating)}}>⬤</Text>
                         <Text> 區，狀態為</Text>
-                        <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
+                        <Text style={[styles.rating, {color: getColor(rating)}]}>{rating}</Text>
                         <Text>。</Text>
                     </Text>
                 </View>
@@ -278,17 +269,5 @@ const styles = StyleSheet.create({
     error: {
         color: 'red',
         fontSize: 18,
-    },
-    green: {
-        color: 'green',
-    },
-    gold: {
-        color: '#D4AF37',
-    },
-    red: {
-        color: 'red',
-    },
-    defaultColor: {
-        color: 'black',
-    },
+    }
 });
