@@ -13,7 +13,7 @@ const TopSection = () => {
     <View style={topStyles.top}>
       <Text style={topStyles.title}>WaterMirror</Text>
       <Text style={topStyles.subtitle}>智慧化水質分析工具</Text>
-      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-alpha-1.3.1</Text>
+      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-alpha-1.3.2</Text>
     </View>
   );
 };
@@ -24,7 +24,7 @@ const BtnSection = ({ navigation }) => {
     if (route === 'Result') {
       const data = await AsyncStorage.getItem('waterQualityData');
       if (data === null) {
-        Alert.alert('提示', '請先至輸入資料頁面填寫水質資料。');
+        Alert.alert('提示', '請先至「輸入資料」頁面填寫您的水質資料。');
       } else {
         navigation.navigate(route, { data: JSON.parse(data) });
       }

@@ -158,7 +158,6 @@ export default function CalcScreen({ navigation }) {
   const handleSubmit = async () => {
     const filledData = Object.values(data).filter(value => value !== '');
     if (filledData.length > 0) {
-      Alert.alert('提示', `正在處理資料並建立CSV檔案`, [{ text: '確定' }]);
       const csvData = `DO,BOD,NH3N,EC,SS\n${Object.values(data).join(',')}`;
       const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
       await FileSystem.writeAsStringAsync(fileName, csvData, {
