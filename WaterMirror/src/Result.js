@@ -49,18 +49,24 @@ export default function ResultScreen({ navigation, route }) {
         }
     }, [data]);
 
-    // 獲取類別資料
+    // 獲取類別資料的函式
     const fetchCategories = () => {
         fetch(`${config.api_url}:${config.port}/categories/`)
             .then(response => response.json())
             .then(data => {
-                const categories = data.data.map(item => ({
-                    name: item.category,
-                    wqiRange: item.rating,
-                    color: getColor(item.category),
-                    legendFontColor: "#7F7F7F",
-                    legendFontSize: 15
-                }));
+                // 使用 reduce 函數計算總樣本數
+                const totalSamples = data.data.reduce((acc, item) => acc + item.rating, 0);
+                const categories = data.data.map(item => {
+                    // 提前計算百分比
+                    const percentage = (item.rating / totalSamples * 100).toFixed(2);
+                    return {
+                        name: `% ${item.category}`,
+                        value: parseFloat(percentage),
+                        color: getColor(item.category),
+                        legendFontColor: "#7F7F7F",
+                        legendFontSize: 15
+                    };
+                });
                 setCategoryData(categories);
                 determineCategory(data.data);
             })
@@ -176,7 +182,7 @@ export default function ResultScreen({ navigation, route }) {
                         width={Dimensions.get('window').width - 16}
                         height={220}
                         chartConfig={chartConfig}
-                        accessor={"wqiRange"}
+                        accessor={"value"}
                         backgroundColor={"transparent"}
                         paddingLeft={"15"}
                         absolute={true}
