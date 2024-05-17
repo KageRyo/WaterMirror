@@ -147,7 +147,7 @@ export default function ResultScreen({ navigation, route }) {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.score}>{score !== null ? `綜合評分：${score}` : '請先至「輸入資料」頁面輸入您的水質資料'}</Text>
+                <Text style={styles.score}>{`綜合評分：${score}`}</Text>
                 <Text style={[styles.rating, { color: color.color }]}>{rating}</Text>
             </View>
 
