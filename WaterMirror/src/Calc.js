@@ -4,7 +4,7 @@ import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from './config.json';
+import Config from "react-native-config";
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -51,7 +51,7 @@ const useServerConnection = (apiUrl) => {
 
 // 畫面視窗
 export default function CalcScreen({ navigation }) {
-  const apiUrl = `${config.api_url}:${config.port}`;
+  const apiUrl = `${Config.api_url}:${Config.port}`;
   const status = useServerConnection(apiUrl);
   const [data, setData] = useState({
     DO: '',
