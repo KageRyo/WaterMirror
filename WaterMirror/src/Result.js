@@ -174,7 +174,7 @@ export default function ResultScreen({ navigation, route }) {
   // 顯示不良水質項目的改善建議
   const showBadValues = (badValues) => {
     Alert.alert(
-      '注意事項',
+      '改善建議',
       `其中以下項目狀況不佳:\n\n${badValues.map(([key, value]) => `${key}：${value}`).join('\n')}\n`,
       [{ text: '我知道了' }]
     );
