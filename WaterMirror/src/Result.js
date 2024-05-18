@@ -8,7 +8,7 @@ import config from './config.json';
 // 結果畫面
 export default function ResultScreen({ navigation, route }) {
   // 從 Route 中取得資料
-  const { data } = route.params ?? {};
+  const { data, assessment } = route.params ?? {};
   // 百分位數狀態
   const [percentile, setPercentile] = useState(null);
   // 分類資料狀態
@@ -154,6 +154,32 @@ export default function ResultScreen({ navigation, route }) {
   // 獲取經 WQI5 評估後的水質狀態資訊
   const { rating, comment } = score !== null ? countWaterQuality(score) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。' };
 
+  // 顯示查看改善建議
+  const showMoreAlert = () => {
+    const assessmentEntries = Object.entries(assessment);
+    const badValues = assessmentEntries.filter(([, value]) => value === '不好' || value === '異常');
+
+    Alert.alert(
+      '改善建議',
+      `您的水質資料各項目狀況綜合如下:\n\n${assessmentEntries.map(([key, value]) => `${key}：${value}`).join('\n')}\n`,
+      badValues.length === 0
+        ? [{ text: '我知道了' }]
+        : [
+            { text: '我知道了' },
+            { text: '下一頁', onPress: () => showBadValues(badValues) }
+          ]
+    );
+  };
+
+  // 顯示不良水質項目的改善建議
+  const showBadValues = (badValues) => {
+    Alert.alert(
+      '注意事項',
+      `其中以下項目狀況不佳:\n\n${badValues.map(([key, value]) => `${key}：${value}`).join('\n')}\n`,
+      [{ text: '我知道了' }]
+    );
+  };
+
   // 顯示警語
   const showWarningAlert = () => {
     Alert.alert(
@@ -222,7 +248,7 @@ export default function ResultScreen({ navigation, route }) {
 
       <View style={styles.btnContainer}>
         <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
-        <Button title="查看更多說明" />
+        <Button title="查看改善建議" onPress={ showMoreAlert }/>
       </View>
 
       <View style={styles.warningContainer}>
