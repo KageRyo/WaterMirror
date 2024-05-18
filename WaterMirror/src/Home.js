@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import GitHubMark from '../assets/github-mark.png';
-
 const githubUrl = 'https://github.com/RotatingPotato/WaterMirror';
 
 // 頂部區塊
