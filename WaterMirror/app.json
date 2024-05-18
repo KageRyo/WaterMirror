@@ -3,7 +3,6 @@
     "name": "WaterMirror",
     "slug": "WaterMirror",
     "version": "1.0.0",
-    "description": "AI-powered Water Quality Analysis",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,20 +27,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",
-        "permissions": [
-          "READ_EXTERNAL_STORAGE",
-          "WRITE_EXTERNAL_STORAGE"
-        ]
-      },
-      "package": "com.kaeryo.watermirror"
+        "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "0637cc41-e315-4259-87c7-fc98ac8fa63c"
-      }
     }
   }
 }
