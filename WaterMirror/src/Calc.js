@@ -97,18 +97,19 @@ export default function CalcScreen({ navigation }) {
 
   // 處理上傳成功時的操作
   const handleUploadSuccess = (data) => {
-    const dataString = JSON.stringify(data, null, 2);
+    const { score, assessment } = data;
+    const scoreString = JSON.stringify(score, null, 2);
 
     Alert.alert(
       '分析完成',
-      `您的水質資料已分析完成。\n綜合評分為：${dataString}`,
+      `您的水質資料已分析完成。\n綜合評分為：${scoreString}`,
       [
         { text: '取消', onPress: () => {} },
         {
           text: '查看報表',
           onPress: () => {
-            storeData(data);
-            navigation.navigate('Result', { data });
+            storeData(score);
+            navigation.navigate('Result', { data: score, assessment });
           },
         },
       ],
@@ -140,7 +141,7 @@ export default function CalcScreen({ navigation }) {
           });
           const responseData = await response.json();
           if (response.ok) {
-            handleUploadSuccess(responseData); // 這裡傳遞responseData
+            handleUploadSuccess(responseData);
           } else {
             throw new Error('Network response was not ok');
           }
@@ -234,12 +235,14 @@ export default function CalcScreen({ navigation }) {
         </View>
 
         <View style={styles.dataContainer}>
-          <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
+        <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
+        {Object.values(data).every(value => value) ? (
           <Text>
-            {Object.values(data).some(value => value) ?
-              `DO: ${data.DO}% BOD: ${data.BOD}mg/L NH3-N: ${data.NH3N}mg/L EC: ${data.EC}μumho/co SS: ${data.SS}mg/L` :
-              "請在上方輸入框輸入水質資料或上傳CSV檔案"}
+            DO: {data.DO}% BOD: {data.BOD}mg/L NH3-N: {data.NH3N}mg/L EC: {data.EC}μumho/co SS: {data.SS}mg/L
           </Text>
+          ) : (
+            <Text>請在上方輸入框輸入水質資料或上傳CSV檔案</Text>
+          )}
         </View>
 
         <View style={styles.btnContainer}>
