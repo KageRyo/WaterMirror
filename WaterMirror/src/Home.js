@@ -13,7 +13,7 @@ const TopSection = () => {
     <View style={topStyles.top}>
       <Text style={topStyles.title}>WaterMirror</Text>
       <Text style={topStyles.subtitle}>智慧化水質分析工具</Text>
-      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-pre-beta-1.0.0</Text>
+      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-pre-beta-1.1.0</Text>
     </View>
   );
 };
