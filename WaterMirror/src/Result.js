@@ -220,7 +220,10 @@ export default function ResultScreen({ navigation, route }) {
         </View>
       )}
 
-      <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
+      <View style={styles.btnContainer}>
+        <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
+        <Button title="查看更多說明" />
+      </View>
 
       <View style={styles.warningContainer}>
         <TouchableOpacity onPress={showWarningAlert}>
@@ -283,6 +286,12 @@ const styles = StyleSheet.create({
     color: 'black',
     textAlign: 'center',
     marginTop: 10,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '80%',
+    marginBottom: 20,
   },
   warningContainer: {
     marginTop: 10,
