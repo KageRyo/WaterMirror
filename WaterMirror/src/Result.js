@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart, BarChart } from 'react-native-chart-kit';
-import config from './config.json';
+import Config from "react-native-config";
 
 // 結果畫面
 export default function ResultScreen({ navigation, route }) {
@@ -55,7 +55,7 @@ export default function ResultScreen({ navigation, route }) {
 
   // 獲取百分位數和相關類別資料
   const fetchPercentile = (score) => {
-    fetch(`${config.api_url}:${config.port}/percentile?score=${score}`)
+    fetch(`${Config.api_url}:${Config.port}/percentile?score=${score}`)
       .then(response => response.json())
       .then(data => {
         if (data.percentile !== undefined) {
@@ -73,7 +73,7 @@ export default function ResultScreen({ navigation, route }) {
 
   // 獲取類別資料的函式
   const fetchCategories = () => {
-    fetch(`${config.api_url}:${config.port}/categories/`)
+    fetch(`${Config.api_url}:${Config.port}/categories/`)
       .then(response => response.json())
       .then(data => {
         // 使用 reduce 函數計算總樣本數
