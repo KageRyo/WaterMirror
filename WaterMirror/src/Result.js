@@ -157,11 +157,26 @@ export default function ResultScreen({ navigation, route }) {
   // 顯示查看改善建議
   const showMoreAlert = () => {
     const assessmentEntries = Object.entries(assessment);
-    const badValues = assessmentEntries.filter(([, value]) => value === '不好' || value === '異常');
+    const badValues = assessmentEntries.filter(([, value]) => value === '不良' || value === '異常');
 
     Alert.alert(
       '改善建議',
-      `您的水質資料各項目狀況綜合如下:\n\n${assessmentEntries.map(([key, value]) => `${key}：${value}`).join('\n')}\n`,
+      `您的水質資料各項目狀況綜合如下:\n\n${assessmentEntries.map(([key, value]) => {
+        switch (key) {
+          case 'DO':
+            return `溶氧量（%）：${value}`;
+          case 'BOD':
+            return `生物需氧量（mg/L）：${value}`;
+          case 'NH3N':
+            return `氨氮（mg/L）：${value}`;
+          case 'EC':
+            return `導電度（μumho/co）：${value}`;
+          case 'SS':
+            return `懸浮固體（mg/L）：${value}`;
+          default:
+            return `${key}：${value}`;
+        }
+      }).join('\n')}\n`,
       badValues.length === 0
         ? [{ text: '我知道了' }]
         : [
@@ -173,12 +188,60 @@ export default function ResultScreen({ navigation, route }) {
 
   // 顯示不良水質項目的改善建議
   const showBadValues = (badValues) => {
+    let suggestions = '';
+    badValues.forEach(([key, value], index) => {
+      if (value === '不良' || value === '異常') {
+        switch (key) {
+          case 'DO':
+            if (value === '異常') {
+              suggestions += '您的溶氧（DO）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
+            } else if (value === '不良') {
+              suggestions += '您的水中溶氧量（DO）可能過高或過低，有可能是溫度過高溶氧量過低，請嘗試為水增氧或增加植物行光合作用；或是太多水草導致溶氧量過高，請嘗試移除部分水草。';
+            }
+            break;
+          case 'BOD':
+            if (value === '異常') {
+              suggestions += '您的生化需氧量（BOD）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
+            } else if (value === '不良') {
+              suggestions += '生化需氧量（BOD）過高，可能是由於水體中存在有機污染物，需要減少有機物輸入或加強水體的生物處理過程。';
+            }
+            break;
+          case 'NH3N':
+            if (value === '異常') {
+              suggestions += '您的氨氮（NH3-N）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
+            } else if (value === '不良') {
+              suggestions += '氨氮（NH3-N）過高，可能是由於水體中存在氨或氮化合物，需要減少氮源的輸入或進行氮的去除處理。';
+            }
+            break;
+          case 'EC':
+            if (value === '異常') {
+              suggestions += '您的電導率（EC）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
+            } else if (value === '不良') {
+              suggestions += '電導率（EC）過高，可能是由於水中溶解了大量的無機鹽類，需要控制鹽源的輸入或進行水體的淡化處理。';
+            }
+            break;
+          case 'SS':
+            if (value === '異常') {
+              suggestions += '您的懸浮固體（SS）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
+            } else if (value === '不良') {
+              suggestions += '懸浮固體（SS）含量過高，可能是由於水中存在大量的懸浮固體，需要加強懸浮物的去除或減少懸浮物的輸入。';
+            }
+            break;
+          default:
+            suggestions += `${key} 的建議：\n`;
+        }
+      }
+      if (index !== badValues.length - 1) {
+        suggestions += '\n\n';
+      }
+    });
+  
     Alert.alert(
       '改善建議',
-      `其中以下項目狀況不佳:\n\n${badValues.map(([key, value]) => `${key}：${value}`).join('\n')}\n`,
+      `${suggestions}`,
       [{ text: '我知道了' }]
     );
-  };
+  };  
 
   // 顯示警語
   const showWarningAlert = () => {
