@@ -1,0 +1,4 @@
+{
+    "api_url": "your api_url", //例如：http://0.0.0.0
+    "port": "your port"  // 例如：8000
+}
