@@ -3,7 +3,8 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart, BarChart } from 'react-native-chart-kit';
-import config from './config.json';
+
+import config from '@/config.json';
 
 // 結果畫面
 export default function ResultScreen({ navigation, route }) {
