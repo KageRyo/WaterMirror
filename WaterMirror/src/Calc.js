@@ -99,7 +99,7 @@ export default function CalcScreen({ navigation }) {
   // 處理上傳成功時的操作
   const handleUploadSuccess = (data) => {
     const { score, assessment } = data;
-    const scoreString = JSON.stringify(score, null, 2);
+    const scoreString = JSON.stringify(score.toFixed(2), null, 2);
 
     Alert.alert(
       '分析完成',
