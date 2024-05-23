@@ -48,7 +48,7 @@ export default function ResultScreen({ navigation, route }) {
         };
         checkStoredData();
       } else {
-        setScore(data);
+        setScore(data.toFixed(2));
         fetchPercentile(data);
       }
     }, [data])
@@ -256,7 +256,7 @@ export default function ResultScreen({ navigation, route }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.score}>{`綜合評分：${score.toFixed(2)}`}</Text>
+        <Text style={styles.score}>{`綜合評分：${score}`}</Text>
         <Text style={[styles.rating, { color: getColor(rating) }]}>{rating}</Text>
       </View>
 
