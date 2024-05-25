@@ -61,6 +61,13 @@ export default function CalcScreen({ navigation }) {
     EC: '',
     SS: '',
   });
+  const [assessment, setAssessment] = useState({
+    DO: '',
+    BOD: '',
+    NH3N: '',
+    EC: '',
+    SS: '',
+  });
 
   useEffect(() => {
     requestStoragePermission();
@@ -79,8 +86,12 @@ export default function CalcScreen({ navigation }) {
   const loadStoredData = async () => {
     try {
       const storedData = await AsyncStorage.getItem('waterQualityData');
+      const storedAssessment = await AsyncStorage.getItem('waterQualityAssessment');
       if (storedData) {
         setData(JSON.parse(storedData));
+      }
+      if (storedAssessment) {
+        setAssessment(JSON.parse(storedAssessment));
       }
     } catch (error) {
       console.error('Failed to load stored data:', error);
@@ -91,6 +102,7 @@ export default function CalcScreen({ navigation }) {
   const storeData = async (data) => {
     try {
       await AsyncStorage.setItem('waterQualityData', JSON.stringify(data));
+      await AsyncStorage.setItem('waterQualityAssessment', JSON.stringify(assessment));
     } catch (error) {
       console.error('Failed to store data:', error);
     }
@@ -109,7 +121,7 @@ export default function CalcScreen({ navigation }) {
         {
           text: '查看報表',
           onPress: () => {
-            storeData(score);
+            storeData(score, assessment);
             navigation.navigate('Result', { data: score, assessment });
           },
         },

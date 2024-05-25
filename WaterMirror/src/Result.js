@@ -37,6 +37,7 @@ export default function ResultScreen({ navigation, route }) {
       if (!data) {
         const checkStoredData = async () => {
           const storedData = await AsyncStorage.getItem('waterQualityData');
+          const storedAssessment = await AsyncStorage.getItem('waterQualityAssessment');
           if (storedData) {
             const parsedData = JSON.parse(storedData);
             setScore(parsedData);
@@ -44,6 +45,9 @@ export default function ResultScreen({ navigation, route }) {
           } else {
             Alert.alert('提示', '請先至輸入資料頁面填寫水質資料。');
             navigation.navigate('Home');
+          }
+          if (!storedAssessment) {
+            Alert.alert('提示', '無法獲取水質資料評估結果。');
           }
         };
         checkStoredData();

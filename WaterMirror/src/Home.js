@@ -22,10 +22,11 @@ const BtnSection = ({ navigation }) => {
   const handlePress = async (route) => {
     if (route === 'Result') {
       const data = await AsyncStorage.getItem('waterQualityData');
+      const assessment = await AsyncStorage.getItem('waterQualityAssessment');
       if (data === null) {
         Alert.alert('提示', '請先至「輸入資料」頁面填寫您的水質資料。');
       } else {
-        navigation.navigate(route, { data: JSON.parse(data) });
+        navigation.navigate(route, { data: JSON.parse(data), assessment:JSON.parse(assessment) });
       }
     } else if (route.startsWith('http')) {
       Linking.openURL(route);
