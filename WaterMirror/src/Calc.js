@@ -99,7 +99,7 @@ export default function CalcScreen({ navigation }) {
   };
 
   // 暫存資料
-  const storeData = async (data) => {
+  const storeData = async (data, assessment) => {
     try {
       await AsyncStorage.setItem('waterQualityData', JSON.stringify(data));
       await AsyncStorage.setItem('waterQualityAssessment', JSON.stringify(assessment));
