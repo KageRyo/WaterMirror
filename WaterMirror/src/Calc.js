@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+       import React, { useState, useEffect } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -206,7 +206,7 @@ export default function CalcScreen({ navigation }) {
     } else {
       Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
     }
-    storeData(data);
+    storeData(data, assessment);
     clearInput();
   };
 
