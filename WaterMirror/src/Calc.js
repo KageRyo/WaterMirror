@@ -164,7 +164,7 @@ export default function CalcScreen({ navigation }) {
       };
     } catch (error) {
       console.error('Error during file upload:', error);
-      Alert.alert('上傳失敗', `無法上傳資料至伺服器。請檢查您的網絡連接。錯誤信息：${error}`, [{ text: '確定' }]);
+      Alert.alert('上傳失敗', `資料上傳至伺服器失敗。您可能未選取任何檔案，或是網路連線異常。`, [{ text: '確定' }]);
     }
   };
 
