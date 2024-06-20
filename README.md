@@ -5,12 +5,12 @@
 水可以映照出山的形貌，透過 WaterMirror 可以輕鬆反映出各項水質資訊。  
   
 ## 自行編譯
-1. 首先將 WaterMirror 及 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 儲存庫分別 Clone 至您的環境。
+1. 首先將 WaterMirror 及 [MPR_Model](https://github.com/KageRyo/MPR_Model) 儲存庫分別 Clone 至您的環境。
 ```bash
-git clone https://github.com/RotatingPotato/WaterMirror.git
-git clone https://github.com/RotatingPotato/MPR_Model.git
+git clone https://github.com/KageRyo/WaterMirror.git
+git clone https://github.com/KageRyo/MPR_Model.git
 ```
-2. 於 [WaterMirror/src/config.json](WaterMirror/src/config.json) 中將 API 與 port 更換成您 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 的伺服器位址。  
+2. 於 [WaterMirror/src/config.json](WaterMirror/src/config.json) 中將 API 與 port 更換成您 [MPR_Model](https://github.com/KageRyo/MPR_Model) 的伺服器位址。  
    範例如下：
 ```json
 {
@@ -19,7 +19,7 @@ git clone https://github.com/RotatingPotato/MPR_Model.git
 }
 ```
 > 請將 api_url 與 port 依據您的真實情況更改。  
-4. 將 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 伺服器建立於您的裝置或雲端平臺。
+4. 將 [MPR_Model](https://github.com/KageRyo/MPR_Model) 伺服器建立於您的裝置或雲端平臺。
 5. 安裝 WaterMirror 所需的函示庫。
 ```bash
 cd WaterMirror
@@ -40,7 +40,7 @@ npx expo start
 - 導電度 EC
   
 ### 請注意
-- 此 README.md 文件皆為預設您將 WaterMirror 搭配 [MPR_Model](https://github.com/RotatingPotato/MPR_Model) 使用。
+- 此 README.md 文件皆為預設您將 WaterMirror 搭配 [MPR_Model](https://github.com/KageRyo/MPR_Model) 使用。
 - 當然，您也可以在不違反 [Apache License 2.0](LICENSE) 的前提下自由修改。
 - WaterMirror 將會在您初次使用「輸入資料」功能時向您請求權限，若拒絕權限將無法使用「上傳水質資料檔案」之功能。  
 - 「上傳水質資料檔案」功能目前僅限於CSV格式，上傳時請遵循以下格式：  
