@@ -1,0 +1,18 @@
+{
+  "name": "WaterMirror Development",
+  "dockerFile": "../Dockerfile",
+  "context": "..",
+  "forwardPorts": [19000, 19001, 19002],
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "msjsdiag.vscode-react-native",
+    "GitHub.copilot-chat",
+    "GitHub.copilot"
+  ],
+  "remoteUser": "node",
+  "postCreateCommand": "npm install"
+}
