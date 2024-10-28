@@ -2,29 +2,66 @@ import React from 'react';
 import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../contexts/LanguageContext';
 
 import GitHubMark from '../assets/github-mark.png';
 const githubUrl = 'https://github.com/KageRyo/WaterMirror';
 
 // 頂部區塊
 const TopSection = () => {
+  const { t } = useTranslation();
+  
   return (
     <View style={topStyles.top}>
-      <Text style={topStyles.title}>WaterMirror</Text>
-      <Text style={topStyles.subtitle}>智慧化水質分析與評估系統</Text>
-      <Text style={topStyles.platform}>版本：WaterMirror-{Platform.OS}-v1.0.8</Text>
+      <Text style={topStyles.title}>{t('app.name')}</Text>
+      <Text style={topStyles.subtitle}>{t('app.subtitle')}</Text>
+      <Text style={topStyles.platform}>
+        {t('app.version', { platform: Platform.OS })}
+      </Text>
     </View>
   );
 };
 
 // 按鈕區塊
 const BtnSection = ({ navigation }) => {
+  const { t } = useTranslation();
+  const { currentLanguage, changeLanguage } = useLanguage();
+  
+  const handleLanguageSwitch = () => {
+    const newLanguage = currentLanguage === 'zh-TW' ? 'zh-CN' : 'zh-TW';
+    changeLanguage(newLanguage);
+  };
+
+  const btnData = [
+    {
+      text: t('buttons.inputData'),
+      route: 'Calc',
+      bgColor: '#FFB6C1',
+    },
+    {
+      text: t('buttons.viewReport'),
+      route: 'Result',
+      bgColor: '#98FB98',
+    },
+    {
+      text: t('buttons.contactAuthor'),
+      route: 'https://kageryo.coderyo.com/',
+      bgColor: '#ADD8E6',
+    },
+    {
+      text: t('buttons.tutorial'),
+      route: 'https://www.youtube.com/@WaterMirror-NUTC',
+      bgColor: '#FFD700',
+    },
+  ];
+
   const handlePress = async (route) => {
     if (route === 'Result') {
       const data = await AsyncStorage.getItem('waterQualityData');
       const assessment = await AsyncStorage.getItem('waterQualityAssessment');
       if (data === null) {
-        Alert.alert('提示', '請先至「輸入資料」頁面填寫您的水質資料。');
+        Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
       } else {
         navigation.navigate(route, { data: JSON.parse(data), assessment:JSON.parse(assessment) });
       }
@@ -48,7 +85,12 @@ const BtnSection = ({ navigation }) => {
         <CustomBtn {...btnData[3]} onPress={() => handlePress(btnData[3].route)} />
       </View>
       <View style={btnStyles.langBtnRow}>
-        <CustomBtn {...btnData[4]} onPress={() => handlePress(btnData[4].route)} isLangBtn={true} />
+        <CustomBtn 
+          text={t('buttons.switchLanguage')} 
+          bgColor="#E6E6FA" 
+          onPress={handleLanguageSwitch} 
+          isLangBtn={true} 
+        />
       </View>
     </View>
   );
@@ -69,35 +111,6 @@ const CustomBtn = ({ bgColor, text, onPress, isLangBtn }) => {
     </TouchableOpacity>
   );
 };
-
-// 按鈕資料
-const btnData = [
-  {
-    text: '輸入資料',
-    route: 'Calc',
-    bgColor: '#FFB6C1',
-  },
-  {
-    text: '查閱報表',
-    route: 'Result',
-    bgColor: '#98FB98',
-  },
-  {
-    text: '聯繫作者',
-    route: 'https://kageryo.coderyo.com/',
-    bgColor: '#ADD8E6',
-  },
-  {
-    text: '使用教學',
-    route: 'https://www.youtube.com/@WaterMirror-NUTC',
-    bgColor: '#FFD700',
-  },
-  {
-    text: '切換語言',
-    route: 'Language',
-    bgColor: '#E6E6FA',
-  },
-];
 
 // 底部區塊
 const BottomSection = () => {

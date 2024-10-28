@@ -3,11 +3,13 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart, BarChart } from 'react-native-chart-kit';
+import { useTranslation } from 'react-i18next';
 
 import config from '@/config.json';
 
 // 結果畫面
 export default function ResultScreen({ navigation, route }) {
+  const { t } = useTranslation();
   // 從 Route 中取得資料
   const { data, assessment } = route.params ?? {};
   // 百分位數狀態
@@ -43,11 +45,11 @@ export default function ResultScreen({ navigation, route }) {
             setScore(parsedData);
             fetchPercentile(parsedData);
           } else {
-            Alert.alert('提示', '請先至輸入資料頁面填寫水質資料。');
+            Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
             navigation.navigate('Home');
           }
           if (!storedAssessment) {
-            Alert.alert('提示', '無法獲取水質資料評估結果。');
+            Alert.alert(t('alerts.notice'), t('result.waterQuality.error'));
           }
         };
         checkStoredData();
@@ -55,7 +57,7 @@ export default function ResultScreen({ navigation, route }) {
         setScore(data.toFixed(2));
         fetchPercentile(data);
       }
-    }, [data])
+    }, [data, t])
   );
 
   // 獲取百分位數和相關類別資料
@@ -118,36 +120,38 @@ export default function ResultScreen({ navigation, route }) {
 
   // 計算水質狀態
   const countWaterQuality = (wqi5) => {
-    let rating = '';
-    let comment = '';
-
-    if (wqi5 > 100) {
-      rating = '輸入的資料可能有誤';
-      comment = '請檢查並重新輸入正確的資料。';
-    } else if (wqi5 > 85) {
-      rating = '優良';
-      comment = '您的水質狀況優良，可做各種用途，加氯消毒可直接飲用。';
-    } else if (wqi5 > 70) {
-      rating = '良好';
-      comment = '您的水質狀況良好，可做為自來水水源、水產、工業、遊樂及灌溉用途。';
-    } else if (wqi5 > 50) {
-      rating = '中等';
-      comment = '您的水質狀況尚可，可做為自來水水源，但需經特別處理，可養殖粗魚，可供工業，遊憩及灌溉用水。';
-    } else if (wqi5 > 30) {
-      rating = '不良';
-      comment = '您的水質狀況屬於中下等，僅適合做灌溉或工業冷卻。';
-    } else if (wqi5 > 15) {
-      rating = '糟糕';
-      comment = '您的水質狀況不佳，但仍不會引起厭惡，可作環境保育之用。';
-    } else if (wqi5 > 0) {
-      rating = '惡劣';
-      comment = '您的水質狀況惡劣，可能發生臭味。';
-    } else {
-      rating = '異常';
-      comment = '您所輸入的水質資料可能有誤，也有可能是您尚未至「輸入資料」頁面輸入水質資料，請檢查並重新輸入資料。';
-    }
-
-    return { rating, comment };
+    if (wqi5 > 100) return {
+      rating: t('result.waterQuality.inputError'),
+      comment: t('result.comments.checkData')
+    };
+    if (wqi5 > 85) return {
+      rating: t('result.waterQuality.excellent'),
+      comment: t('result.comments.excellent')
+    };
+    if (wqi5 > 70) return {
+      rating: t('result.waterQuality.good'),
+      comment: t('result.comments.good')
+    };
+    if (wqi5 > 50) return {
+      rating: t('result.waterQuality.fair'),
+      comment: t('result.comments.fair')
+    };
+    if (wqi5 > 30) return {
+      rating: t('result.waterQuality.poor'),
+      comment: t('result.comments.poor')
+    };
+    if (wqi5 > 15) return {
+      rating: t('result.waterQuality.bad'),
+      comment: t('result.comments.bad')
+    };
+    if (wqi5 > 0) return {
+      rating: t('result.waterQuality.terrible'),
+      comment: t('result.comments.terrible')
+    };
+    return {
+      rating: t('result.waterQuality.error'),
+      comment: t('result.comments.error')
+    };
   };
 
   // 確定類別
@@ -162,105 +166,86 @@ export default function ResultScreen({ navigation, route }) {
   // 顯示查看改善建議
   const showMoreAlert = () => {
     const assessmentEntries = Object.entries(assessment);
-    const badValues = assessmentEntries.filter(([, value]) => value === '不良' || value === '異常');
+    const badValues = assessmentEntries.filter(([, value]) => 
+      value === t('result.waterQuality.poor') || value === t('result.waterQuality.error')
+    );
 
     Alert.alert(
-      '改善建議',
-      `您的水質資料各項目狀況綜合如下:\n\n${assessmentEntries.map(([key, value]) => {
-        switch (key) {
-          case 'DO':
-            return `溶氧量（%）：${value}`;
-          case 'BOD':
-            return `生物需氧量（mg/L）：${value}`;
-          case 'NH3N':
-            return `氨氮（mg/L）：${value}`;
-          case 'EC':
-            return `導電度（μumho/co）：${value}`;
-          case 'SS':
-            return `懸浮固體（mg/L）：${value}`;
-          default:
-            return `${key}：${value}`;
-        }
+      t('result.improvement.title'),
+      `${t('result.improvement.parameters')}\n\n${assessmentEntries.map(([key, value]) => {
+        return `${t(`result.improvement.parameters.${key}`)}：${value}`;
       }).join('\n')}\n`,
       badValues.length === 0
-        ? [{ text: '我知道了' }]
+        ? [{ text: t('result.buttons.iKnow') }]
         : [
-            { text: '我知道了' },
-            { text: '下一頁', onPress: () => showBadValues(badValues) }
+            { text: t('result.buttons.iKnow') },
+            { text: t('result.buttons.next'), onPress: () => showBadValues(badValues) }
           ]
     );
   };
 
-  // 顯示不良水質項目的改善建議
-  const showBadValues = (badValues) => {
-    let suggestions = '';
-    badValues.forEach(([key, value], index) => {
-      if (value === '不良' || value === '異常') {
-        switch (key) {
-          case 'DO':
-            if (value === '異常') {
-              suggestions += '您的溶氧（DO）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
-            } else if (value === '不良') {
-              suggestions += '您的水中溶氧量（DO）可能過高或過低，有可能是溫度過高溶氧量過低，請嘗試為水增氧或增加植物行光合作用；或是太多水草導致溶氧量過高，請嘗試移除部分水草。';
-            }
-            break;
-          case 'BOD':
-            if (value === '異常') {
-              suggestions += '您的生化需氧量（BOD）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
-            } else if (value === '不良') {
-              suggestions += '生化需氧量（BOD）過高，可能是由於水體中存在有機污染物，需要減少有機物輸入或加強水體的生物處理過程。';
-            }
-            break;
-          case 'NH3N':
-            if (value === '異常') {
-              suggestions += '您的氨氮（NH3-N）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
-            } else if (value === '不良') {
-              suggestions += '氨氮（NH3-N）過高，可能是由於水體中存在氨或氮化合物，需要減少氮源的輸入或進行氮的去除處理。';
-            }
-            break;
-          case 'EC':
-            if (value === '異常') {
-              suggestions += '您的電導率（EC）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
-            } else if (value === '不良') {
-              suggestions += '電導率（EC）過高，可能是由於水中溶解了大量的無機鹽類，需要控制鹽源的輸入或進行水體的淡化處理。';
-            }
-            break;
-          case 'SS':
-            if (value === '異常') {
-              suggestions += '您的懸浮固體（SS）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。';
-            } else if (value === '不良') {
-              suggestions += '懸浮固體（SS）含量過高，可能是由於水中存在大量的懸浮固體，需要加強懸浮物的去除或減少懸浮物的輸入。';
-            }
-            break;
-          default:
-            suggestions += `${key} 的建議：\n`;
-        }
+// 顯示不良水質項目的改善建議
+const showBadValues = (badValues) => {
+  // 使用已經在組件頂層定義的 t 函數
+  let suggestions = '';
+  badValues.forEach(([key, value], index) => {
+    if (value === t('result.waterQuality.poor') || value === t('result.waterQuality.error')) {
+      switch (key) {
+        case 'DO':
+          if (value === t('result.waterQuality.error')) {
+            suggestions += t('result.improvement.suggestions.DO.error');
+          } else if (value === t('result.waterQuality.poor')) {
+            suggestions += t('result.improvement.suggestions.DO.poor');
+          }
+          break;
+        case 'BOD':
+          if (value === t('result.waterQuality.error')) {
+            suggestions += t('result.improvement.suggestions.BOD.error');
+          } else if (value === t('result.waterQuality.poor')) {
+            suggestions += t('result.improvement.suggestions.BOD.poor');
+          }
+          break;
+        case 'NH3N':
+          if (value === t('result.waterQuality.error')) {
+            suggestions += t('result.improvement.suggestions.NH3N.error');
+          } else if (value === t('result.waterQuality.poor')) {
+            suggestions += t('result.improvement.suggestions.NH3N.poor');
+          }
+          break;
+        case 'EC':
+          if (value === t('result.waterQuality.error')) {
+            suggestions += t('result.improvement.suggestions.EC.error');
+          } else if (value === t('result.waterQuality.poor')) {
+            suggestions += t('result.improvement.suggestions.EC.poor');
+          }
+          break;
+        case 'SS':
+          if (value === t('result.waterQuality.error')) {
+            suggestions += t('result.improvement.suggestions.SS.error');
+          } else if (value === t('result.waterQuality.poor')) {
+            suggestions += t('result.improvement.suggestions.SS.poor');
+          }
+          break;
+        default:
+          suggestions += `${key} ${t('result.improvement.title')}：\n`;
       }
-      if (index !== badValues.length - 1) {
-        suggestions += '\n\n';
-      }
-    });
-  
-    Alert.alert(
-      '改善建議',
-      `${suggestions}`,
-      [{ text: '我知道了' }]
-    );
-  };  
+    }
+    if (index !== badValues.length - 1) {
+      suggestions += '\n\n';
+    }
+  });
 
-  // 顯示警語
-  const showWarningAlert = () => {
-    Alert.alert(
-      "免責聲明",
-      "人工智慧分析系統如WaterMirror在處理水質資料時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
-      [{ text: "我知道了" }]
+  Alert.alert(
+    t('result.improvement.title'),
+    suggestions,
+    [{ text: t('result.buttons.iKnow') }]
     );
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.score}>{`綜合評分：${score}`}</Text>
+        <Text style={styles.score}>{`${t('result.score')}：${score}`}</Text>
         <Text style={[styles.rating, { color: getColor(rating) }]}>{rating}</Text>
       </View>
 
@@ -270,10 +255,16 @@ export default function ResultScreen({ navigation, route }) {
         <View style={styles.chartContainer}>
           <BarChart
             data={{
-              labels: ["仍有的水質改善空間", "您贏過的水質資料"],
+              labels: [
+                t('result.chart.improvementSpace'),
+                t('result.chart.betterThan')
+              ],
               datasets: [{
-                data: [(100 - percentile).toFixed(2), (percentile).toFixed(2)],
-                colors: [(opacity = 1) => `rgba(255, 99, 132, ${opacity})`, (opacity = 1) => `rgba(75, 192, 192, ${opacity})`]
+                data: [(100 - percentile).toFixed(2), percentile.toFixed(2)],
+                colors: [
+                  (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
+                  (opacity = 1) => `rgba(75, 192, 192, ${opacity})`
+                ]
               }]
             }}
             width={Dimensions.get('window').width - 30}
@@ -305,31 +296,39 @@ export default function ResultScreen({ navigation, route }) {
             style={styles.pieChart}
           />
           <Text style={styles.percentileNote}>
-            <Text>您的水質資料目前位於 </Text>
+            {t('result.chart.status')}
             <Text style={{ color: getColor(rating) }}>⬤</Text>
-            <Text> 區，狀態為</Text>
+            {t('result.chart.statusIs')}
             <Text style={[styles.rating, { color: getColor(rating) }]}>{rating}</Text>
-            <Text>。</Text>
           </Text>
         </View>
       )}
 
       <View style={styles.btnContainer}>
-        <Button title="重新輸入資料" onPress={() => navigation.navigate('Calc')} />
-        <Button title="查看改善建議" onPress={ showMoreAlert }/>
+        <Button 
+          title={t('result.buttons.reenterData')} 
+          onPress={() => navigation.navigate('Calc')} 
+        />
+        <Button 
+          title={t('result.buttons.viewSuggestions')} 
+          onPress={showMoreAlert}
+        />
       </View>
 
       <View style={styles.warningContainer}>
-        <TouchableOpacity onPress={showWarningAlert}>
+        <TouchableOpacity onPress={() => Alert.alert(
+          t('alerts.notice'),
+          t('alerts.disclaimer'),
+          [{ text: t('alerts.iUnderstand') }]
+        )}>
           <Text style={styles.warningText}>
-            WaterMirror 仍可能會出現錯誤，請謹慎使用。
+            {t('alerts.notice')}
           </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

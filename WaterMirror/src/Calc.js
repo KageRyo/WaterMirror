@@ -1,9 +1,10 @@
-       import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 import config from '@/config.json';
 
@@ -19,15 +20,19 @@ const Input = ({ label, value, onChangeText }) => (
 );
 
 // 連接狀態元件
-const ConnectionStatus = ({ status }) => (
-  <Text style={[styles.status, status === '已連線到MPR水質分析模型' ? styles.connected : styles.notConnected]}>
-    連線狀況: {status}
-  </Text>
-);
+const ConnectionStatus = ({ status }) => {
+  const { t } = useTranslation();
+  return (
+    <Text style={[styles.status, status === t('calc.connection.connected') ? styles.connected : styles.notConnected]}>
+      {t('calc.connection.status')} {status}
+    </Text>
+  );
+};
 
 // 用於檢查與伺服器的連線狀態的 Hook
 const useServerConnection = (apiUrl) => {
-  const [status, setStatus] = useState('與MPR水質分析伺服器連線中...');
+  const { t } = useTranslation();
+  const [status, setStatus] = useState(t('calc.connection.connecting'));
 
   useEffect(() => {
     const checkTimeout = 5000;
@@ -35,15 +40,15 @@ const useServerConnection = (apiUrl) => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // 檢查與伺服器的連線狀態
   const checkConnection = async () => {
     try {
       const response = await fetch(`${apiUrl}/`);
       const jsonResponse = await response.json();
-      setStatus(jsonResponse.message === '成功與 API 連線!' ? '已連線到MPR水質分析模型' : '與MPR水質分析模型連線失敗');
+      setStatus(jsonResponse.message === '成功與 API 連線!' ? 
+        t('calc.connection.connected') : t('calc.connection.failed'));
     } catch (error) {
       console.error('連線錯誤:', error);
-      setStatus('MPR水質分析伺服器未開啟');
+      setStatus(t('calc.connection.disconnected'));
     }
   };
 
@@ -52,6 +57,7 @@ const useServerConnection = (apiUrl) => {
 
 // 畫面視窗
 export default function CalcScreen({ navigation }) {
+  const { t } = useTranslation();
   const apiUrl = `${config.api_url}:${config.port}`;
   const status = useServerConnection(apiUrl);
   const [data, setData] = useState({
@@ -78,7 +84,7 @@ export default function CalcScreen({ navigation }) {
   async function requestStoragePermission() {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== 'granted') {
-      alert('需要權限以訪問您的媒體庫！');
+      Alert.alert(t('alerts.notice'), t('alerts.storagePermission'));
     }
   }
 
@@ -114,12 +120,12 @@ export default function CalcScreen({ navigation }) {
     const scoreString = JSON.stringify(score.toFixed(2), null, 2);
 
     Alert.alert(
-      '分析完成',
-      `您的水質資料已分析完成。\n綜合評分為：${scoreString}`,
+      t('calc.upload.success'),
+      t('calc.upload.scoreMessage', { score: scoreString }),
       [
-        { text: '取消', onPress: () => {} },
+        { text: t('calc.buttons.cancel'), onPress: () => {} },
         {
-          text: '查看報表',
+          text: t('calc.buttons.viewReport'),
           onPress: () => {
             storeData(score, assessment);
             navigation.navigate('Result', { data: score, assessment });
@@ -164,7 +170,11 @@ export default function CalcScreen({ navigation }) {
       };
     } catch (error) {
       console.error('Error during file upload:', error);
-      Alert.alert('上傳失敗', `資料上傳至伺服器失敗。您可能未選取任何檔案，或是網路連線異常。`, [{ text: '確定' }]);
+      Alert.alert(
+        t('calc.upload.failed'),
+        t('calc.upload.errorMessage'),
+        [{ text: t('calc.buttons.confirm') }]
+      );
     }
   };
 
@@ -201,10 +211,18 @@ export default function CalcScreen({ navigation }) {
         throw new Error('Network response was not ok');
       }
     } catch (error) {
-      Alert.alert('上傳失敗', '發生錯誤，請稍後重試。', [{ text: '確定' }]);
+      Alert.alert(
+        t('calc.upload.failed'),
+        t('calc.upload.retryMessage'),
+        [{ text: t('calc.buttons.confirm') }]
+      );
     }
     } else {
-      Alert.alert('提示', '請填寫水質資料', [{ text: '確定' }]);
+      Alert.alert(
+        t('alerts.notice'),
+        t('calc.validation.pleaseInputData'),
+        [{ text: t('calc.buttons.confirm') }]
+      );
     }
     storeData(data, assessment);
     clearInput();
@@ -218,9 +236,9 @@ export default function CalcScreen({ navigation }) {
   // 顯示警語
   const showWarningAlert = () => {
     Alert.alert(
-      "免責聲明",
-      "人工智慧分析系統如WaterMirror在處理水質資料時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
-      [{ text: "我知道了" }]
+      t('alerts.notice'),
+      t('alerts.disclaimer'),
+      [{ text: t('alerts.iUnderstand') }]
     );
   };
 
@@ -232,47 +250,55 @@ export default function CalcScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.headerContainer}>
-          <ConnectionStatus status={status} />
-        </View>
-
-        <View style={styles.separator} />
-
-        <View style={styles.inputContainer}>
-          <Text style={styles.title}>手動輸入水質資料</Text>
-          <Input label="溶氧量（DO, %）" value={data.DO} onChangeText={(text) => setData({ ...data, DO: text })} />
-          <Input label="生物需氧量（BOD, mg/L）" value={data.BOD} onChangeText={(text) => setData({ ...data, BOD: text })} />
-          <Input label="氨氮（NH3-N, mg/L）" value={data.NH3N} onChangeText={(text) => setData({ ...data, NH3N: text })} />
-          <Input label="導電度（EC, μumho/co）" value={data.EC} onChangeText={(text) => setData({ ...data, EC: text })} />
-          <Input label="懸浮固體（SS, mg/L）" value={data.SS} onChangeText={(text) => setData({ ...data, SS: text })} />
-        </View>
-
+        <Text style={styles.title}>{t('calc.title')}</Text>
         <View style={styles.dataContainer}>
-        <Text style={styles.sectionTitle}>目前輸入的水質資料</Text>
-        {Object.values(data).every(value => value) ? (
-          <Text>
-            DO: {data.DO}% BOD: {data.BOD}mg/L NH3-N: {data.NH3N}mg/L EC: {data.EC}μumho/co SS: {data.SS}mg/L
-          </Text>
-          ) : (
-            <Text>請在上方輸入框輸入水質資料或上傳CSV檔案</Text>
-          )}
+          <Input 
+            label={t('calc.parameters.DO')} 
+            value={data.DO} 
+            onChangeText={(text) => setData({ ...data, DO: text })} 
+          />
+          <Input 
+            label={t('calc.parameters.BOD')} 
+            value={data.BOD} 
+            onChangeText={(text) => setData({ ...data, BOD: text })} 
+          />
+          <Input 
+            label={t('calc.parameters.NH3N')} 
+            value={data.NH3N} 
+            onChangeText={(text) => setData({ ...data, NH3N: text })} 
+          />
+          <Input 
+            label={t('calc.parameters.EC')} 
+            value={data.EC} 
+            onChangeText={(text) => setData({ ...data, EC: text })} 
+          />
+          <Input 
+            label={t('calc.parameters.SS')} 
+            value={data.SS} 
+            onChangeText={(text) => setData({ ...data, SS: text })} 
+          />
         </View>
+        <ConnectionStatus status={status} />
+        <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
-          <Button title="刪除" onPress={clearInput} />
-          <Button title="送出" onPress={handleSubmit} />
+          <Button title={t('calc.buttons.clear')} onPress={clearInput} />
+          <Button title={t('calc.buttons.submit')} onPress={handleSubmit} />
         </View>
 
         <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
-          <Button title="上傳水質資料檔案" onPress={handleFileUpload} />
+          <Button 
+            title={t('calc.buttons.uploadFile')} 
+            onPress={handleFileUpload} 
+          />
         </View>
 
         <View style={styles.warningContainer}>
           <TouchableOpacity onPress={showWarningAlert}>
             <Text style={styles.warningText}>
-              WaterMirror 仍可能會出現錯誤，請謹慎使用。
+              {t('calc.warning.message')}
             </Text>
           </TouchableOpacity>
         </View>
