@@ -36,28 +36,32 @@ export default function ResultScreen({ navigation, route }) {
   // 使用 useFocusEffect 確保每次進入畫面都檢查資料
   useFocusEffect(
     React.useCallback(() => {
-      if (!data) {
+      if (!data || !assessment) {
         const checkStoredData = async () => {
-          const storedData = await AsyncStorage.getItem('waterQualityData');
-          const storedAssessment = await AsyncStorage.getItem('waterQualityAssessment');
-          if (storedData) {
+          try {
+            const storedData = await AsyncStorage.getItem('waterQualityData');
+            const storedAssessment = await AsyncStorage.getItem('waterQualityAssessment');
+            
+            if (!storedData || !storedAssessment) {
+              Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
+              navigation.goBack();  // 使用 goBack 而不是 navigate
+              return;  // 立即返回，不執行後續代碼
+            }
+            
             const parsedData = JSON.parse(storedData);
             setScore(parsedData);
             fetchPercentile(parsedData);
-          } else {
+          } catch (error) {
             Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
-            navigation.navigate('Home');
-          }
-          if (!storedAssessment) {
-            Alert.alert(t('alerts.notice'), t('result.waterQuality.error'));
+            navigation.goBack();
           }
         };
         checkStoredData();
       } else {
-        setScore(data.toFixed(2));
+        setScore(parseFloat(data));  // 確保 data 是數字
         fetchPercentile(data);
       }
-    }, [data, t])
+    }, [data, assessment, navigation, t])
   );
 
   // 獲取百分位數和相關類別資料
@@ -322,7 +326,7 @@ const showBadValues = (badValues) => {
           [{ text: t('alerts.iUnderstand') }]
         )}>
           <Text style={styles.warningText}>
-            {t('alerts.notice')}
+            {t('alerts.warning')}
           </Text>
         </TouchableOpacity>
       </View>
