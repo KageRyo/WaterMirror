@@ -65,6 +65,10 @@
     },
     "warning": {
       "message": "WaterMirror 仍可能会出现错误，请谨慎使用。"
+    },
+    "dataDisplay": {
+      "title": "目前输入的水质数据",
+      "noData": "请在上方输入框输入水质数据或上传CSV文件"
     }
   },
   "result": {

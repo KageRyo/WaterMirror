@@ -285,10 +285,27 @@ export default function CalcScreen({ navigation }) {
             onChangeText={(text) => setData({ ...data, SS: text })} 
           />
         </View>
-
+    
         <View style={styles.btnContainer}>
           <Button title={t('calc.buttons.clear')} onPress={clearInput} />
           <Button title={t('calc.buttons.submit')} onPress={handleSubmit} />
+        </View>
+
+        <View style={styles.dataDisplayContainer}>
+          <Text style={styles.dataDisplayTitle}>{t('calc.dataDisplay.title')}</Text>
+          {Object.values(data).some(value => value !== '') ? (
+            <View style={styles.dataDisplayContent}>
+              {Object.entries(data).map(([key, value]) => (
+                value && (
+                  <Text key={key} style={styles.dataDisplayText}>
+                    {t(`calc.parameters.${key}`)}: {value}
+                  </Text>
+                )
+              ))}
+            </View>
+          ) : (
+            <Text style={styles.noDataText}>{t('calc.dataDisplay.noData')}</Text>
+          )}
         </View>
 
         <View style={styles.separator} />
@@ -384,5 +401,32 @@ const styles = StyleSheet.create({
     color: 'red',
     textDecorationLine: 'underline',
     textAlign: 'center',
+  },
+  dataDisplayContainer: {
+    width: '80%',
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 5,
+  },
+  dataDisplayTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  dataDisplayContent: {
+    marginTop: 5,
+  },
+  dataDisplayText: {
+    fontSize: 14,
+    marginVertical: 2,
+  },
+  noDataText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginTop: 5,
   },
 });
