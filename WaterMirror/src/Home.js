@@ -47,14 +47,24 @@ const BtnSection = ({ navigation }) => {
         <View style={btnStyles.btnSpace} />
         <CustomBtn {...btnData[3]} onPress={() => handlePress(btnData[3].route)} />
       </View>
+      <View style={btnStyles.langBtnRow}>
+        <CustomBtn {...btnData[4]} onPress={() => handlePress(btnData[4].route)} isLangBtn={true} />
+      </View>
     </View>
   );
 };
 
 // 自訂按鈕元件
-const CustomBtn = ({ bgColor, text, onPress }) => {
+const CustomBtn = ({ bgColor, text, onPress, isLangBtn }) => {
   return (
-    <TouchableOpacity style={[btnStyles.btn, { backgroundColor: bgColor }]} onPress={onPress}>
+    <TouchableOpacity 
+      style={[
+        btnStyles.btn, 
+        { backgroundColor: bgColor },
+        isLangBtn && btnStyles.langBtn
+      ]} 
+      onPress={onPress}
+    >
       <Text style={btnStyles.btnText}>{text}</Text>
     </TouchableOpacity>
   );
@@ -81,6 +91,11 @@ const btnData = [
     text: '使用教學',
     route: 'https://www.youtube.com/@WaterMirror-NUTC',
     bgColor: '#FFD700',
+  },
+  {
+    text: '切換語言',
+    route: 'Language',
+    bgColor: '#E6E6FA',
   },
 ];
 
@@ -159,6 +174,11 @@ const btnStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  langBtnRow: {
+    marginTop: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
   btnRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -172,6 +192,10 @@ const btnStyles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#000',
+  },
+  langBtn: {
+    width: 320,
+    height: 50,
   },
   btnText: {
     fontSize: 20,
