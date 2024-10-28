@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "智能化水质分析与评估系统",
-    "version": "版本：WaterMirror-{{platform}}-v1.0.8"
+    "version": "版本：WaterMirror-{{platform}}-v1.1.0"
   },
   "nav": {
     "home": "首页",
@@ -14,7 +14,8 @@
     "viewReport": "查阅报表",
     "contactAuthor": "联系作者",
     "tutorial": "使用教学",
-    "switchLanguage": "切换语言"
+    "switchLanguage": "切换语言",
+    "cancel": "取消"
   },
   "language": {
     "select": "选择语言",
@@ -27,7 +28,12 @@
     "warning": "WaterMirror 仍可能会出现错误，请谨慎使用。",
     "disclaimer": "人工智能分析系统如WaterMirror在处理水质数据时仍可能会出现错误。分析结果可能受到水质数据品质、测量方法或环境因素的影响而产生偏差。使用前请谨慎评估，并应与专业意见或实验结果相结合，以确保决策的准确性。本软件提供的分析结果仅供参考，开发者不承担因依这些信息而导致的任何直接或间接损失。",
     "iUnderstand": "我知道了",
-    "storagePermission": "需要权限以访问您的媒体库！"
+    "storagePermission": "需要权限以访问您的媒体库！",
+    "error": "错误",
+    "serverErrors": {
+      "categoryData": "无法从服务器获取类别数据。",
+      "percentileData": "无法从服务器获取百分位数。"
+    }
   },
   "calc": {
     "title": "手动输入水质数据",

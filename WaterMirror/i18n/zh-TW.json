@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "智慧化水質分析與評估系統",
-    "version": "版本：WaterMirror-{{platform}}-v1.0.8"
+    "version": "版本：WaterMirror-{{platform}}-v1.1.0"
   },
   "nav": {
     "home": "首頁",
@@ -14,7 +14,8 @@
     "viewReport": "查閱報表",
     "contactAuthor": "聯繫作者",
     "tutorial": "使用教學",
-    "switchLanguage": "切換語言"
+    "switchLanguage": "切換語言",
+    "cancel": "取消"
   },
   "language": {
     "select": "選擇語言",
@@ -27,7 +28,12 @@
     "warning": "WaterMirror 仍可能會出現錯誤，請謹慎使用。",
     "disclaimer": "人工智慧分析系統如WaterMirror在處理水質資料時仍可能會出現錯誤。分析結果可能受到水質資料品質、測量方法或環境因素的影響而產生偏差。使用前請謹慎評估，並應與專業意見或實驗結果相結合，以確保決策的準確性。本軟體提供的分析結果僅供參考，開發者不承擔因依賴這些資訊而導致的任何直接或間接損失。",
     "iUnderstand": "我知道了",
-    "storagePermission": "需要權限以訪問您的媒體庫！"
+    "storagePermission": "需要權限以訪問您的媒體庫！",
+    "error": "Error",
+    "serverErrors": {
+      "categoryData": "Unable to fetch category data from server.",
+      "percentileData": "Unable to fetch percentile data from server."
+    }
   },
   "calc": {
     "title": "手動輸入水質資料",
@@ -105,7 +111,7 @@
       "suggestions": {
         "DO": {
           "error": "您的溶氧（DO）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。",
-          "poor": "您的水中溶氧量（DO）可能過高或過低，有可能是溫度過高溶氧量過低，請嘗試為水增氧或增加植物行光合作用；或是太多水草導致溶氧量過高，請嘗試移除部分水草��"
+          "poor": "您的水中溶氧量（DO）可能過高或過低，有可能是溫度過高溶氧量過低，請嘗試為水增氧或增加植物行光合作用；或是太多水草導致溶氧量過高，請嘗試移除部分水草"
         },
         "BOD": {
           "error": "您的生化需氧量（BOD）資料可能存在錯誤，或是狀況非常糟糕，若資料無誤建議尋求專業人士協助。",

@@ -59,7 +59,10 @@ npx expo start
   
 ## 語言支援
 WaterMirror 支援以下語言：  
-- 繁體中文（正體中文）
+- 正體中文
+- 簡體中文
+- English
+- 日本語
 - 歡迎貢獻 :D
 
 ## 貢獻

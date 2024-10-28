@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import 'intl-pluralrules';
 import zhTW from './zh-TW.json';
 import zhCN from './zh-CN.json';
+import en from './en.json';
+import ja from './ja.json';
 
 const LANGUAGE_DETECTOR = {
   type: 'languageDetector',
@@ -33,7 +35,9 @@ i18n
     compatibilityJSON: 'v3',
     resources: {
       'zh-TW': { translation: zhTW },
-      'zh-CN': { translation: zhCN }
+      'zh-CN': { translation: zhCN },
+      'en': { translation: en },
+      'ja': { translation: ja }
     },
     fallbackLng: 'zh-TW',
     interpolation: {
