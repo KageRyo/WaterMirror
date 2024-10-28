@@ -78,7 +78,7 @@ export default function ResultScreen({ navigation, route }) {
       })
       .catch(error => {
         console.error('Error fetching percentile data:', error);
-        Alert.alert('錯誤', '無法從伺服器獲取百分位數。');
+        Alert.alert(t('alerts.error'), t('alerts.serverErrors.percentileData'));
       });
   };
 
@@ -105,7 +105,7 @@ export default function ResultScreen({ navigation, route }) {
       })
       .catch(error => {
         console.error('Error fetching categories:', error);
-        Alert.alert('錯誤', '無法從伺服器獲取類別數據。');
+        Alert.alert(t('alerts.error'), t('alerts.serverErrors.categoryData'));
       });
   };
 

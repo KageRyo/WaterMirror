@@ -1,0 +1,147 @@
+{
+  "app": {
+    "name": "WaterMirror",
+    "subtitle": "Smart Water Quality Analysis and Assessment System",
+    "version": "Version: WaterMirror-{{platform}}-v1.1.0"
+  },
+  "nav": {
+    "home": "Home",
+    "calc": "Input Data",
+    "result": "View Report"
+  },
+  "buttons": {
+    "inputData": "Input Data",
+    "viewReport": "View Report",
+    "contactAuthor": "Contact Author",
+    "tutorial": "Tutorial",
+    "switchLanguage": "Switch Language",
+    "cancel": "Cancel"
+  },
+  "language": {
+    "select": "Select Language",
+    "zhTW": "Traditional Chinese",
+    "zhCN": "Simplified Chinese"
+  },
+  "alerts": {
+    "notice": "Notice",
+    "pleaseInputData": "Please go to the 'Input Data' page to enter your water quality data.",
+    "warning": "WaterMirror may still have errors, please use with caution.",
+    "disclaimer": "AI analysis systems like WaterMirror may still have errors when processing water quality data. Analysis results may be affected by data quality, measurement methods, or environmental factors. Please evaluate carefully before use and combine with professional opinions or experimental results to ensure decision accuracy. The analysis results provided by this software are for reference only, and the developers are not responsible for any direct or indirect losses resulting from reliance on this information.",
+    "iUnderstand": "I Understand",
+    "storagePermission": "Permission needed to access your media library!",
+    "error": "Error",
+    "serverErrors": {
+      "categoryData": "Unable to fetch category data from server.",
+      "percentileData": "Unable to fetch percentile data from server."
+    }
+  },
+  "calc": {
+    "title": "Manual Water Quality Data Input",
+    "parameters": {
+      "DO": "Dissolved Oxygen (DO, %)",
+      "BOD": "Biochemical Oxygen Demand (BOD, mg/L)",
+      "NH3N": "Ammonia Nitrogen (NH3-N, mg/L)",
+      "EC": "Electrical Conductivity (EC, μumho/co)",
+      "SS": "Suspended Solids (SS, mg/L)"
+    },
+    "connection": {
+      "status": "Connection Status: ",
+      "connecting": "Connecting to MPR Water Quality Analysis Server...",
+      "connected": "Connected to MPR Analysis Model",
+      "disconnected": "MPR Analysis Server Not Started",
+      "failed": "Connection to MPR Analysis Model Failed"
+    },
+    "upload": {
+      "success": "Analysis Complete",
+      "scoreMessage": "Your water quality data analysis is complete.\nOverall score: {{score}}",
+      "failed": "Upload Failed",
+      "errorMessage": "Failed to upload data to server. You may not have selected any file, or network connection is abnormal.",
+      "retryMessage": "An error occurred, please try again later."
+    },
+    "buttons": {
+      "clear": "Delete",
+      "submit": "Submit",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "viewReport": "View Report",
+      "uploadFile": "Upload Water Quality Data File"
+    },
+    "validation": {
+      "pleaseInputData": "Please enter water quality data"
+    },
+    "warning": {
+      "message": "WaterMirror may still have errors, please use with caution."
+    },
+    "dataDisplay": {
+      "title": "Current Water Quality Data",
+      "noData": "Please enter water quality data in the input fields above or upload a CSV file"
+    }
+  },
+  "result": {
+    "score": "Overall Score",
+    "waterQuality": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor",
+      "bad": "Bad",
+      "terrible": "Terrible",
+      "error": "Error",
+      "inputError": "Input data may be incorrect"
+    },
+    "comments": {
+      "excellent": "Your water quality is excellent and can be used for various purposes. With chlorine disinfection, it can be directly consumed.",
+      "good": "Your water quality is good and can be used as tap water source, aquaculture, industrial, recreational, and irrigation purposes.",
+      "fair": "Your water quality is acceptable and can be used as tap water source with special treatment. Suitable for rough fish farming, industrial use, recreation, and irrigation.",
+      "poor": "Your water quality is below average, only suitable for irrigation or industrial cooling.",
+      "bad": "Your water quality is poor but not repulsive, can be used for environmental conservation.",
+      "terrible": "Your water quality is terrible and may produce odors.",
+      "error": "Your input water quality data may be incorrect, or you haven't entered data on the 'Input Data' page. Please check and re-enter the data.",
+      "checkData": "Please check and re-enter correct data."
+    },
+    "improvement": {
+      "title": "Improvement Suggestions",
+      "parameters": {
+        "DO": "Dissolved Oxygen (%)",
+        "BOD": "Biochemical Oxygen Demand (mg/L)",
+        "NH3N": "Ammonia Nitrogen (mg/L)",
+        "EC": "Electrical Conductivity (μumho/co)",
+        "SS": "Suspended Solids (mg/L)"
+      },
+      "suggestions": {
+        "DO": {
+          "error": "Your dissolved oxygen (DO) data may be erroneous or the situation is very poor. If data is correct, please seek professional assistance.",
+          "poor": "Your water's dissolved oxygen (DO) may be too high or too low. This could be due to high temperature causing low DO; try adding oxygen or increasing plant photosynthesis. Or too many aquatic plants causing high DO; try removing some plants."
+        },
+        "BOD": {
+          "error": "Your biochemical oxygen demand (BOD) data may be erroneous or the situation is very poor. If data is correct, please seek professional assistance.",
+          "poor": "High biochemical oxygen demand (BOD) may be due to organic pollutants in the water. Need to reduce organic matter input or enhance biological treatment processes."
+        },
+        "NH3N": {
+          "error": "Your ammonia nitrogen (NH3-N) data may be erroneous or the situation is very poor. If data is correct, please seek professional assistance.",
+          "poor": "High ammonia nitrogen (NH3-N) may be due to ammonia or nitrogen compounds in the water. Need to reduce nitrogen source input or implement nitrogen removal treatment."
+        },
+        "EC": {
+          "error": "Your electrical conductivity (EC) data may be erroneous or the situation is very poor. If data is correct, please seek professional assistance.",
+          "poor": "High electrical conductivity (EC) may be due to high dissolved inorganic salts. Need to control salt source input or implement water desalination treatment."
+        },
+        "SS": {
+          "error": "Your suspended solids (SS) data may be erroneous or the situation is very poor. If data is correct, please seek professional assistance.",
+          "poor": "High suspended solids (SS) content may be due to large amounts of suspended matter in the water. Need to enhance suspended matter removal or reduce suspended matter input."
+        }
+      }
+    },
+    "buttons": {
+      "reenterData": "Re-enter Data",
+      "viewSuggestions": "View Improvement Suggestions",
+      "next": "Next",
+      "iKnow": "I Know"
+    },
+    "chart": {
+      "improvementSpace": "Remaining Water Quality Improvement Space",
+      "betterThan": "Water Quality Data You've Surpassed",
+      "status": "Your water quality data is currently in",
+      "statusIs": "zone, status is"
+    }
+  }
+}
