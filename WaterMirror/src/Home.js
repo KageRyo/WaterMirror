@@ -29,10 +29,34 @@ const BtnSection = ({ navigation }) => {
   const { currentLanguage, changeLanguage } = useLanguage();
   
   const handleLanguageSwitch = () => {
-    const newLanguage = currentLanguage === 'zh-TW' ? 'zh-CN' : 'zh-TW';
-    changeLanguage(newLanguage);
+    Alert.alert(
+      t('language.select'),
+      '',
+      [
+        {
+          text: '正體中文',
+          onPress: () => changeLanguage('zh-TW')
+        },
+        {
+          text: '简体中文',
+          onPress: () => changeLanguage('zh-CN')
+        },
+        {
+          text: 'English',
+          onPress: () => changeLanguage('en')
+        },
+        {
+          text: '日本語',
+          onPress: () => changeLanguage('ja')
+        },
+        {
+          text: t('buttons.cancel'),
+          style: 'cancel'
+        }
+      ]
+    );
   };
-
+  
   const btnData = [
     {
       text: t('buttons.inputData'),
