@@ -165,7 +165,11 @@ export default function CalcScreen({ navigation }) {
             throw new Error('Network response was not ok');
           }
         } catch (error) {
-          Alert.alert('上傳失敗', '發生錯誤，請稍後重試。', [{ text: '確定' }]);
+          Alert.alert(
+            t('calc.upload.failed'),
+            t('calc.upload.retryMessage'),
+            [{ text: t('calc.buttons.confirm') }]
+          );
         }
       };
     } catch (error) {
@@ -211,16 +215,12 @@ export default function CalcScreen({ navigation }) {
         throw new Error('Network response was not ok');
       }
     } catch (error) {
-      Alert.alert(
-        t('calc.upload.failed'),
-        t('calc.upload.retryMessage'),
-        [{ text: t('calc.buttons.confirm') }]
-      );
+      Alert.alert('上傳失敗', '發生錯誤，請稍後重試。', [{ text: '確定' }]);
     }
     } else {
       Alert.alert(
-        t('alerts.notice'),
-        t('calc.validation.pleaseInputData'),
+        t('alerts.notice'), 
+        t('calc.validation.pleaseInputData'), 
         [{ text: t('calc.buttons.confirm') }]
       );
     }
@@ -251,6 +251,13 @@ export default function CalcScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>{t('calc.title')}</Text>
+        
+        {/* 連線狀況 */}
+        <ConnectionStatus status={status} />
+        
+        <View style={styles.separator} />
+        
+        {/* 手動輸入水質資料 */}
         <View style={styles.dataContainer}>
           <Input 
             label={t('calc.parameters.DO')} 
@@ -278,8 +285,6 @@ export default function CalcScreen({ navigation }) {
             onChangeText={(text) => setData({ ...data, SS: text })} 
           />
         </View>
-        <ConnectionStatus status={status} />
-        <View style={styles.separator} />
 
         <View style={styles.btnContainer}>
           <Button title={t('calc.buttons.clear')} onPress={clearInput} />
@@ -288,6 +293,7 @@ export default function CalcScreen({ navigation }) {
 
         <View style={styles.separator} />
 
+        {/* 上傳水質資料檔案 */}
         <View style={styles.btnContainer}>
           <Button 
             title={t('calc.buttons.uploadFile')} 
@@ -295,6 +301,7 @@ export default function CalcScreen({ navigation }) {
           />
         </View>
 
+        {/* 警告訊息 */}
         <View style={styles.warningContainer}>
           <TouchableOpacity onPress={showWarningAlert}>
             <Text style={styles.warningText}>
@@ -333,7 +340,7 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     marginBottom: 10,
   },
   inputContainer: {
@@ -352,7 +359,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
   },
