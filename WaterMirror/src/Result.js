@@ -82,20 +82,32 @@ export default function ResultScreen({ navigation, route }) {
       });
   };
 
-  // 獲取類別資料的函式
+  // 添加類別名稱映射
+  const categoryMapping = {
+    '優良': 'excellent',
+    '良好': 'good',
+    '中等': 'fair',
+    '不良': 'poor',
+    '糟糕': 'bad',
+    '惡劣': 'terrible'
+  };
+
+  // 修改 fetchCategories 函數
   const fetchCategories = () => {
     fetch(`${config.api_url}:${config.port}/categories/`)
       .then(response => response.json())
       .then(data => {
-        // 使用 reduce 函數計算總樣本數
         const totalSamples = data.data.reduce((acc, item) => acc + item.rating, 0);
         const categories = data.data.map(item => {
-          // 提前計算百分比
           const percentage = (item.rating / totalSamples * 100).toFixed(2);
+          // 使用映射關係取得對應的翻譯鍵
+          const translationKey = categoryMapping[item.category];
+          const translatedCategory = t(`result.waterQuality.${translationKey}`);
           return {
-            name: `% ${item.category}`,
+            // 移除百分比符號，只保留翻譯後的類別名稱
+            name: `% ${translatedCategory}`,
             value: parseFloat(percentage),
-            color: getColor(item.category),
+            color: getColor(translatedCategory),
             legendFontColor: "#7F7F7F",
             legendFontSize: 15
           };
