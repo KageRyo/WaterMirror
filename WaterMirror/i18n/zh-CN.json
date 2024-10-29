@@ -142,6 +142,17 @@
       "betterThan": "您赢过的水质数据",
       "status": "您的水质数据目前位于",
       "statusIs": "区，状态为"
+    },
+    "percentileText": "您的水质状况优于了 {{percentile}}% 的水质数据！",
+    "unknownStatus": "未知",
+    "noValidData": "无有效水质数据，请返回并重新输入数据。",
+    "categories": {
+      "excellent": "优良",
+      "good": "良好",
+      "fair": "中等",
+      "poor": "不良",
+      "bad": "糟糕",
+      "terrible": "恶劣"
     }
   }
 }

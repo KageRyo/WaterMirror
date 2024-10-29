@@ -161,11 +161,11 @@ export default function ResultScreen({ navigation, route }) {
   // 確定類別
   const determineCategory = (categories) => {
     const category = categories.find(category => category.rating >= data);
-    setCategory(category ? category.category : '未知');
+    setCategory(category ? category.category : t('result.unknownStatus'));
   };
 
   // 獲取經 WQI5 評估後的水質狀態資訊
-  const { rating, comment } = score !== null ? countWaterQuality(score) : { rating: '未知', comment: '無有效水質資料，請返回並重新輸入資料。' };
+  const { rating, comment } = score !== null ? countWaterQuality(score) : { rating: t('result.unknownStatus'), comment: t('result.noValidData') };
 
   // 顯示查看改善建議
   const showMoreAlert = () => {
@@ -287,7 +287,9 @@ const showBadValues = (badValues) => {
             formatYLabel={(yValue) => `${yValue}%`}
             style={styles.barChart}
           />
-          <Text style={styles.percentile}>您的水質狀況優於了 {percentile.toFixed(2)}% 的水質資料！</Text>
+          <Text style={styles.percentile}>
+            {t('result.percentileText', { percentile: percentile.toFixed(2) })}
+          </Text>
           <PieChart
             data={categoryData}
             width={Dimensions.get('window').width - 16}
