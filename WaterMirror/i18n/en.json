@@ -1,8 +1,8 @@
 {
   "app": {
     "name": "WaterMirror",
-    "subtitle": "Intelligent Water Quality Analysis and Improvement Assessment",
-    "version": "Version: WaterMirror-{{platform}}-v1.1.0"
+    "subtitle": "Smart Water Quality Analysis and Assessment System",
+    "version": "Version: WaterMirror-{{platform}}-v1.1.1"
   },
   "nav": {
     "home": "Home",
@@ -36,7 +36,7 @@
     }
   },
   "calc": {
-    "title": "Manual Water Quality Data Input",
+    "title": "Water Quality Data Input",
     "parameters": {
       "DO": "Dissolved Oxygen (DO, %)",
       "BOD": "Biochemical Oxygen Demand (BOD, mg/L)",
@@ -100,7 +100,7 @@
       "checkData": "Please check and re-enter correct data."
     },
     "improvement": {
-      "title": "Improvement Suggestions",
+      "title": "Suggestions",
       "parameters": {
         "DO": "Dissolved Oxygen (%)",
         "BOD": "Biochemical Oxygen Demand (mg/L)",
@@ -132,14 +132,14 @@
       }
     },
     "buttons": {
-      "reenterData": "Re-enter Data",
-      "viewSuggestions": "View Improvement Suggestions",
+      "reenterData": "Re-enter",
+      "viewSuggestions": "Suggestions",
       "next": "Next",
       "iKnow": "I Know"
     },
     "chart": {
-      "improvementSpace": "Remaining Water Quality Improvement Space",
-      "betterThan": "Water Quality Data You've Surpassed",
+      "improvementSpace": "Improvement Space",
+      "betterThan": "You've Surpassed",
       "status": "Your water quality data is currently in",
       "statusIs": "zone, status is"
     },
