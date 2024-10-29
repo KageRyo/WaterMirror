@@ -138,8 +138,8 @@
       "iKnow": "I Know"
     },
     "chart": {
-      "improvementSpace": "Remaining Water Quality Improvement Space",
-      "betterThan": "Water Quality Data You've Surpassed",
+      "improvementSpace": "Improvement Space",
+      "betterThan": "You've Surpassed",
       "status": "Your water quality data is currently in",
       "statusIs": "zone, status is"
     },
