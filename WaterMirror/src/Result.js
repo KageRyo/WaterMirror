@@ -112,12 +112,12 @@ export default function ResultScreen({ navigation, route }) {
   // 根據類別獲取顏色
   const getColor = (category) => {
     const colors = {
-      '優良': 'green',
-      '良好': 'blue',
-      '中等': 'gold',
-      '不良': 'orange',
-      '糟糕': 'red',
-      '惡劣': 'brown'
+      [t('result.waterQuality.excellent')]: 'green',
+      [t('result.waterQuality.good')]: 'blue',
+      [t('result.waterQuality.fair')]: 'gold',
+      [t('result.waterQuality.poor')]: 'orange',
+      [t('result.waterQuality.bad')]: 'red',
+      [t('result.waterQuality.terrible')]: 'brown'
     };
     return colors[category] || '#ccc';
   };
