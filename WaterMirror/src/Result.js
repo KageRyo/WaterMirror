@@ -261,7 +261,7 @@ const showBadValues = (badValues) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.score}>{`${t('result.score')}：${score}`}</Text>
+        <Text style={styles.score}>{`${t('result.score')}：${score !== null ? score.toFixed(2) : score}`}</Text>
         <Text style={[styles.rating, { color: getColor(rating) }]}>{rating}</Text>
       </View>
 
