@@ -142,6 +142,17 @@
       "betterThan": "Water Quality Data You've Surpassed",
       "status": "Your water quality data is currently in",
       "statusIs": "zone, status is"
+    },
+    "percentileText": "Your water quality is better than {{percentile}}% of water quality data!",
+    "unknownStatus": "Unknown",
+    "noValidData": "No valid water quality data. Please return and re-enter data.",
+    "categories": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor",
+      "bad": "Bad",
+      "terrible": "Terrible"
     }
   }
 }

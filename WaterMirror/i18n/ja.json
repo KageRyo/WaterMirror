@@ -142,6 +142,17 @@
         "betterThan": "あなたが上回った水質データ",
         "status": "現在の水質データは",
         "statusIs": "区域にあり、状態は"
+      },
+      "percentileText": "あなたの水質状態は {{percentile}}% の水質データより優れています！",
+      "unknownStatus": "不明",
+      "noValidData": "有効な水質データがありません。戻って再入力してください。",
+      "categories": {
+        "excellent": "優秀",
+        "good": "良好",
+        "fair": "普通",
+        "poor": "不良",
+        "bad": "悪い",
+        "terrible": "極めて悪い"
       }
     }
   }
