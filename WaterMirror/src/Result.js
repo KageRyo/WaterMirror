@@ -188,7 +188,7 @@ export default function ResultScreen({ navigation, route }) {
 
     Alert.alert(
       t('result.improvement.title'),
-      `${t('result.improvement.parameters')}\n\n${assessmentEntries.map(([key, value]) => {
+      `${assessmentEntries.map(([key, value]) => {
         return `${t(`result.improvement.parameters.${key}`)}：${value}`;
       }).join('\n')}\n`,
       badValues.length === 0
