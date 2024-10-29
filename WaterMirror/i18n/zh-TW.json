@@ -86,8 +86,8 @@
       "poor": "不良",
       "bad": "糟糕",
       "terrible": "惡劣",
-      "error": "異常",
-      "inputError": "輸入的資料可能有誤"
+      "error": "錯誤",
+      "inputError": "輸入錯誤"
     },
     "comments": {
       "excellent": "您的水質狀況優良，可做各種用途，加氯消毒可直接飲用。",

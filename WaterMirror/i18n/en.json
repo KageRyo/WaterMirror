@@ -36,7 +36,7 @@
     }
   },
   "calc": {
-    "title": "Manual Water Quality Data Input",
+    "title": "Water Quality Data Input",
     "parameters": {
       "DO": "Dissolved Oxygen (DO, %)",
       "BOD": "Biochemical Oxygen Demand (BOD, mg/L)",
@@ -100,7 +100,7 @@
       "checkData": "Please check and re-enter correct data."
     },
     "improvement": {
-      "title": "Improvement Suggestions",
+      "title": "Suggestions",
       "parameters": {
         "DO": "Dissolved Oxygen (%)",
         "BOD": "Biochemical Oxygen Demand (mg/L)",
@@ -132,8 +132,8 @@
       }
     },
     "buttons": {
-      "reenterData": "Re-enter Data",
-      "viewSuggestions": "View Improvement Suggestions",
+      "reenterData": "Re-enter",
+      "viewSuggestions": "Suggestions",
       "next": "Next",
       "iKnow": "I Know"
     },
