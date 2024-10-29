@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "Smart Water Quality Analysis and Assessment System",
-    "version": "Version: WaterMirror-{{platform}}-v1.1.0"
+    "version": "Version: WaterMirror-{{platform}}-v1.1.1"
   },
   "nav": {
     "home": "Home",
