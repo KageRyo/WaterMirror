@@ -1,8 +1,8 @@
 {
   "app": {
     "name": "WaterMirror",
-    "subtitle": "智慧水質分析與改善評估",
-    "version": "版本：WaterMirror-{{platform}}-v1.1.0"
+    "subtitle": "智慧化水質分析與評估系統",
+    "version": "版本：WaterMirror-{{platform}}-v1.1.1"
   },
   "nav": {
     "home": "首頁",
@@ -86,8 +86,8 @@
       "poor": "不良",
       "bad": "糟糕",
       "terrible": "惡劣",
-      "error": "異常",
-      "inputError": "輸入的資料可能有誤"
+      "error": "錯誤",
+      "inputError": "輸入錯誤"
     },
     "comments": {
       "excellent": "您的水質狀況優良，可做各種用途，加氯消毒可直接飲用。",

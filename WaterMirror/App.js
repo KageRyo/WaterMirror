@@ -2,16 +2,47 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import './i18n';  // 確保這行在最上面
-import { I18nextProvider } from 'react-i18next';
+import './i18n';
+import { I18nextProvider, useTranslation } from 'react-i18next';
 import { LanguageProvider } from './contexts/LanguageContext';
 import i18n from './i18n';
 
-import HomeScreen from './src/Home';      // 首頁
-import CalcScreen from './src/Calc';      // 水質資料填寫頁面
-import ResultScreen from './src/Result';  // 查閱報表頁面
+import HomeScreen from './src/Home';
+import CalcScreen from './src/Calc';
+import ResultScreen from './src/Result';
 
 const Stack = createStackNavigator();
+
+// 建立一個包裝的 Navigator 組件
+function AppNavigator() {
+  const { t } = useTranslation();
+
+  return (
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={() => ({ 
+          title: t('nav.home')
+        })} 
+      />
+      <Stack.Screen 
+        name="Calc" 
+        component={CalcScreen} 
+        options={() => ({ 
+          title: t('nav.calc')
+        })} 
+      />
+      <Stack.Screen 
+        name="Result" 
+        component={ResultScreen} 
+        options={() => ({ 
+          title: t('nav.result')
+        })} 
+      />
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
   return (
@@ -19,23 +50,7 @@ export default function App() {
       <LanguageProvider>
         <NavigationContainer>
           <StatusBar hidden={false} />
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen 
-              name="Home" 
-              component={HomeScreen} 
-              options={{ title: i18n.t('nav.home') }} 
-            />
-            <Stack.Screen 
-              name="Calc" 
-              component={CalcScreen} 
-              options={{ title: i18n.t('nav.calc') }} 
-            />
-            <Stack.Screen 
-              name="Result" 
-              component={ResultScreen} 
-              options={{ title: i18n.t('nav.result') }} 
-            />
-          </Stack.Navigator>
+          <AppNavigator />
         </NavigationContainer>
       </LanguageProvider>
     </I18nextProvider>
