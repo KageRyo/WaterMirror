@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -74,6 +74,7 @@ export default function CalcScreen({ navigation }) {
     EC: '',
     SS: '',
   });
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     requestStoragePermission();
@@ -137,10 +138,17 @@ export default function CalcScreen({ navigation }) {
   };
 
   // 處理上傳的CSV水質資料檔案
-  const handleFileUpload = async () => {
+  const handleFileUpload = useCallback(async () => {
+    if (isUploading) return; // 如果正在上傳中，直接返回
+
     try {
-      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-      if (!result.cancelled) {
+      setIsUploading(true);
+      const result = await DocumentPicker.getDocumentAsync({ 
+        type: '*/*',
+        copyToCacheDirectory: true // 確保檔案被複製到快取目錄
+      });
+      
+      if (!result.canceled && result.assets && result.assets.length > 0) {
         const pickedFile = result.assets[0];
         const formData = new FormData();
         formData.append('file', {
@@ -149,7 +157,6 @@ export default function CalcScreen({ navigation }) {
           type: pickedFile.mimeType
         });
         
-        // 處理伺服器回應
         try {
           const response = await fetch(`${apiUrl}/score/total/`, {
             method: 'POST',
@@ -171,7 +178,7 @@ export default function CalcScreen({ navigation }) {
             [{ text: t('calc.buttons.confirm') }]
           );
         }
-      };
+      }
     } catch (error) {
       console.error('Error during file upload:', error);
       Alert.alert(
@@ -179,8 +186,10 @@ export default function CalcScreen({ navigation }) {
         t('calc.upload.errorMessage'),
         [{ text: t('calc.buttons.confirm') }]
       );
+    } finally {
+      setIsUploading(false); // 無論成功與否，都將上傳狀態設為 false
     }
-  };
+  }, [apiUrl, isUploading, t]); // 加入相依性陣列
 
   // 處理手動輸入的水質資料
   const handleSubmit = async () => {
@@ -314,7 +323,8 @@ export default function CalcScreen({ navigation }) {
         <View style={styles.btnContainer}>
           <Button 
             title={t('calc.buttons.uploadFile')} 
-            onPress={handleFileUpload} 
+            onPress={handleFileUpload}
+            disabled={isUploading} // 在上傳過程中禁用按鈕
           />
         </View>
 
