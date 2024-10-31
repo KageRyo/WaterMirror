@@ -5,9 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
 
-import GitHubMark from '../assets/github-mark.png';
-const githubUrl = 'https://github.com/KageRyo/WaterMirror';
-
 // 頂部區塊
 const TopSection = () => {
   const { t } = useTranslation();
@@ -70,12 +67,12 @@ const BtnSection = ({ navigation }) => {
     },
     {
       text: t('buttons.contactAuthor'),
-      route: 'https://kageryo.coderyo.com/',
+      route: 'mailto:kageryo@coderyo.com',
       bgColor: '#ADD8E6',
     },
     {
       text: t('buttons.tutorial'),
-      route: 'https://www.youtube.com/@WaterMirror-NUTC',
+      route: 'https://youtu.be/g8yDUuhPMfc',
       bgColor: '#FFD700',
     },
   ];
@@ -97,8 +94,12 @@ const BtnSection = ({ navigation }) => {
         Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
         return;
       }
-    } else if (route.startsWith('http')) {
-      Linking.openURL(route);
+    } else if (route.startsWith('http') || route.startsWith('mailto:')) {
+      try {
+        await Linking.openURL(route);
+      } catch {
+        // 不執行任何操作以隱藏錯誤訊息
+      }
     } else {
       navigation.navigate(route);
     }
@@ -149,18 +150,8 @@ const BottomSection = () => {
   return (
     <View style={bottomStyles.bottom}>
       <Text style={bottomStyles.blue}>資訊應用服務創新競賽</Text>
-      {/* <Text style={[bottomStyles.blue, bottomStyles.bottomText]}>智慧生產工程系 張健勳, 吳國維 進行開發</Text>
-      <Text style={bottomStyles.bottomText}>若有任何問題，歡迎到本專案GitHub頁面！</Text> */}
-      {/* <TouchableOpacity onPress={openGitHub}>
-        <Image source={GitHubMark} style={bottomStyles.githubImg} />
-      </TouchableOpacity> */}
     </View>
   );
-};
-
-// 開啟 GitHub 連結
-const openGitHub = () => {
-  Linking.openURL(githubUrl);
 };
 
 // 畫面視窗
