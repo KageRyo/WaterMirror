@@ -35,7 +35,7 @@ const useServerConnection = (apiUrl) => {
   const [status, setStatus] = useState(t('calc.connection.connecting'));
 
   useEffect(() => {
-    const checkTimeout = 5000;
+    const checkTimeout = 3000;
     const intervalId = setInterval(() => checkConnection(), checkTimeout);
     return () => clearInterval(intervalId);
   }, []);
