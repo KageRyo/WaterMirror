@@ -1,9 +1,10 @@
 import React from 'react';
-import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View, ActionSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
+import { ActionSheetProvider, useActionSheet } from '@expo/react-native-action-sheet';
 
 import GitHubMark from '../assets/github-mark.png';
 const githubUrl = 'https://github.com/KageRyo/WaterMirror';
@@ -27,33 +28,45 @@ const TopSection = () => {
 const BtnSection = ({ navigation }) => {
   const { t } = useTranslation();
   const { currentLanguage, changeLanguage } = useLanguage();
+  const { showActionSheetWithOptions } = useActionSheet();
   
   const handleLanguageSwitch = () => {
-    Alert.alert(
-      t('language.select'),
-      '',
-      [
-        {
-          text: '正體中文',
-          onPress: () => changeLanguage('zh-TW')
-        },
-        {
-          text: '简体中文',
-          onPress: () => changeLanguage('zh-CN')
-        },
-        {
-          text: 'English',
-          onPress: () => changeLanguage('en')
-        },
-        {
-          text: '日本語',
-          onPress: () => changeLanguage('ja')
-        },
-        {
-          text: t('buttons.cancel'),
-          style: 'cancel'
+    const options = [
+      {
+        text: '正體中文',
+        onPress: () => changeLanguage('zh-TW')
+      },
+      {
+        text: '简体中文',
+        onPress: () => changeLanguage('zh-CN')
+      },
+      {
+        text: 'English',
+        onPress: () => changeLanguage('en')
+      },
+      {
+        text: '日本語',
+        onPress: () => changeLanguage('ja')
+      },
+      {
+        text: t('buttons.cancel'),
+        style: 'cancel'
+      }
+    ];
+
+    // 使用 ActionSheet 顯示選單
+    const buttonTitles = options.map(option => option.text);
+    showActionSheetWithOptions(
+      {
+        options: buttonTitles,
+        cancelButtonIndex: options.length - 1,
+        title: t('language.select')
+      },
+      buttonIndex => {
+        if (buttonIndex !== options.length - 1) {
+          options[buttonIndex].onPress();
         }
-      ]
+      }
     );
   };
   
@@ -97,8 +110,12 @@ const BtnSection = ({ navigation }) => {
         Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
         return;
       }
-    } else if (route.startsWith('http')) {
-      Linking.openURL(route);
+    } else if (route.startsWith('http') || route.startsWith('mailto:')) {
+      try {
+        await Linking.openURL(route);
+      } catch {
+        // 不執行任何操作以隱藏錯誤訊息
+      }
     } else {
       navigation.navigate(route);
     }
@@ -164,7 +181,7 @@ const openGitHub = () => {
 };
 
 // 畫面視窗
-export default function HomeScreen() {
+export function HomeScreen() {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
@@ -268,3 +285,12 @@ const bottomStyles = StyleSheet.create({
     height: 50,
   },
 });
+
+// 確保在應用的根組件中包裹 ActionSheetProvider
+export default function App() {
+  return (
+    <ActionSheetProvider>
+      <HomeScreen />
+    </ActionSheetProvider>
+  );
+}
