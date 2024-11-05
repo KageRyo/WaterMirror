@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "智能水质分析与改善评估系统",
-    "version": "版本：WaterMirror-{{platform}}-InnoServeAwards2024"
+    "version": "版本：WaterMirror-{{platform}}-v1.1.2"
   },
   "nav": {
     "home": "首页",
