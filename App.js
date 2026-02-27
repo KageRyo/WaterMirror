@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import './i18n';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -11,7 +11,7 @@ import HomeScreen from './src/Home';
 import CalcScreen from './src/Calc';
 import ResultScreen from './src/Result';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 // 建立一個包裝的 Navigator 組件
 function AppNavigator() {
@@ -49,7 +49,7 @@ export default function App() {
     <I18nextProvider i18n={i18n}>
       <LanguageProvider>
         <NavigationContainer>
-          <StatusBar hidden={false} />
+          <StatusBar />
           <AppNavigator />
         </NavigationContainer>
       </LanguageProvider>
