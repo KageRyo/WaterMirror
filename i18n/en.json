@@ -67,7 +67,8 @@
       "uploadFile": "Upload Water Quality Data File"
     },
     "validation": {
-      "pleaseInputData": "Please enter water quality data"
+      "pleaseInputData": "Please enter water quality data",
+      "pleaseInputAllData": "Please fill in all fields: {{fields}}"
     },
     "warning": {
       "message": "WaterMirror may still have errors, please use with caution."

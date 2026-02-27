@@ -67,7 +67,8 @@
       "uploadFile": "上傳水質資料檔案"
     },
     "validation": {
-      "pleaseInputData": "請填寫水質資料"
+      "pleaseInputData": "請填寫水質資料",
+      "pleaseInputAllData": "請填寫所有欄位：{{fields}}"
     },
     "warning": {
       "message": "WaterMirror 仍可能會出現錯誤，請謹慎使用。"
