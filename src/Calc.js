@@ -29,20 +29,24 @@ const ConnectionStatus = ({ status }) => {
   );
 };
 
+// 帶超時的 fetch
+const fetchWithTimeout = (url, options = {}, timeout = 5000) => {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out')), timeout)
+    ),
+  ]);
+};
+
 // 用於檢查與伺服器的連線狀態的 Hook
 const useServerConnection = (apiUrl) => {
   const { t } = useTranslation();
   const [status, setStatus] = useState(t('calc.connection.connecting'));
 
-  useEffect(() => {
-    const checkTimeout = 3000;
-    const intervalId = setInterval(() => checkConnection(), checkTimeout);
-    return () => clearInterval(intervalId);
-  }, []);
-
   const checkConnection = async () => {
     try {
-      const response = await fetch(`${apiUrl}/`);
+      const response = await fetchWithTimeout(`${apiUrl}/`, {}, 3000);
       const jsonResponse = await response.json();
       setStatus(jsonResponse.message === '成功與 API 連線!' ? 
         t('calc.connection.connected') : t('calc.connection.failed'));
@@ -51,6 +55,12 @@ const useServerConnection = (apiUrl) => {
       setStatus(t('calc.connection.disconnected'));
     }
   };
+
+  useEffect(() => {
+    checkConnection();
+    const intervalId = setInterval(checkConnection, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return status;
 };
@@ -75,6 +85,7 @@ export default function CalcScreen({ navigation }) {
     SS: '',
   });
   const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     requestStoragePermission();
@@ -158,13 +169,13 @@ export default function CalcScreen({ navigation }) {
         });
         
         try {
-          const response = await fetch(`${apiUrl}/score/total/`, {
+          const response = await fetchWithTimeout(`${apiUrl}/score/total/`, {
             method: 'POST',
             body: formData,
             headers: {
               'Content-Type': 'multipart/form-data',
             },
-          });
+          }, 10000);
           const responseData = await response.json();
           if (response.ok) {
             handleUploadSuccess(responseData);
@@ -193,8 +204,20 @@ export default function CalcScreen({ navigation }) {
 
   // 處理手動輸入的水質資料
   const handleSubmit = async () => {
-    const filledData = Object.values(data).filter(value => value !== '');
-    if (filledData.length > 0) {
+    if (isSubmitting) return;
+
+    const emptyFields = Object.entries(data).filter(([, value]) => value === '');
+    if (emptyFields.length > 0) {
+      Alert.alert(
+        t('alerts.notice'), 
+        t('calc.validation.pleaseInputAllData', { fields: emptyFields.map(([key]) => t(`calc.parameters.${key}`)).join(', ') }),
+        [{ text: t('calc.buttons.confirm') }]
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
       const csvData = `DO,BOD,NH3N,EC,SS\n${Object.values(data).join(',')}`;
       const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
       await FileSystem.writeAsStringAsync(fileName, csvData, {
@@ -208,32 +231,30 @@ export default function CalcScreen({ navigation }) {
         type: 'text/csv',
       });
 
-    // 上傳文件並處理伺服器回應
-    try {
-      const response = await fetch(`${apiUrl}/score/total/`, {
+      const response = await fetchWithTimeout(`${apiUrl}/score/total/`, {
         method: 'POST',
         body: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });
+      }, 10000);
       const responseData = await response.json();
       if (response.ok) {
-        handleUploadSuccess(responseData); // 這裡傳遞responseData
+        storeData(responseData.score, responseData.assessment);
+        handleUploadSuccess(responseData);
       } else {
         throw new Error('Network response was not ok');
       }
     } catch (error) {
-      Alert.alert('上傳失敗', '發生錯誤，請稍後重試。', [{ text: '確定' }]);
-    }
-    } else {
+      console.error('Submit error:', error);
       Alert.alert(
-        t('alerts.notice'), 
-        t('calc.validation.pleaseInputData'), 
+        t('calc.upload.failed'),
+        t('calc.upload.retryMessage'),
         [{ text: t('calc.buttons.confirm') }]
       );
+    } finally {
+      setIsSubmitting(false);
     }
-    storeData(data, assessment);
     clearInput();
   };
 
@@ -297,7 +318,7 @@ export default function CalcScreen({ navigation }) {
     
         <View style={styles.btnContainer}>
           <Button title={t('calc.buttons.clear')} onPress={clearInput} />
-          <Button title={t('calc.buttons.submit')} onPress={handleSubmit} />
+          <Button title={isSubmitting ? t('calc.connection.connecting') : t('calc.buttons.submit')} onPress={handleSubmit} disabled={isSubmitting} />
         </View>
 
         <View style={styles.dataDisplayContainer}>
