@@ -20,6 +20,10 @@ export default function ResultScreen({ navigation, route }) {
   const [score, setScore] = useState(null);
   // 類別狀態
   const [category, setCategory] = useState('');
+  // 評估資料狀態
+  const [assessmentData, setAssessmentData] = useState(assessment || null);
+  // 載入狀態
+  const [isReady, setIsReady] = useState(false);
 
   // 圖表設定
   const chartConfig = {
@@ -36,7 +40,12 @@ export default function ResultScreen({ navigation, route }) {
   // 使用 useFocusEffect 確保每次進入畫面都檢查資料
   useFocusEffect(
     React.useCallback(() => {
-      if (!data || !assessment) {
+      if (data && assessment) {
+        setScore(parseFloat(data));
+        setAssessmentData(assessment);
+        setIsReady(true);
+        fetchPercentile(data);
+      } else {
         const checkStoredData = async () => {
           try {
             const storedData = await AsyncStorage.getItem('waterQualityData');
@@ -44,12 +53,15 @@ export default function ResultScreen({ navigation, route }) {
             
             if (!storedData || !storedAssessment) {
               Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
-              navigation.goBack();  // 使用 goBack 而不是 navigate
-              return;  // 立即返回，不執行後續代碼
+              navigation.goBack();
+              return;
             }
             
             const parsedData = JSON.parse(storedData);
+            const parsedAssessment = JSON.parse(storedAssessment);
             setScore(parsedData);
+            setAssessmentData(parsedAssessment);
+            setIsReady(true);
             fetchPercentile(parsedData);
           } catch (error) {
             Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
@@ -57,9 +69,6 @@ export default function ResultScreen({ navigation, route }) {
           }
         };
         checkStoredData();
-      } else {
-        setScore(parseFloat(data));  // 確保 data 是數字
-        fetchPercentile(data);
       }
     }, [data, assessment, navigation, t])
   );
@@ -181,7 +190,8 @@ export default function ResultScreen({ navigation, route }) {
 
   // 顯示查看改善建議
   const showMoreAlert = () => {
-    const assessmentEntries = Object.entries(assessment);
+    if (!assessmentData) return;
+    const assessmentEntries = Object.entries(assessmentData);
     const badValues = assessmentEntries.filter(([, value]) => 
       value === t('result.waterQuality.poor') || value === t('result.waterQuality.error')
     );
@@ -257,6 +267,15 @@ const showBadValues = (badValues) => {
     [{ text: t('result.buttons.iKnow') }]
     );
   };
+
+  // 資料尚未準備好時顯示載入中
+  if (!isReady || score === null || !assessmentData) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center' }]}>
+        <Text style={{ fontSize: 16, color: '#666' }}>{t('result.loading', 'Loading...')}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
