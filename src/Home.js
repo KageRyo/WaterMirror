@@ -7,6 +7,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { ActionSheetProvider, useActionSheet } from '@expo/react-native-action-sheet';
 
 import GitHubMark from '../assets/github-mark.png';
+const { parseStoredResult } = require('./utils/resultHelpers.cjs');
 const githubUrl = 'https://github.com/KageRyo/WaterMirror';
 
 // 頂部區塊
@@ -96,12 +97,13 @@ const BtnSection = ({ navigation }) => {
   const handlePress = async (route) => {
     if (route === 'Result') {
       try {
-        const result = await AsyncStorage.getItem('waterQualityResult');
-        if (!result) {
+        const storedResult = await AsyncStorage.getItem('waterQualityResult');
+        const parsedResult = parseStoredResult(storedResult);
+        if (!parsedResult) {
           Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
           return;  // 如果沒有資料，直接返回，不執行導航
         }
-        navigation.navigate(route, { result: JSON.parse(result) });
+        navigation.navigate(route, { result: parsedResult });
       } catch (error) {
         Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
         return;

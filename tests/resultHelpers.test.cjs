@@ -6,6 +6,7 @@ const {
   getCategoryColor,
   getCategoryTranslationKey,
   normalizeResultPayload,
+  parseStoredResult,
 } = require('../src/utils/resultHelpers.cjs');
 
 test('category helpers map backend categories', () => {
@@ -39,4 +40,26 @@ test('normalizeResultPayload converts legacy route params', () => {
   });
   assert.equal(payload.score, 82.5);
   assert.equal(payload.model_type, 'legacy');
+});
+
+test('parseStoredResult returns null for missing or invalid payloads', () => {
+  assert.equal(parseStoredResult(null), null);
+  assert.equal(parseStoredResult('not-json'), null);
+  assert.equal(parseStoredResult(JSON.stringify({ foo: 'bar' })), null);
+});
+
+test('parseStoredResult returns normalized stored result', () => {
+  const payload = parseStoredResult(
+    JSON.stringify({
+      score: 82.5,
+      category: 'Good',
+      rating_range: '70 < WQI5 ≤ 85',
+      model_type: 'direct_wqi5',
+      latency_ms: 12.4,
+      assessment: { DO: 'Good' },
+      warnings: [],
+    })
+  );
+  assert.equal(payload.category, 'Good');
+  assert.equal(payload.score, 82.5);
 });
