@@ -50,6 +50,12 @@ Deployment
 - For local development, run on simulator/emulator via Expo.
 - For production, follow Expo's published app workflow.
 
+Android Build Notes
+-------------------
+- Keep Android app configuration in `app.json` consistent with Expo schema.
+- Do not place Android permission fields inside `adaptiveIcon`; malformed Android config can lead to unstable release builds.
+- Prefer validating release configuration with `npx expo-doctor` before EAS builds.
+
 Backend Integration
 -------------------
 WaterMirror expects `WQSurrogateModels` or another compatible backend exposing:
