@@ -96,16 +96,12 @@ const BtnSection = ({ navigation }) => {
   const handlePress = async (route) => {
     if (route === 'Result') {
       try {
-        const data = await AsyncStorage.getItem('waterQualityData');
-        const assessment = await AsyncStorage.getItem('waterQualityAssessment');
-        if (!data || !assessment) {
+        const result = await AsyncStorage.getItem('waterQualityResult');
+        if (!result) {
           Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
           return;  // 如果沒有資料，直接返回，不執行導航
         }
-        navigation.navigate(route, { 
-          data: JSON.parse(data), 
-          assessment: JSON.parse(assessment) 
-        });
+        navigation.navigate(route, { result: JSON.parse(result) });
       } catch (error) {
         Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
         return;
