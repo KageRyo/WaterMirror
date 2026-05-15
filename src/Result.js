@@ -12,6 +12,7 @@ const {
   getCategoryColor,
   getCategoryTranslationKey,
   normalizeResultPayload,
+  parseStoredResult,
 } = require('./utils/resultHelpers.cjs');
 
 // 結果畫面
@@ -49,16 +50,12 @@ export default function ResultScreen({ navigation, route }) {
         const loadStoredResult = async () => {
           try {
             const storedResult = await AsyncStorage.getItem('waterQualityResult');
-            
-            if (!storedResult) {
+
+            const parsedResult = parseStoredResult(storedResult);
+            if (!parsedResult) {
               Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
               navigation.goBack();
               return;
-            }
-            
-            const parsedResult = normalizeResultPayload(JSON.parse(storedResult));
-            if (!parsedResult) {
-              throw new Error('Invalid stored result');
             }
             setResult(parsedResult);
             setIsReady(true);

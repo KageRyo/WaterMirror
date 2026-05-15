@@ -67,9 +67,22 @@ function normalizeResultPayload(result) {
   return null;
 }
 
+function parseStoredResult(raw) {
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return normalizeResultPayload(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
 module.exports = {
   getAssessmentTranslationKey,
   getCategoryColor,
   getCategoryTranslationKey,
   normalizeResultPayload,
+  parseStoredResult,
 };
