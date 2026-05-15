@@ -64,6 +64,23 @@ Flow:
 
 `Input water indicators -> Send to backend -> Receive WQI5 score/category -> Display assessment report`
 
+Architecture
+------------
+```mermaid
+flowchart LR
+    A[Manual input or CSV upload] --> B[WaterMirror app]
+    B --> C[Config-driven API base URL and model_type]
+    C --> D[WQSurrogateModels backend]
+    D --> E[score category rating_range warnings]
+    E --> F[Result page]
+```
+
+Result Page Behavior
+--------------------
+- WaterMirror does not derive WQI5 category thresholds locally.
+- The app displays backend-returned `category`, `rating_range`, and `warnings`.
+- Missing stored report data falls back to an alert instead of navigating into a crashing result path.
+
 CSV upload format
 -----------------
 The accepted format is CSV with a header row containing columns:
