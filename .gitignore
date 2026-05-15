@@ -29,14 +29,8 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
 
 # typescript
 *.tsbuildinfo
-
-# API config file
-./WaterMirror/src/config.json
-WaterMirror/src/config.json
-
-# config files
-./src/config.json

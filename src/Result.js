@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions, Button } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart, BarChart } from 'react-native-chart-kit';
 import { useTranslation } from 'react-i18next';
 
-import config from '@/config.json';
+import config from '@/config';
+
+const {
+  getAssessmentTranslationKey,
+  getCategoryColor,
+  getCategoryTranslationKey,
+  normalizeResultPayload,
+} = require('./utils/resultHelpers.cjs');
 
 // 結果畫面
 export default function ResultScreen({ navigation, route }) {
   const { t } = useTranslation();
-  // 從 Route 中取得資料
-  const { data, assessment } = route.params ?? {};
+  const initialResult = normalizeResultPayload(route.params?.result || route.params);
   // 百分位數狀態
   const [percentile, setPercentile] = useState(null);
   // 分類資料狀態
   const [categoryData, setCategoryData] = useState([]);
-  // 綜合評分狀態
-  const [score, setScore] = useState(null);
-  // 類別狀態
-  const [category, setCategory] = useState('');
-  // 評估資料狀態
-  const [assessmentData, setAssessmentData] = useState(assessment || null);
+  const [result, setResult] = useState(initialResult);
   // 載入狀態
   const [isReady, setIsReady] = useState(false);
 
@@ -40,42 +41,41 @@ export default function ResultScreen({ navigation, route }) {
   // 使用 useFocusEffect 確保每次進入畫面都檢查資料
   useFocusEffect(
     React.useCallback(() => {
-      if (data && assessment) {
-        setScore(parseFloat(data));
-        setAssessmentData(assessment);
+      if (initialResult) {
+        setResult(initialResult);
         setIsReady(true);
-        fetchPercentile(data);
+        fetchPercentile(initialResult.score);
       } else {
-        const checkStoredData = async () => {
+        const loadStoredResult = async () => {
           try {
-            const storedData = await AsyncStorage.getItem('waterQualityData');
-            const storedAssessment = await AsyncStorage.getItem('waterQualityAssessment');
+            const storedResult = await AsyncStorage.getItem('waterQualityResult');
             
-            if (!storedData || !storedAssessment) {
+            if (!storedResult) {
               Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
               navigation.goBack();
               return;
             }
             
-            const parsedData = JSON.parse(storedData);
-            const parsedAssessment = JSON.parse(storedAssessment);
-            setScore(parsedData);
-            setAssessmentData(parsedAssessment);
+            const parsedResult = normalizeResultPayload(JSON.parse(storedResult));
+            if (!parsedResult) {
+              throw new Error('Invalid stored result');
+            }
+            setResult(parsedResult);
             setIsReady(true);
-            fetchPercentile(parsedData);
+            fetchPercentile(parsedResult.score);
           } catch (error) {
             Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
             navigation.goBack();
           }
         };
-        checkStoredData();
+        loadStoredResult();
       }
-    }, [data, assessment, navigation, t])
+    }, [initialResult, navigation, t])
   );
 
   // 獲取百分位數和相關類別資料
   const fetchPercentile = (score) => {
-    fetch(`${config.api_url}:${config.port}/percentile?score=${score}`)
+    fetch(`${config.apiBaseUrl}/percentile?score=${score}`)
       .then(response => response.json())
       .then(data => {
         if (data.percentile !== undefined) {
@@ -91,38 +91,24 @@ export default function ResultScreen({ navigation, route }) {
       });
   };
 
-  // 添加類別名稱映射
-  const categoryMapping = {
-    '優良': 'excellent',
-    '良好': 'good',
-    '中等': 'fair',
-    '不良': 'poor',
-    '糟糕': 'bad',
-    '惡劣': 'terrible'
-  };
-
-  // 修改 fetchCategories 函數
   const fetchCategories = () => {
-    fetch(`${config.api_url}:${config.port}/categories/`)
+    fetch(`${config.apiBaseUrl}/categories`)
       .then(response => response.json())
       .then(data => {
         const totalSamples = data.data.reduce((acc, item) => acc + item.rating, 0);
         const categories = data.data.map(item => {
           const percentage = (item.rating / totalSamples * 100).toFixed(2);
-          // 使用映射關係取得對應的翻譯鍵
-          const translationKey = categoryMapping[item.category];
+          const translationKey = getCategoryTranslationKey(item.category);
           const translatedCategory = t(`result.waterQuality.${translationKey}`);
           return {
-            // 移除百分比符號，只保留翻譯後的類別名稱
             name: `% ${translatedCategory}`,
             value: parseFloat(percentage),
-            color: getColor(translatedCategory),
+            color: getCategoryColor(item.category),
             legendFontColor: "#7F7F7F",
             legendFontSize: 15
           };
         });
         setCategoryData(categories);
-        determineCategory(data.data);
       })
       .catch(error => {
         console.error('Error fetching categories:', error);
@@ -130,76 +116,22 @@ export default function ResultScreen({ navigation, route }) {
       });
   };
 
-  // 根據類別獲取顏色
-  const getColor = (category) => {
-    const colors = {
-      [t('result.waterQuality.excellent')]: 'green',
-      [t('result.waterQuality.good')]: 'blue',
-      [t('result.waterQuality.fair')]: 'gold',
-      [t('result.waterQuality.poor')]: 'orange',
-      [t('result.waterQuality.bad')]: 'red',
-      [t('result.waterQuality.terrible')]: 'brown'
-    };
-    return colors[category] || '#ccc';
-  };
-
-  // 計算水質狀態
-  const countWaterQuality = (wqi5) => {
-    if (wqi5 > 100) return {
-      rating: t('result.waterQuality.inputError'),
-      comment: t('result.comments.checkData')
-    };
-    if (wqi5 > 85) return {
-      rating: t('result.waterQuality.excellent'),
-      comment: t('result.comments.excellent')
-    };
-    if (wqi5 > 70) return {
-      rating: t('result.waterQuality.good'),
-      comment: t('result.comments.good')
-    };
-    if (wqi5 > 50) return {
-      rating: t('result.waterQuality.fair'),
-      comment: t('result.comments.fair')
-    };
-    if (wqi5 > 30) return {
-      rating: t('result.waterQuality.poor'),
-      comment: t('result.comments.poor')
-    };
-    if (wqi5 > 15) return {
-      rating: t('result.waterQuality.bad'),
-      comment: t('result.comments.bad')
-    };
-    if (wqi5 > 0) return {
-      rating: t('result.waterQuality.terrible'),
-      comment: t('result.comments.terrible')
-    };
-    return {
-      rating: t('result.waterQuality.error'),
-      comment: t('result.comments.error')
-    };
-  };
-
-  // 確定類別
-  const determineCategory = (categories) => {
-    const category = categories.find(category => category.rating >= data);
-    setCategory(category ? category.category : t('result.unknownStatus'));
-  };
-
-  // 獲取經 WQI5 評估後的水質狀態資訊
-  const { rating, comment } = score !== null ? countWaterQuality(score) : { rating: t('result.unknownStatus'), comment: t('result.noValidData') };
+  const categoryKey = result ? getCategoryTranslationKey(result.category) : null;
+  const rating = categoryKey ? t(`result.waterQuality.${categoryKey}`) : t('result.unknownStatus');
+  const comment = categoryKey ? t(`result.comments.${categoryKey}`) : t('result.noValidData');
 
   // 顯示查看改善建議
   const showMoreAlert = () => {
-    if (!assessmentData) return;
-    const assessmentEntries = Object.entries(assessmentData);
+    if (!result?.assessment) return;
+    const assessmentEntries = Object.entries(result.assessment);
     const badValues = assessmentEntries.filter(([, value]) => 
-      value === t('result.waterQuality.poor') || value === t('result.waterQuality.error')
+      value === 'Poor' || value === 'OutOfRange'
     );
 
     Alert.alert(
       t('result.improvement.title'),
       `${assessmentEntries.map(([key, value]) => {
-        return `${t(`result.improvement.parameters.${key}`)}：${value}`;
+        return `${t(`result.improvement.parameters.${key}`)}：${t(`result.waterQuality.${getAssessmentTranslationKey(value)}`)}`;
       }).join('\n')}\n`,
       badValues.length === 0
         ? [{ text: t('result.buttons.iKnow') }]
@@ -212,43 +144,42 @@ export default function ResultScreen({ navigation, route }) {
 
 // 顯示不良水質項目的改善建議
 const showBadValues = (badValues) => {
-  // 使用已經在組件頂層定義的 t 函數
   let suggestions = '';
   badValues.forEach(([key, value], index) => {
-    if (value === t('result.waterQuality.poor') || value === t('result.waterQuality.error')) {
+    if (value === 'Poor' || value === 'OutOfRange') {
       switch (key) {
         case 'DO':
-          if (value === t('result.waterQuality.error')) {
+          if (value === 'OutOfRange') {
             suggestions += t('result.improvement.suggestions.DO.error');
-          } else if (value === t('result.waterQuality.poor')) {
+          } else if (value === 'Poor') {
             suggestions += t('result.improvement.suggestions.DO.poor');
           }
           break;
         case 'BOD':
-          if (value === t('result.waterQuality.error')) {
+          if (value === 'OutOfRange') {
             suggestions += t('result.improvement.suggestions.BOD.error');
-          } else if (value === t('result.waterQuality.poor')) {
+          } else if (value === 'Poor') {
             suggestions += t('result.improvement.suggestions.BOD.poor');
           }
           break;
         case 'NH3N':
-          if (value === t('result.waterQuality.error')) {
+          if (value === 'OutOfRange') {
             suggestions += t('result.improvement.suggestions.NH3N.error');
-          } else if (value === t('result.waterQuality.poor')) {
+          } else if (value === 'Poor') {
             suggestions += t('result.improvement.suggestions.NH3N.poor');
           }
           break;
         case 'EC':
-          if (value === t('result.waterQuality.error')) {
+          if (value === 'OutOfRange') {
             suggestions += t('result.improvement.suggestions.EC.error');
-          } else if (value === t('result.waterQuality.poor')) {
+          } else if (value === 'Poor') {
             suggestions += t('result.improvement.suggestions.EC.poor');
           }
           break;
         case 'SS':
-          if (value === t('result.waterQuality.error')) {
+          if (value === 'OutOfRange') {
             suggestions += t('result.improvement.suggestions.SS.error');
-          } else if (value === t('result.waterQuality.poor')) {
+          } else if (value === 'Poor') {
             suggestions += t('result.improvement.suggestions.SS.poor');
           }
           break;
@@ -269,7 +200,7 @@ const showBadValues = (badValues) => {
   };
 
   // 資料尚未準備好時顯示載入中
-  if (!isReady || score === null || !assessmentData) {
+  if (!isReady || !result) {
     return (
       <View style={[styles.container, { justifyContent: 'center' }]}>
         <Text style={{ fontSize: 16, color: '#666' }}>{t('result.loading', 'Loading...')}</Text>
@@ -280,11 +211,20 @@ const showBadValues = (badValues) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.score}>{`${t('result.score')}：${score !== null ? score.toFixed(2) : score}`}</Text>
-        <Text style={[styles.rating, { color: getColor(rating) }]}>{rating}</Text>
+        <Text style={styles.score}>{`${t('result.score')}：${result.score.toFixed(2)}`}</Text>
+        <Text style={[styles.rating, { color: getCategoryColor(result.category) }]}>{rating}</Text>
       </View>
 
       <Text style={styles.comment}>{comment}</Text>
+      {result.rating_range ? <Text style={styles.range}>{result.rating_range}</Text> : null}
+      <Text style={styles.meta}>{`${result.model_type} · ${result.latency_ms.toFixed(2)} ms`}</Text>
+      {result.warnings?.length ? (
+        <View style={styles.warningPanel}>
+          {result.warnings.map((warning) => (
+            <Text key={warning} style={styles.warningItem}>{warning}</Text>
+          ))}
+        </View>
+      ) : null}
 
       {percentile !== null && (
         <View style={styles.chartContainer}>
@@ -334,9 +274,9 @@ const showBadValues = (badValues) => {
           />
           <Text style={styles.percentileNote}>
             {t('result.chart.status')}
-            <Text style={{ color: getColor(rating) }}>⬤</Text>
+            <Text style={{ color: getCategoryColor(result.category) }}>⬤</Text>
             {t('result.chart.statusIs')}
-            <Text style={[styles.rating, { color: getColor(rating) }]}>{rating}</Text>
+            <Text style={[styles.rating, { color: getCategoryColor(result.category) }]}>{rating}</Text>
           </Text>
         </View>
       )}
@@ -392,6 +332,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
+  range: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 6,
+  },
+  meta: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 10,
+  },
   chartContainer: {
     marginBottom: 10,
     alignItems: 'center',
@@ -426,6 +376,18 @@ const styles = StyleSheet.create({
   warningContainer: {
     marginTop: 10,
     marginBottom: 10,
+  },
+  warningPanel: {
+    width: '90%',
+    backgroundColor: '#fff5f5',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  warningItem: {
+    color: '#a94442',
+    marginBottom: 4,
+    fontSize: 12,
   },
   warningText: {
     fontSize: 14,

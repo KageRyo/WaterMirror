@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 
-import config from '@/config.json';
+import config from '@/config';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -30,7 +29,7 @@ const ConnectionStatus = ({ status }) => {
 };
 
 // 帶超時的 fetch
-const fetchWithTimeout = (url, options = {}, timeout = 5000) => {
+const fetchWithTimeout = (url, options = {}, timeout = config.requestTimeoutMs) => {
   return Promise.race([
     fetch(url, options),
     new Promise((_, reject) =>
@@ -46,9 +45,9 @@ const useServerConnection = (apiUrl) => {
 
   const checkConnection = async () => {
     try {
-      const response = await fetchWithTimeout(`${apiUrl}/`, {}, 3000);
+      const response = await fetchWithTimeout(`${apiUrl}/status`, {}, 3000);
       const jsonResponse = await response.json();
-      setStatus(jsonResponse.message === '成功與 API 連線!' ? 
+      setStatus(jsonResponse.status === 'ok' ?
         t('calc.connection.connected') : t('calc.connection.failed'));
     } catch (error) {
       console.error('連線錯誤:', error);
@@ -68,16 +67,9 @@ const useServerConnection = (apiUrl) => {
 // 畫面視窗
 export default function CalcScreen({ navigation }) {
   const { t } = useTranslation();
-  const apiUrl = `${config.api_url}:${config.port}`;
+  const apiUrl = config.apiBaseUrl;
   const status = useServerConnection(apiUrl);
   const [data, setData] = useState({
-    DO: '',
-    BOD: '',
-    NH3N: '',
-    EC: '',
-    SS: '',
-  });
-  const [assessment, setAssessment] = useState({
     DO: '',
     BOD: '',
     NH3N: '',
@@ -103,13 +95,9 @@ export default function CalcScreen({ navigation }) {
   // 載入暫存資料
   const loadStoredData = async () => {
     try {
-      const storedData = await AsyncStorage.getItem('waterQualityData');
-      const storedAssessment = await AsyncStorage.getItem('waterQualityAssessment');
-      if (storedData) {
-        setData(JSON.parse(storedData));
-      }
-      if (storedAssessment) {
-        setAssessment(JSON.parse(storedAssessment));
+      const storedInputs = await AsyncStorage.getItem('waterQualityInputs');
+      if (storedInputs) {
+        setData(JSON.parse(storedInputs));
       }
     } catch (error) {
       console.error('Failed to load stored data:', error);
@@ -117,35 +105,44 @@ export default function CalcScreen({ navigation }) {
   };
 
   // 暫存資料
-  const storeData = async (data, assessment) => {
+  const storeData = async (inputs, result) => {
     try {
-      await AsyncStorage.setItem('waterQualityData', JSON.stringify(data));
-      await AsyncStorage.setItem('waterQualityAssessment', JSON.stringify(assessment));
+      await AsyncStorage.setItem('waterQualityInputs', JSON.stringify(inputs));
+      await AsyncStorage.setItem('waterQualityResult', JSON.stringify(result));
     } catch (error) {
       console.error('Failed to store data:', error);
     }
   };
 
   // 處理上傳成功時的操作
-  const handleUploadSuccess = (data) => {
-    const { score, assessment } = data;
+  const handleUploadSuccess = (result) => {
+    const { score, category } = result;
     const scoreString = JSON.stringify(score.toFixed(2), null, 2);
 
     Alert.alert(
       t('calc.upload.success'),
-      t('calc.upload.scoreMessage', { score: scoreString }),
+      t('calc.upload.scoreMessage', { score: `${scoreString} (${category || t('result.unknownStatus')})` }),
       [
         { text: t('calc.buttons.cancel'), onPress: () => {} },
         {
           text: t('calc.buttons.viewReport'),
           onPress: () => {
-            storeData(score, assessment);
-            navigation.navigate('Result', { data: score, assessment });
+            storeData(data, result);
+            navigation.navigate('Result', { result });
           },
         },
       ],
       { cancelable: false }
     );
+  };
+
+  const parseErrorMessage = async (response) => {
+    try {
+      const payload = await response.json();
+      return payload.detail || t('calc.upload.retryMessage');
+    } catch {
+      return t('calc.upload.retryMessage');
+    }
   };
 
   // 處理上傳的CSV水質資料檔案
@@ -167,6 +164,7 @@ export default function CalcScreen({ navigation }) {
           name: pickedFile.name,
           type: pickedFile.mimeType
         });
+        formData.append('model_type', config.defaultModelType);
         
         try {
           const response = await fetchWithTimeout(`${apiUrl}/score/total/`, {
@@ -175,17 +173,17 @@ export default function CalcScreen({ navigation }) {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
-          }, 10000);
-          const responseData = await response.json();
+          });
           if (response.ok) {
+            const responseData = await response.json();
             handleUploadSuccess(responseData);
           } else {
-            throw new Error('Network response was not ok');
+            throw new Error(await parseErrorMessage(response));
           }
         } catch (error) {
           Alert.alert(
             t('calc.upload.failed'),
-            t('calc.upload.retryMessage'),
+            error.message || t('calc.upload.retryMessage'),
             [{ text: t('calc.buttons.confirm') }]
           );
         }
@@ -218,44 +216,36 @@ export default function CalcScreen({ navigation }) {
 
     setIsSubmitting(true);
     try {
-      const csvData = `DO,BOD,NH3N,EC,SS\n${Object.values(data).join(',')}`;
-      const fileName = `${FileSystem.cacheDirectory}water_quality_data.csv`;
-      await FileSystem.writeAsStringAsync(fileName, csvData, {
-        encoding: FileSystem.EncodingType.UTF8,
-      });
-
-      const formData = new FormData();
-      formData.append('file', {
-        uri: fileName,
-        name: 'water_quality_data.csv',
-        type: 'text/csv',
-      });
-
-      const response = await fetchWithTimeout(`${apiUrl}/score/total/`, {
+      const response = await fetchWithTimeout(`${apiUrl}/predict`, {
         method: 'POST',
-        body: formData,
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
-      }, 10000);
-      const responseData = await response.json();
+        body: JSON.stringify({
+          DO: Number(data.DO),
+          BOD: Number(data.BOD),
+          NH3N: Number(data.NH3N),
+          EC: Number(data.EC),
+          SS: Number(data.SS),
+          model_type: config.defaultModelType,
+        }),
+      });
       if (response.ok) {
-        storeData(responseData.score, responseData.assessment);
+        const responseData = await response.json();
         handleUploadSuccess(responseData);
       } else {
-        throw new Error('Network response was not ok');
+        throw new Error(await parseErrorMessage(response));
       }
     } catch (error) {
       console.error('Submit error:', error);
       Alert.alert(
         t('calc.upload.failed'),
-        t('calc.upload.retryMessage'),
+        error.message || t('calc.upload.retryMessage'),
         [{ text: t('calc.buttons.confirm') }]
       );
     } finally {
       setIsSubmitting(false);
     }
-    clearInput();
   };
 
   // 清空輸入框
@@ -343,7 +333,7 @@ export default function CalcScreen({ navigation }) {
         {/* 上傳水質資料檔案 */}
         <View style={styles.btnContainer}>
           <Button 
-            title={t('calc.buttons.uploadFile')} 
+            title={isUploading ? t('calc.connection.connecting') : t('calc.buttons.uploadFile')}
             onPress={handleFileUpload}
             disabled={isUploading} // 在上傳過程中禁用按鈕
           />
