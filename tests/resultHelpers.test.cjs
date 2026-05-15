@@ -7,6 +7,7 @@ const {
   getCategoryTranslationKey,
   normalizeResultPayload,
   parseStoredResult,
+  getModelTypeLabel,
 } = require('../src/utils/resultHelpers.cjs');
 
 test('category helpers map backend categories', () => {
@@ -62,4 +63,14 @@ test('parseStoredResult returns normalized stored result', () => {
   );
   assert.equal(payload.category, 'Good');
   assert.equal(payload.score, 82.5);
+});
+
+test('getModelTypeLabel returns friendly names with mock t function', () => {
+  // Mock translation function (returns key if not found)
+  const mockT = (key) => key;
+
+  assert.equal(getModelTypeLabel('lightgbm', mockT), 'LightGBM');
+  assert.equal(getModelTypeLabel('direct_wqi5', mockT), 'Direct WQI5');
+  assert.equal(getModelTypeLabel('rf', mockT), 'Random Forest');
+  assert.equal(getModelTypeLabel('unknown', mockT), 'unknown');
 });

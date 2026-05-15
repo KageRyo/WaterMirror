@@ -67,6 +67,37 @@ function normalizeResultPayload(result) {
   return null;
 }
 
+/**
+ * Returns a user-friendly display name for a model type.
+ * Falls back to the raw value if no translation is available.
+ *
+ * @param {string} modelType - The model type key (e.g. 'lightgbm', 'direct_wqi5')
+ * @param {function} t - i18n translation function from LanguageContext
+ */
+function getModelTypeLabel(modelType, t) {
+  if (!modelType) return '';
+
+  const key = `modelTypes.${modelType}`;
+  const translated = t(key);
+
+  // If translation key doesn't exist, return the raw value with nice formatting
+  if (translated === key) {
+    const fallbackNames = {
+      direct_wqi5: 'Direct WQI5',
+      lr: 'Linear Regression',
+      mpr: 'Polynomial Regression',
+      svm: 'Support Vector Machine',
+      rf: 'Random Forest',
+      xgboost: 'XGBoost',
+      lightgbm: 'LightGBM',
+      legacy: 'Legacy',
+    };
+    return fallbackNames[modelType] || modelType;
+  }
+
+  return translated;
+}
+
 function parseStoredResult(raw) {
   if (!raw) {
     return null;
@@ -85,4 +116,5 @@ module.exports = {
   getCategoryTranslationKey,
   normalizeResultPayload,
   parseStoredResult,
+  getModelTypeLabel,
 };
