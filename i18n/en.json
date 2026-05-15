@@ -83,6 +83,10 @@
     "warning": {
       "message": "WaterMirror may still have errors, please use with caution."
     },
+    "modelSelection": {
+      "label": "Select Analysis Model",
+      "hint": "direct_wqi5 is formula baseline; others are ML surrogate models"
+    },
     "dataDisplay": {
       "title": "Current Water Quality Data",
       "noData": "Please enter water quality data in the input fields above or upload a CSV file"
