@@ -4,7 +4,7 @@
 
 Project Summary
 ---------------
-WaterMirror is a cross-platform mobile client for collecting and submitting water quality measurements to an analysis backend. The app provides data upload, validation, and results display features in a compact, production-oriented interface.
+WaterMirror is the frontend mobile client for `WQSurrogateModels`. It collects current water indicator values, sends them to the backend assessment API, and displays WQI5-based assessment results.
 
 Supported Indicators
 --------------------
@@ -28,12 +28,9 @@ cd WaterMirror
 npm install
 ```
 
-Set backend config in `src/config.json`:
-```json
-{
-  "api_url": "http://127.0.0.1",
-  "port": "8000"
-}
+Create `.env` from the example:
+```bash
+cp .env.example .env
 ```
 
 Start the app:
@@ -41,14 +38,31 @@ Start the app:
 npx expo start
 ```
 
+Example `.env`:
+```dotenv
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8001
+EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
+EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
+```
+
 Deployment
 ----------
 - For local development, run on simulator/emulator via Expo.
 - For production, follow Expo's published app workflow.
 
-Integration with MPR_Model
---------------------------
-WaterMirror expects an API server endpoint for inferencing. Use MPR_Model (or similar) as backend and ensure network authorization is configured.
+Backend Integration
+-------------------
+WaterMirror expects `WQSurrogateModels` or another compatible backend exposing:
+
+- `GET /status`
+- `POST /predict`
+- `POST /score/total/`
+- `GET /percentile`
+- `GET /categories`
+
+Flow:
+
+`Input water indicators -> Send to backend -> Receive WQI5 score/category -> Display assessment report`
 
 CSV upload format
 -----------------
@@ -67,7 +81,8 @@ Project Structure
 -----------------
 - `src/`: application source code
 - `assets/`: static assets and images
-- `src/config.json`: environment configuration
+- `.env.example`: runtime configuration example
+- `tests/`: Node-based helper tests
 
 Contributing
 ------------
@@ -84,4 +99,3 @@ Authors
 -------
 - Chien-Hsun Chang (KageRyo)
 - Kuo-Wei Wu (RRAaru)
-
