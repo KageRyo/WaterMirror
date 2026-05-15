@@ -7,7 +7,9 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/*.test.cjs",
+    "expo:config": "expo config --json",
+    "expo:doctor": "expo-doctor"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^4.1.0",

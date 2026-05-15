@@ -55,6 +55,20 @@ Android Build Notes
 - Keep Android app configuration in `app.json` consistent with Expo schema.
 - Do not place Android permission fields inside `adaptiveIcon`; malformed Android config can lead to unstable release builds.
 - Prefer validating release configuration with `npx expo-doctor` before EAS builds.
+- `eas.json` now provides:
+  - `preview` profile for APK testing
+  - `production` profile for AAB generation
+
+Suggested Android verification flow:
+
+```bash
+npm test
+npx expo-doctor
+npx expo start --clear
+eas build -p android --profile preview
+```
+
+If a preview APK still crashes on launch, capture the device log with `adb logcat` before changing UI code.
 
 Backend Integration
 -------------------
