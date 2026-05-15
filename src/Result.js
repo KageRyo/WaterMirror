@@ -13,6 +13,7 @@ const {
   getCategoryTranslationKey,
   normalizeResultPayload,
   parseStoredResult,
+  getModelTypeLabel,
 } = require('./utils/resultHelpers.cjs');
 
 // 結果畫面
@@ -214,7 +215,7 @@ const showBadValues = (badValues) => {
 
       <Text style={styles.comment}>{comment}</Text>
       {result.rating_range ? <Text style={styles.range}>{result.rating_range}</Text> : null}
-      <Text style={styles.meta}>{`${result.model_type} · ${result.latency_ms.toFixed(2)} ms`}</Text>
+      <Text style={styles.meta}>{`${getModelTypeLabel(result.model_type, t)} · ${result.latency_ms.toFixed(2)} ms`}</Text>
       {result.warnings?.length ? (
         <View style={styles.warningPanel}>
           {result.warnings.map((warning) => (

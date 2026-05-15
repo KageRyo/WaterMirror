@@ -35,6 +35,16 @@
       "percentileData": "Unable to fetch percentile data from server."
     }
   },
+  "modelTypes": {
+    "direct_wqi5": "直接 WQI5 公式",
+    "lr": "線性回歸 (LR)",
+    "mpr": "多項式回歸 (MPR)",
+    "svm": "支持向量機 (SVM)",
+    "rf": "隨機森林 (RF)",
+    "xgboost": "XGBoost",
+    "lightgbm": "LightGBM"
+  },
+
   "calc": {
     "title": "手動輸入水質資料",
     "parameters": {
