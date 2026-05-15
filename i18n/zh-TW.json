@@ -83,6 +83,10 @@
     "warning": {
       "message": "WaterMirror 仍可能會出現錯誤，請謹慎使用。"
     },
+    "modelSelection": {
+      "label": "選擇分析模型",
+      "hint": "direct_wqi5 為公式基準，其他為機器學習代理模型"
+    },
     "dataDisplay": {
       "title": "目前輸入的水質資料",
       "noData": "請在上方輸入框輸入水質資料或上傳CSV檔案"

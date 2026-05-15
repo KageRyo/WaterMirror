@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -78,6 +79,7 @@ export default function CalcScreen({ navigation }) {
   });
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedModelType, setSelectedModelType] = useState(config.defaultModelType);
 
   useEffect(() => {
     requestStoragePermission();
@@ -164,7 +166,7 @@ export default function CalcScreen({ navigation }) {
           name: pickedFile.name,
           type: pickedFile.mimeType
         });
-        formData.append('model_type', config.defaultModelType);
+        formData.append('model_type', selectedModelType);
         
         try {
           const response = await fetchWithTimeout(`${apiUrl}/score/total/`, {
@@ -227,7 +229,7 @@ export default function CalcScreen({ navigation }) {
           NH3N: Number(data.NH3N),
           EC: Number(data.EC),
           SS: Number(data.SS),
-          model_type: config.defaultModelType,
+          model_type: selectedModelType,
         }),
       });
       if (response.ok) {
@@ -304,6 +306,25 @@ export default function CalcScreen({ navigation }) {
             value={data.SS} 
             onChangeText={(text) => setData({ ...data, SS: text })} 
           />
+        </View>
+
+        {/* 模型選擇 */}
+        <View style={styles.modelSelectorContainer}>
+          <Text style={styles.modelSelectorLabel}>{t('calc.modelSelection.label')}</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={selectedModelType}
+              onValueChange={(itemValue) => setSelectedModelType(itemValue)}
+              style={styles.picker}
+            >
+              {config.supportedModelTypes.map((model) => (
+                <Picker.Item key={model} label={model} value={model} />
+              ))}
+            </Picker>
+          </View>
+          <Text style={styles.modelSelectorHint}>
+            {t('calc.modelSelection.hint')}
+          </Text>
         </View>
     
         <View style={styles.btnContainer}>
@@ -422,6 +443,30 @@ const styles = StyleSheet.create({
     color: 'red',
     textDecorationLine: 'underline',
     textAlign: 'center',
+  },
+  modelSelectorContainer: {
+    width: '80%',
+    marginBottom: 15,
+  },
+  modelSelectorLabel: {
+    fontSize: 16,
+    marginBottom: 5,
+    fontWeight: '500',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+  modelSelectorHint: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
   dataDisplayContainer: {
     width: '80%',
