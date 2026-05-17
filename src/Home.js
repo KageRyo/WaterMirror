@@ -163,8 +163,7 @@ const CustomBtn = ({ bgColor, text, onPress, isLangBtn }) => {
 const BottomSection = () => {
   return (
     <View style={bottomStyles.bottom}>
-      <Text style={bottomStyles.blue}>本專案由國立臺中科技大學</Text>
-      <Text style={[bottomStyles.blue, bottomStyles.bottomText]}>智慧生產工程系 張健勳, 吳國維 進行開發</Text>
+      <Text style={[bottomStyles.blue, bottomStyles.bottomText]}>Apache 2.0 License</Text>
       <Text style={bottomStyles.bottomText}>若有任何問題，歡迎到本專案GitHub頁面！</Text>
       <TouchableOpacity onPress={openGitHub}>
         <Image source={GitHubMark} style={bottomStyles.githubImg} />

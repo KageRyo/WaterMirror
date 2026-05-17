@@ -18,6 +18,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.kaeryo.watermirror",
       "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
         "NSCameraUsageDescription": "This app uses the camera to scan documents.",
         "NSPhotoLibraryAddUsageDescription": "This app needs access to the photo library to save photos.",
         "NSPhotoLibraryUsageDescription": "This app needs access to the photo library to select photos."
@@ -28,6 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "usesCleartextTraffic": true,
       "package": "com.kaeryo.watermirror"
     },
     "web": {

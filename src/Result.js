@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert, Dimensions, Button } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,7 +19,10 @@ const {
 // 結果畫面
 export default function ResultScreen({ navigation, route }) {
   const { t } = useTranslation();
-  const initialResult = normalizeResultPayload(route.params?.result || route.params);
+  const initialResult = useMemo(
+    () => normalizeResultPayload(route.params?.result || route.params),
+    [route.params]
+  );
   // 百分位數狀態
   const [percentile, setPercentile] = useState(null);
   // 分類資料狀態
@@ -29,7 +32,7 @@ export default function ResultScreen({ navigation, route }) {
   const [isReady, setIsReady] = useState(false);
 
   // 圖表設定
-  const chartConfig = {
+  const chartConfig = useMemo(() => ({
     backgroundColor: '#ffffff',
     backgroundGradientFrom: '#ffffff',
     backgroundGradientTo: '#ffffff',
@@ -38,7 +41,7 @@ export default function ResultScreen({ navigation, route }) {
     style: {
       borderRadius: 16,
     },
-  };
+  }), []);
 
   // 使用 useFocusEffect 確保每次進入畫面都檢查資料
   useFocusEffect(
@@ -117,6 +120,25 @@ export default function ResultScreen({ navigation, route }) {
   const categoryKey = result ? getCategoryTranslationKey(result.category) : null;
   const rating = categoryKey ? t(`result.waterQuality.${categoryKey}`) : t('result.unknownStatus');
   const comment = categoryKey ? t(`result.comments.${categoryKey}`) : t('result.noValidData');
+  const barChartData = useMemo(() => {
+    if (percentile === null) {
+      return null;
+    }
+
+    return {
+      labels: [
+        t('result.chart.improvementSpace'),
+        t('result.chart.betterThan')
+      ],
+      datasets: [{
+        data: [100 - percentile, percentile],
+        colors: [
+          (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
+          (opacity = 1) => `rgba(75, 192, 192, ${opacity})`
+        ]
+      }]
+    };
+  }, [percentile, t]);
 
   // 顯示查看改善建議
   const showMoreAlert = () => {
@@ -224,30 +246,15 @@ const showBadValues = (badValues) => {
         </View>
       ) : null}
 
-      {percentile !== null && (
+      {percentile !== null && barChartData && (
         <View style={styles.chartContainer}>
           <BarChart
-            data={{
-              labels: [
-                t('result.chart.improvementSpace'),
-                t('result.chart.betterThan')
-              ],
-              datasets: [{
-                data: [(100 - percentile).toFixed(2), percentile.toFixed(2)],
-                colors: [
-                  (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
-                  (opacity = 1) => `rgba(75, 192, 192, ${opacity})`
-                ]
-              }]
-            }}
+            data={barChartData}
             width={Dimensions.get('window').width - 30}
             height={220}
             yAxisLabel=""
             yAxisSuffix="%"
-            chartConfig={{
-              ...chartConfig,
-              decimalPlaces: 0,
-            }}
+            chartConfig={chartConfig}
             verticalLabelRotation={0}
             fromZero={true}
             withCustomBarColorFromData={true}

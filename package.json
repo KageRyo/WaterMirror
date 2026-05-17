@@ -26,6 +26,7 @@
     "expo-status-bar": "~3.0.9",
     "i18next": "^23.16.4",
     "intl-pluralrules": "^2.0.1",
+    "prop-types": "^15.8.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-i18next": "^15.1.0",

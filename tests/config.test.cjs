@@ -4,12 +4,12 @@ const assert = require('node:assert/strict');
 const { buildAppConfig, normalizeBaseUrl, SUPPORTED_MODEL_TYPES, isSupportedModelType } = require('../src/utils/appConfig.cjs');
 
 test('normalizeBaseUrl removes trailing slash', () => {
-  assert.equal(normalizeBaseUrl('http://localhost:8010/'), 'http://localhost:8010');
+  assert.equal(normalizeBaseUrl('http://127.0.0.1:8011/'), 'http://127.0.0.1:8011');
 });
 
 test('buildAppConfig uses defaults', () => {
   const config = buildAppConfig({});
-  assert.equal(config.apiBaseUrl, 'http://localhost:8010');
+  assert.equal(config.apiBaseUrl, 'http://127.0.0.1:8011');
   assert.equal(config.defaultModelType, 'direct_wqi5');
   assert.equal(config.requestTimeoutMs, 10000);
 });
