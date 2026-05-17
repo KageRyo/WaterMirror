@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart, BarChart } from 'react-native-chart-kit';
 import { useTranslation } from 'react-i18next';
 
-import config from '@/config';
+import { apiClient } from '@/utils/apiClient';
 
 const {
   getAssessmentTranslationKey,
@@ -73,7 +73,7 @@ export default function ResultScreen({ navigation, route }) {
 
   // 獲取百分位數和相關類別資料
   const fetchPercentile = (score) => {
-    fetch(`${config.apiBaseUrl}/api/v2/percentile?score=${score}`)
+    apiClient.getPercentile(score)
       .then(response => response.json())
       .then(data => {
         if (data.percentile !== undefined) {
@@ -90,7 +90,7 @@ export default function ResultScreen({ navigation, route }) {
   };
 
   const fetchCategories = () => {
-    fetch(`${config.apiBaseUrl}/api/v2/categories`)
+    apiClient.getCategories()
       .then(response => response.json())
       .then(data => {
         const totalSamples = data.data.reduce((acc, item) => acc + item.rating, 0);
