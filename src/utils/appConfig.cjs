@@ -1,5 +1,5 @@
 function normalizeBaseUrl(url) {
-  return (url || 'http://localhost:8010').replace(/\/+$/, '');
+  return (url || 'http://140.123.105.126:8011').replace(/\/+$/, '');
 }
 
 function parseInteger(value, fallback) {

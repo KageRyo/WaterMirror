@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Alert, Button, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import * as DocumentPicker from 'expo-document-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 
 import config from '@/config';
 import { apiClient } from '@/utils/apiClient';
+
+const { getModelTypeLabel } = require('./utils/resultHelpers.cjs');
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -71,6 +73,13 @@ export default function CalcScreen({ navigation }) {
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedModelType, setSelectedModelType] = useState(config.defaultModelType);
+  const modelOptions = useMemo(
+    () => config.supportedModelTypes.map((model) => ({
+      value: model,
+      label: getModelTypeLabel(model, t),
+    })),
+    [t]
+  );
 
   useEffect(() => {
     requestStoragePermission();
@@ -185,7 +194,7 @@ export default function CalcScreen({ navigation }) {
     } finally {
       setIsUploading(false); // 無論成功與否，都將上傳狀態設為 false
     }
-  }, [apiUrl, isUploading, t]); // 加入相依性陣列
+  }, [handleUploadSuccess, isUploading, selectedModelType, t]); // 加入相依性陣列
 
   // 處理手動輸入的水質資料
   const handleSubmit = async () => {
@@ -243,14 +252,11 @@ export default function CalcScreen({ navigation }) {
     );
   };
 
-  // 關閉鍵盤
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.title}>{t('calc.title')}</Text>
         
         {/* 連線狀況 */}
@@ -290,17 +296,24 @@ export default function CalcScreen({ navigation }) {
         {/* 模型選擇 */}
         <View style={styles.modelSelectorContainer}>
           <Text style={styles.modelSelectorLabel}>{t('calc.modelSelection.label')}</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={selectedModelType}
-              onValueChange={(itemValue) => setSelectedModelType(itemValue)}
-              style={styles.picker}
-            >
-              {config.supportedModelTypes.map((model) => (
-                <Picker.Item key={model} label={model} value={model} />
-              ))}
-            </Picker>
-          </View>
+          <RNPickerSelect
+            value={selectedModelType}
+            onValueChange={(itemValue) => {
+              if (itemValue) setSelectedModelType(itemValue);
+            }}
+            items={modelOptions}
+            useNativeAndroidPickerStyle={false}
+            fixAndroidTouchableBug
+            placeholder={{}}
+            style={{
+              inputIOS: styles.pickerInput,
+              inputAndroid: styles.pickerInput,
+              inputWeb: styles.pickerInput,
+              iconContainer: styles.pickerIconContainer,
+              viewContainer: styles.pickerContainer,
+            }}
+            Icon={() => <Text style={styles.pickerIcon}>▼</Text>}
+          />
           <Text style={styles.modelSelectorHint}>
             {t('calc.modelSelection.hint')}
           </Text>
@@ -348,7 +361,6 @@ export default function CalcScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </TouchableWithoutFeedback>
   );
 }
 
@@ -433,14 +445,30 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   pickerContainer: {
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    overflow: 'hidden',
+    backgroundColor: '#fff',
   },
-  picker: {
+  pickerInput: {
     height: 50,
     width: '100%',
+    paddingHorizontal: 12,
+    paddingRight: 36,
+    fontSize: 16,
+    color: '#111',
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' } : {}),
+  },
+  pickerIconContainer: {
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+  },
+  pickerIcon: {
+    fontSize: 12,
+    color: '#666',
   },
   modelSelectorHint: {
     fontSize: 12,

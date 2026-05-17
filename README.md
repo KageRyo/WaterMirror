@@ -40,7 +40,7 @@ npx expo start
 
 Example `.env`:
 ```dotenv
-EXPO_PUBLIC_API_BASE_URL=http://localhost:8010
+EXPO_PUBLIC_API_BASE_URL=http://140.123.105.126:8011
 EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
 EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
 ```
@@ -87,7 +87,7 @@ The backend also keeps the old root-level endpoints (`/status`, `/predict`, `/sc
 Example `.env` (pointing to service root, not including `/api/v2`):
 
 ```dotenv
-EXPO_PUBLIC_API_BASE_URL=http://localhost:8010
+EXPO_PUBLIC_API_BASE_URL=http://140.123.105.126:8011
 EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
 EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
 ```
