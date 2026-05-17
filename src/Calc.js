@@ -46,7 +46,7 @@ const useServerConnection = (apiUrl) => {
 
   const checkConnection = async () => {
     try {
-      const response = await fetchWithTimeout(`${apiUrl}/status`, {}, 3000);
+      const response = await fetchWithTimeout(`${apiUrl}/api/v2/health`, {}, 3000);
       const jsonResponse = await response.json();
       setStatus(jsonResponse.status === 'ok' ?
         t('calc.connection.connected') : t('calc.connection.failed'));
@@ -169,7 +169,7 @@ export default function CalcScreen({ navigation }) {
         formData.append('model_type', selectedModelType);
         
         try {
-          const response = await fetchWithTimeout(`${apiUrl}/score/total/`, {
+          const response = await fetchWithTimeout(`${apiUrl}/api/v2/assessment/csv/summary`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -218,7 +218,7 @@ export default function CalcScreen({ navigation }) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetchWithTimeout(`${apiUrl}/predict`, {
+      const response = await fetchWithTimeout(`${apiUrl}/api/v2/assessment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
