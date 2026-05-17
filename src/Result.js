@@ -73,7 +73,7 @@ export default function ResultScreen({ navigation, route }) {
 
   // 獲取百分位數和相關類別資料
   const fetchPercentile = (score) => {
-    fetch(`${config.apiBaseUrl}/percentile?score=${score}`)
+    fetch(`${config.apiBaseUrl}/api/v2/percentile?score=${score}`)
       .then(response => response.json())
       .then(data => {
         if (data.percentile !== undefined) {
@@ -90,7 +90,7 @@ export default function ResultScreen({ navigation, route }) {
   };
 
   const fetchCategories = () => {
-    fetch(`${config.apiBaseUrl}/categories`)
+    fetch(`${config.apiBaseUrl}/api/v2/categories`)
       .then(response => response.json())
       .then(data => {
         const totalSamples = data.data.reduce((acc, item) => acc + item.rating, 0);
