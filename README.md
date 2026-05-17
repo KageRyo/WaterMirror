@@ -40,7 +40,7 @@ npx expo start
 
 Example `.env`:
 ```dotenv
-EXPO_PUBLIC_API_BASE_URL=http://localhost:8001
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8010
 EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
 EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
 ```
@@ -72,17 +72,29 @@ If a preview APK still crashes on launch, capture the device log with `adb logca
 
 Backend Integration
 -------------------
-WaterMirror expects `WQSurrogateModels` or another compatible backend exposing:
+WaterMirror is the frontend for `WQSurrogateModels`. All API calls are centralized in `src/utils/apiClient.js`.
 
-- `GET /status`
-- `POST /predict`
-- `POST /score/total/`
-- `GET /percentile`
-- `GET /categories`
+The app primarily uses the modern v2 endpoints under `/api/v2/*`:
+
+- `GET /api/v2/health` — connection / health check
+- `POST /api/v2/assessment` — single record assessment
+- `POST /api/v2/assessment/csv/summary` — CSV batch upload (returns mean score)
+- `GET /api/v2/percentile` — get score percentile
+- `GET /api/v2/categories` — get WQI5 category distribution
+
+The backend also keeps the old root-level endpoints (`/status`, `/predict`, `/score/total/`, ...) for backward compatibility. These are marked as deprecated and new development should prefer the `/api/v2/*` paths.
+
+Example `.env` (pointing to service root, not including `/api/v2`):
+
+```dotenv
+EXPO_PUBLIC_API_BASE_URL=http://localhost:8010
+EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
+EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
+```
 
 Flow:
 
-`Input water indicators -> Send to backend -> Receive WQI5 score/category -> Display assessment report`
+`Input water indicators or CSV -> apiClient -> WQSurrogateModels (v2) -> Display result`
 
 Architecture
 ------------
@@ -117,6 +129,7 @@ Permissions
 Project Structure
 -----------------
 - `src/`: application source code
+  - `utils/apiClient.js` — centralized client for all `/api/v2/*` calls
 - `assets/`: static assets and images
 - `.env.example`: runtime configuration example
 - `tests/`: Node-based helper tests
