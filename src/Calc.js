@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 
 import config from '@/config';
+import { apiClient } from '@/utils/apiClient';
 
 // 水質輸入元件
 const Input = ({ label, value, onChangeText }) => (
@@ -29,24 +30,15 @@ const ConnectionStatus = ({ status }) => {
   );
 };
 
-// 帶超時的 fetch
-const fetchWithTimeout = (url, options = {}, timeout = config.requestTimeoutMs) => {
-  return Promise.race([
-    fetch(url, options),
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Request timed out')), timeout)
-    ),
-  ]);
-};
 
 // 用於檢查與伺服器的連線狀態的 Hook
-const useServerConnection = (apiUrl) => {
+const useServerConnection = () => {
   const { t } = useTranslation();
   const [status, setStatus] = useState(t('calc.connection.connecting'));
 
   const checkConnection = async () => {
     try {
-      const response = await fetchWithTimeout(`${apiUrl}/api/v2/health`, {}, 3000);
+      const response = await apiClient.health();
       const jsonResponse = await response.json();
       setStatus(jsonResponse.status === 'ok' ?
         t('calc.connection.connected') : t('calc.connection.failed'));
@@ -68,8 +60,7 @@ const useServerConnection = (apiUrl) => {
 // 畫面視窗
 export default function CalcScreen({ navigation }) {
   const { t } = useTranslation();
-  const apiUrl = config.apiBaseUrl;
-  const status = useServerConnection(apiUrl);
+  const status = useServerConnection();
   const [data, setData] = useState({
     DO: '',
     BOD: '',
@@ -169,13 +160,7 @@ export default function CalcScreen({ navigation }) {
         formData.append('model_type', selectedModelType);
         
         try {
-          const response = await fetchWithTimeout(`${apiUrl}/api/v2/assessment/csv/summary`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
+          const response = await apiClient.assessCsvSummary(formData);
           if (response.ok) {
             const responseData = await response.json();
             handleUploadSuccess(responseData);
@@ -218,19 +203,13 @@ export default function CalcScreen({ navigation }) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetchWithTimeout(`${apiUrl}/api/v2/assessment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          DO: Number(data.DO),
-          BOD: Number(data.BOD),
-          NH3N: Number(data.NH3N),
-          EC: Number(data.EC),
-          SS: Number(data.SS),
-          model_type: selectedModelType,
-        }),
+      const response = await apiClient.assess({
+        DO: Number(data.DO),
+        BOD: Number(data.BOD),
+        NH3N: Number(data.NH3N),
+        EC: Number(data.EC),
+        SS: Number(data.SS),
+        model_type: selectedModelType,
       });
       if (response.ok) {
         const responseData = await response.json();
