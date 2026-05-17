@@ -144,8 +144,3 @@ Contributing
 License
 -------
 Apache License 2.0. See `LICENSE`.
-
-Authors
--------
-- Chien-Hsun Chang (KageRyo)
-- Kuo-Wei Wu (RRAaru)
