@@ -9,7 +9,7 @@ test('normalizeBaseUrl removes trailing slash', () => {
 
 test('buildAppConfig uses defaults', () => {
   const config = buildAppConfig({});
-  assert.equal(config.apiBaseUrl, 'http://140.123.105.126:8011');
+  assert.equal(config.apiBaseUrl, 'http://localhost:8001');
   assert.equal(config.defaultModelType, 'direct_wqi5');
   assert.equal(config.requestTimeoutMs, 10000);
 });
