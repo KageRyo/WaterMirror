@@ -39,6 +39,19 @@ EXPO_PUBLIC_API_BASE_URL=http://140.123.105.126:8011
 - `GET /api/v2/percentile`
 - `GET /api/v2/categories`
 
+Example assessment request body:
+
+```json
+{
+  "DO": 7.2,
+  "BOD": 2.1,
+  "NH3N": 0.3,
+  "EC": 450,
+  "SS": 12,
+  "model_type": "direct_wqi5"
+}
+```
+
 ## Result Display Contract
 
 WaterMirror should display backend-returned fields directly:
@@ -48,6 +61,8 @@ WaterMirror should display backend-returned fields directly:
 - `rating_range`
 - `warnings`
 - `assessment`
+- `model_type`
+- `latency_ms`
 
 WaterMirror should not re-derive WQI5 category thresholds locally.
 
@@ -60,3 +75,4 @@ The backend still exposes legacy root-level endpoints such as `/predict` and `/s
 - API contract: <https://github.com/KageRyo/WQSurrogateModels/blob/main/docs/watermirror-integration.md>
 - Endpoint reference: <https://github.com/KageRyo/WQSurrogateModels/blob/main/docs/api-reference.md>
 - Full-stack local run: <https://github.com/KageRyo/WQSurrogateModels/blob/main/docs/fullstack-local-run.md>
+- Result payload semantics: <https://github.com/KageRyo/WaterMirror/blob/main/docs/result-fields.md>

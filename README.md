@@ -100,6 +100,9 @@ Example row:
 
 - [Backend Integration](docs/backend-integration.md)
 - [CSV Format](docs/csv-format.md)
+- [Result Fields](docs/result-fields.md)
+- [API Migration](docs/api-migration.md)
+- [Demo Flow](docs/demo-flow.md)
 - [Android Build](docs/android-build.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - Backend API/model docs: <https://github.com/KageRyo/WQSurrogateModels>
