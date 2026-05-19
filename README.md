@@ -63,7 +63,7 @@ EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
 ### Remote backend
 
 ```dotenv
-EXPO_PUBLIC_API_BASE_URL=http://127.0.0.1:8011
+EXPO_PUBLIC_API_BASE_URL=https://api.example.com
 EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
 EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
 ```
@@ -100,6 +100,9 @@ Example row:
 
 - [Backend Integration](docs/backend-integration.md)
 - [CSV Format](docs/csv-format.md)
+- [Result Fields](docs/result-fields.md)
+- [API Migration](docs/api-migration.md)
+- [Demo Flow](docs/demo-flow.md)
 - [Android Build](docs/android-build.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - Backend API/model docs: <https://github.com/KageRyo/WQSurrogateModels>
