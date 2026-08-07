@@ -60,3 +60,26 @@ jobs:
 
       - name: Export web bundle (build validation)
         run: npx expo export --platform web --output-dir dist
+
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: watermirror:ci-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          load: true
+
+      - name: Smoke test Docker image
+        run: docker run --rm watermirror:ci-test node --version
