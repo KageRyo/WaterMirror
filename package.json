@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "babel-preset-expo": "~54.0.10"
+    "babel-preset-expo": "~57.0.5"
   },
   "overrides": {
     "react-native-picker-select": {
