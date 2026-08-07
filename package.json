@@ -25,7 +25,7 @@
     "expo-media-library": "~18.2.1",
     "expo-notifications": "~0.32.17",
     "expo-status-bar": "~3.0.9",
-    "i18next": "^23.16.4",
+    "i18next": "^26.3.6",
     "intl-pluralrules": "^2.0.1",
     "prop-types": "^15.8.1",
     "react": "19.1.0",
