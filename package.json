@@ -18,7 +18,7 @@
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.11.0",
     "babel-plugin-module-resolver": "^5.0.2",
-    "expo": "~54.0.36",
+    "expo": "~57.0.9",
     "expo-build-properties": "~1.0.10",
     "expo-document-picker": "~14.0.8",
     "expo-file-system": "~19.0.23",
