@@ -4,7 +4,7 @@ This guide covers Android-specific build checks for `WaterMirror`.
 
 ## Preconditions
 
-- Node.js 16+ or 18+
+- Node.js >= 20.19
 - Expo CLI through `npx expo`
 - EAS CLI if building cloud artifacts
 
