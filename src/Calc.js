@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import * as DocumentPicker from 'expo-document-picker';
-import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 
@@ -82,17 +81,8 @@ export default function CalcScreen({ navigation }) {
   );
 
   useEffect(() => {
-    requestStoragePermission();
     loadStoredData();
   }, []);
-
-  // 請求存儲權限
-  async function requestStoragePermission() {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('alerts.notice'), t('alerts.storagePermission'));
-    }
-  }
 
   // 載入暫存資料
   const loadStoredData = async () => {
