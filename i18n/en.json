@@ -12,7 +12,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "Intelligent Water Quality Analysis and Improvement Assessment System",
-    "version": "Version: WaterMirror-{{platform}}-v1.1.2"
+    "version": "Version: WaterMirror-{{platform}}-v2.1.0"
   },
   "nav": {
     "home": "Home",
