@@ -36,8 +36,7 @@ WaterMirror depends on the API contract exposed by [WQSurrogateModels](https://g
 - npm
 - A running [WQSurrogateModels](https://github.com/KageRyo/WQSurrogateModels) backend for live assessments
 
-WaterMirror uses Node.js/npm and Expo. The companion Python backend may use
-`uv`, but `uv` is not used to run this frontend.
+WaterMirror uses Node.js/npm and Expo. The companion Python backend may use `uv`, but `uv` is not used to run this frontend.
 
 ## Quickstart
 
