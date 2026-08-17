@@ -38,7 +38,6 @@
     "warning": "WaterMirror may still have errors, please use with caution.",
     "disclaimer": "AI analysis systems like WaterMirror may still have errors when processing water quality data. Analysis results may be affected by data quality, measurement methods, or environmental factors. Please evaluate carefully before use and combine with professional opinions or experimental results to ensure decision accuracy. The analysis results provided by this software are for reference only, and the developers are not responsible for any direct or indirect losses resulting from reliance on this information.",
     "iUnderstand": "I Understand",
-    "storagePermission": "Permission needed to access your media library!",
     "error": "Error",
     "serverErrors": {
       "categoryData": "Unable to fetch category data from server.",
