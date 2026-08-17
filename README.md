@@ -113,6 +113,7 @@ Example row:
 - [Demo Flow](docs/demo-flow.md)
 - [Android Build](docs/android-build.md)
 - [Mobile Identity and Network Security](docs/mobile-security.md)
+- [Release Process](docs/release-process.md)
 - [Troubleshooting](docs/troubleshooting.md)
 - Backend API/model docs: <https://github.com/KageRyo/WQSurrogateModels>
 
