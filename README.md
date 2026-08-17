@@ -35,10 +35,19 @@ WaterMirror depends on the API contract exposed by `WQSurrogateModels` under `/a
 ```bash
 git clone https://github.com/KageRyo/WaterMirror.git
 cd WaterMirror
-npm install
+npm ci
 cp .env.example .env
 npx expo start
 ```
+
+## Prerequisites
+
+- Node.js 20 or newer
+- npm
+- A running `WQSurrogateModels` backend for live assessments
+
+WaterMirror uses Node.js/npm and Expo. The companion Python backend may use
+`uv`, but `uv` is not used to run this frontend.
 
 ## Environment Configuration
 
