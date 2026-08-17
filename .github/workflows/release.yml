@@ -1,0 +1,35 @@
+name: Validate release metadata
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Verify repository visibility
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          visibility="$(gh api "repos/${GITHUB_REPOSITORY}" --jq .visibility)"
+          test "$visibility" = "public"
+
+      - name: Verify release tag and title
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+        run: |
+          expected_version="$(node -p "require('./app.json').expo.version")"
+          expected_tag="WaterMirror-v${expected_version}"
+          expected_name="WaterMirror v${expected_version}"
+          test "$RELEASE_TAG" = "$expected_tag"
+          test "$RELEASE_NAME" = "$expected_name"
