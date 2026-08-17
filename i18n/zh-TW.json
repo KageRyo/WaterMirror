@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "智慧水質分析與改善評估系統",
-    "version": "版本：WaterMirror-{{platform}}-v2.1.0"
+    "version": "版本：WaterMirror-{{platform}}-v2.1.1"
   },
   "nav": {
     "home": "首頁",
