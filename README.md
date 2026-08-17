@@ -1,6 +1,6 @@
 # WaterMirror
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-%5E48.0.0-brightgreen.svg)](https://expo.dev) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-54.0.36-brightgreen.svg)](https://expo.dev) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
 
 WaterMirror is a cross-platform mobile frontend for WQI5-based current-state water quality assessment.
 
@@ -8,7 +8,7 @@ It allows users to:
 
 - input five water quality indicators manually
 - upload CSV files
-- submit data to the WQSurrogateModels backend
+- submit data to the [WQSurrogateModels](https://github.com/KageRyo/WQSurrogateModels) backend
 - display backend-returned WQI5 score, category, rating range, and warnings
 
 WaterMirror does not calculate WQI5 thresholds locally. The backend is the source of truth for assessment logic.
@@ -18,9 +18,9 @@ WaterMirror does not calculate WQI5 thresholds locally. The backend is the sourc
 This project is part of a two-repository system:
 
 - `WaterMirror`: cross-platform mobile frontend for data entry, CSV upload, and result visualization
-- `WQSurrogateModels`: FastAPI backend and model/reproducibility repository for WQI5-based current-state water quality assessment
+- [WQSurrogateModels](https://github.com/KageRyo/WQSurrogateModels): FastAPI backend and model/reproducibility repository for WQI5-based current-state water quality assessment
 
-WaterMirror depends on the API contract exposed by `WQSurrogateModels` under `/api/v2/*`.
+WaterMirror depends on the API contract exposed by [WQSurrogateModels](https://github.com/KageRyo/WQSurrogateModels) under `/api/v2/*`.
 
 ## Supported Indicators
 
@@ -30,12 +30,20 @@ WaterMirror depends on the API contract exposed by `WQSurrogateModels` under `/a
 - Electrical conductivity (`EC`)
 - Suspended solids (`SS`)
 
+## Prerequisites
+
+- Node.js >= 20.19
+- npm
+- A running [WQSurrogateModels](https://github.com/KageRyo/WQSurrogateModels) backend for live assessments
+
+WaterMirror uses Node.js/npm and Expo. The companion Python backend may use `uv`, but `uv` is not used to run this frontend.
+
 ## Quickstart
 
 ```bash
 git clone https://github.com/KageRyo/WaterMirror.git
 cd WaterMirror
-npm install
+npm ci
 cp .env.example .env
 npx expo start
 ```
