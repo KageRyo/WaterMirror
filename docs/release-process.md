@@ -1,8 +1,8 @@
 # Release Process
 
-WaterMirror uses the Expo version in `app.json` as the mobile release version.
-The private `package.json` version is dependency metadata and is not the public
-application release number.
+WaterMirror uses the Expo version in `app.json` as the canonical mobile release
+version. Keep the `package.json` version aligned for npm and tooling metadata;
+the release workflow still validates against `app.json`.
 
 ## Naming convention
 
