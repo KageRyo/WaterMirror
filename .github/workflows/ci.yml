@@ -66,7 +66,7 @@ jobs:
         run: npx expo export --platform web --output-dir dist
 
       - name: Verify public backend configuration is bundled
-        run: rg --fixed-strings 'https://wq-integration.example.invalid' dist/_expo/static/js
+        run: grep --recursive --fixed-strings 'https://wq-integration.example.invalid' dist/_expo/static/js
 
   docker:
     runs-on: ubuntu-latest
