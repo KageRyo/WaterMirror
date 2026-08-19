@@ -59,7 +59,14 @@ jobs:
         run: npx expo config --json > /dev/null
 
       - name: Export web bundle (build validation)
+        env:
+          EXPO_PUBLIC_API_BASE_URL: https://wq-integration.example.invalid
+          EXPO_PUBLIC_DEFAULT_MODEL: direct_wqi5
+          EXPO_PUBLIC_REQUEST_TIMEOUT_MS: "10000"
         run: npx expo export --platform web --output-dir dist
+
+      - name: Verify public backend configuration is bundled
+        run: rg --fixed-strings 'https://wq-integration.example.invalid' dist/_expo/static/js
 
   docker:
     runs-on: ubuntu-latest
