@@ -1,6 +1,6 @@
 {
   "name": "watermirror",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -14,37 +14,39 @@
   "dependencies": {
     "@expo/react-native-action-sheet": "^4.1.0",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-picker/picker": "2.11.1",
+    "@react-native-picker/picker": "2.11.4",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.11.0",
     "babel-plugin-module-resolver": "^5.0.3",
-    "expo": "~54.0.37",
-    "expo-build-properties": "~1.0.10",
-    "expo-constants": "~18.0.14",
-    "expo-document-picker": "~14.0.8",
-    "expo-file-system": "~19.0.24",
-    "expo-notifications": "~0.32.17",
-    "expo-status-bar": "~3.0.9",
+    "expo": "~57.0.14",
+    "expo-build-properties": "~57.0.12",
+    "expo-constants": "~57.0.12",
+    "expo-document-picker": "~57.0.1",
+    "expo-file-system": "~57.0.4",
+    "expo-notifications": "~57.0.12",
+    "expo-splash-screen": "~57.0.7",
+    "expo-status-bar": "~57.0.1",
     "i18next": "^23.16.4",
     "intl-pluralrules": "^2.0.1",
     "prop-types": "^15.8.1",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-i18next": "^15.1.0",
-    "react-native": "0.81.5",
+    "react-native": "0.86.2",
     "react-native-chart-kit": "^6.12.0",
-    "react-native-gesture-handler": "~2.28.0",
+    "react-native-gesture-handler": "~2.32.0",
     "react-native-picker-select": "^9.0.1",
-    "react-native-safe-area-context": "~5.6.0",
-    "react-native-screens": "~4.16.0",
-    "react-native-svg": "15.12.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.6",
-    "babel-preset-expo": "~54.0.12"
+    "babel-preset-expo": "~57.0.0"
   },
   "overrides": {
+    "uuid": "11.1.1",
     "react-native-picker-select": {
       "@react-native-picker/picker": "$@react-native-picker/picker"
     }

@@ -13,6 +13,24 @@ function buildProperties(config) {
   )[1];
 }
 
+function splashScreenProperties(config) {
+  return config.plugins.find(
+    (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-splash-screen'
+  )[1];
+}
+
+test('splash screen uses the SDK 57 config plugin', () => {
+  const config = buildConfig('production');
+
+  assert.equal('splash' in baseConfig, false);
+  assert.deepEqual(splashScreenProperties(config), {
+    backgroundColor: '#ffffff',
+    image: './assets/splash.png',
+    imageWidth: 200,
+    resizeMode: 'contain',
+  });
+});
+
 test('development and preview policies allow local HTTP backends', () => {
   const config = buildConfig('preview');
 
