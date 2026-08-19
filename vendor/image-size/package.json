@@ -1,0 +1,8 @@
+{
+  "name": "image-size",
+  "version": "2.0.3",
+  "description": "Vendored image-size runtime with parser progress guards",
+  "main": "./index.cjs",
+  "license": "MIT",
+  "private": true
+}

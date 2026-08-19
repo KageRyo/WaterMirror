@@ -1,6 +1,6 @@
 # WaterMirror
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-57.0.14-brightgreen.svg)](https://expo.dev) [![Expo app version](https://img.shields.io/badge/Expo%20app%20version-2.2.1-brightgreen.svg)](app.json) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-57.0.14-brightgreen.svg)](https://expo.dev) [![Expo app version](https://img.shields.io/badge/Expo%20app%20version-2.2.2-brightgreen.svg)](app.json) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
 
 WaterMirror is a cross-platform mobile frontend for WQI5-based current-state water quality assessment.
 
