@@ -4,6 +4,10 @@ const {
   V2_ENDPOINTS,
   appendCsvModelType,
   createAssessmentRequest,
+  getBackendStatus,
+  normalizeClientError,
+  parseBackendError,
+  RequestTimeoutError,
   validateAssessmentResponse,
   validateCsvRowsResponse,
 } = require('./apiContract.cjs');
@@ -18,7 +22,7 @@ export function fetchWithTimeout(url, options = {}, timeout = config.requestTime
   return Promise.race([
     fetch(url, options),
     new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Request timed out')), timeout)
+      setTimeout(() => reject(new RequestTimeoutError()), timeout)
     ),
   ]);
 }
@@ -49,12 +53,20 @@ export const apiClient = {
 
   parseCsvRowsResponse: validateCsvRowsResponse,
 
+  parseErrorResponse: parseBackendError,
+
+  toClientError: normalizeClientError,
+
   // ==================== 高階 API 方法 ====================
 
   /**
    * 健康檢查（用於連線狀態）
    */
   health: () => fetchWithTimeout(v2('/health'), {}, 3000),
+
+  ready: () => fetchWithTimeout(v2(V2_ENDPOINTS.ready), {}, 3000),
+
+  backendStatus: () => getBackendStatus(apiClient),
 
   /**
    * 單筆水質資料評估

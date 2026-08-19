@@ -45,10 +45,16 @@
       },
       "connection": {
         "status": "接続状態: ",
-        "connecting": "MPR水質分析サーバーに接続中...",
-        "connected": "MPR分析モデルに接続済み",
-        "disconnected": "MPR分析サーバーが起動していません",
-        "failed": "MPR分析モデルへの接続に失敗"
+        "connecting": "水質バックエンドに接続中...",
+        "ready": "バックエンドの準備ができました",
+        "backend_not_ready": "バックエンドは稼働中ですが準備ができていません",
+        "backend_unreachable": "バックエンドに接続できません",
+        "timeout": "バックエンド接続がタイムアウトしました",
+        "invalid_response": "バックエンドから互換性のない応答が返されました",
+        "backend_failure": "バックエンドリクエストに失敗しました",
+        "invalid_input": "バックエンドがリクエストを拒否しました",
+        "invalid_csv": "バックエンドが CSV アップロードを拒否しました",
+        "model_unavailable": "選択したモデルは利用できません"
       },
       "upload": {
         "success": "分析完了",
@@ -56,6 +62,17 @@
         "failed": "アップロード失敗",
         "errorMessage": "サーバーへのデータアップロードに失敗しました。ファイルが選択されていないか、ネットワーク接続に問題がある可能性があります。",
         "retryMessage": "エラーが発生しました。後でもう一度お試しください。"
+      },
+      "errors": {
+        "backend_unreachable": "バックエンドに接続できません。サーバーのアドレスとネットワーク接続を確認してください。",
+        "backend_not_ready": "バックエンドは稼働中ですが、評価を処理する準備ができていません。",
+        "timeout": "リクエストがタイムアウトしました。後でもう一度お試しください。",
+        "invalid_input": "評価値を確認して、もう一度お試しください。",
+        "invalid_csv": "CSV に必要な列があり、すべての値が数値であることを確認してください。",
+        "model_unavailable": "選択したモデルはバックエンドで利用できません。",
+        "invalid_response": "バックエンドから互換性のない応答が返されました。",
+        "backend_failure": "バックエンドはリクエストを完了できませんでした。",
+        "requestId": "サポート参照: {{requestId}}"
       },
       "buttons": {
         "clear": "削除",

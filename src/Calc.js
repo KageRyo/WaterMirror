@@ -25,8 +25,8 @@ const Input = ({ label, value, onChangeText }) => (
 const ConnectionStatus = ({ status }) => {
   const { t } = useTranslation();
   return (
-    <Text style={[styles.status, status === t('calc.connection.connected') ? styles.connected : styles.notConnected]}>
-      {t('calc.connection.status')} {status}
+    <Text style={[styles.status, status === 'ready' ? styles.connected : styles.notConnected]}>
+      {t('calc.connection.status')} {t(`calc.connection.${status}`)}
     </Text>
   );
 };
@@ -34,18 +34,14 @@ const ConnectionStatus = ({ status }) => {
 
 // 用於檢查與伺服器的連線狀態的 Hook
 const useServerConnection = () => {
-  const { t } = useTranslation();
-  const [status, setStatus] = useState(t('calc.connection.connecting'));
+  const [status, setStatus] = useState('connecting');
 
   const checkConnection = async () => {
     try {
-      const response = await apiClient.health();
-      const jsonResponse = await response.json();
-      setStatus(jsonResponse.status === 'ok' ?
-        t('calc.connection.connected') : t('calc.connection.failed'));
-    } catch (error) {
-      console.error('連線錯誤:', error);
-      setStatus(t('calc.connection.disconnected'));
+      const backend = await apiClient.backendStatus();
+      setStatus(backend.state);
+    } catch {
+      setStatus('backend_unreachable');
     }
   };
 
@@ -128,13 +124,12 @@ export default function CalcScreen({ navigation }) {
     );
   };
 
-  const parseErrorMessage = async (response) => {
-    try {
-      const payload = await response.json();
-      return payload.detail || t('calc.upload.retryMessage');
-    } catch {
-      return t('calc.upload.retryMessage');
-    }
+  const clientErrorMessage = (error) => {
+    const clientError = apiClient.toClientError(error);
+    const message = t(`calc.errors.${clientError.kind}`);
+    return clientError.requestId
+      ? `${message}\n${t('calc.errors.requestId', { requestId: clientError.requestId })}`
+      : message;
   };
 
   // 處理上傳的CSV水質資料檔案
@@ -162,21 +157,20 @@ export default function CalcScreen({ navigation }) {
             const responseData = apiClient.parseAssessmentResponse(await response.json());
             handleUploadSuccess(responseData);
           } else {
-            throw new Error(await parseErrorMessage(response));
+            throw await apiClient.parseErrorResponse(response);
           }
         } catch (error) {
           Alert.alert(
             t('calc.upload.failed'),
-            error.message || t('calc.upload.retryMessage'),
+            clientErrorMessage(error),
             [{ text: t('calc.buttons.confirm') }]
           );
         }
       }
     } catch (error) {
-      console.error('Error during file upload:', error);
       Alert.alert(
         t('calc.upload.failed'),
-        t('calc.upload.errorMessage'),
+        clientErrorMessage(error),
         [{ text: t('calc.buttons.confirm') }]
       );
     } finally {
@@ -212,13 +206,12 @@ export default function CalcScreen({ navigation }) {
         const responseData = apiClient.parseAssessmentResponse(await response.json());
         handleUploadSuccess(responseData);
       } else {
-        throw new Error(await parseErrorMessage(response));
+        throw await apiClient.parseErrorResponse(response);
       }
     } catch (error) {
-      console.error('Submit error:', error);
       Alert.alert(
         t('calc.upload.failed'),
-        error.message || t('calc.upload.retryMessage'),
+        clientErrorMessage(error),
         [{ text: t('calc.buttons.confirm') }]
       );
     } finally {

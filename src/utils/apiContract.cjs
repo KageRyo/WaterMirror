@@ -12,6 +12,7 @@ const SUPPORTED_MODEL_TYPES = [
 
 const V2_ENDPOINTS = Object.freeze({
   health: '/health',
+  ready: '/ready',
   models: '/models',
   assessment: '/assessment',
   csvSummary: '/assessment/csv/summary',
@@ -26,6 +27,31 @@ class ApiContractError extends Error {
     this.name = 'ApiContractError';
   }
 }
+
+class RequestTimeoutError extends Error {
+  constructor() {
+    super('The request timed out.');
+    this.name = 'RequestTimeoutError';
+  }
+}
+
+class BackendClientError extends Error {
+  constructor(kind, requestId = null) {
+    super(kind);
+    this.name = 'BackendClientError';
+    this.kind = kind;
+    this.requestId = requestId;
+  }
+}
+
+const BACKEND_ERROR_KINDS = {
+  invalid_assessment_input: 'invalid_input',
+  invalid_csv: 'invalid_csv',
+  model_unavailable: 'model_unavailable',
+  dataset_unavailable: 'backend_not_ready',
+  invalid_configuration: 'backend_not_ready',
+  internal_error: 'backend_failure',
+};
 
 function isSupportedModelType(modelType) {
   return SUPPORTED_MODEL_TYPES.includes(modelType);
@@ -117,14 +143,122 @@ function validateCsvRowsResponse(payload) {
   return payload;
 }
 
+function getRequestId(response) {
+  return response && response.headers && typeof response.headers.get === 'function'
+    ? response.headers.get('X-Request-ID')
+    : null;
+}
+
+async function parseBackendError(response, payloadOverride) {
+  const requestId = getRequestId(response);
+  try {
+    const payload = payloadOverride === undefined ? await response.json() : payloadOverride;
+    const kind = BACKEND_ERROR_KINDS[payload && payload.error && payload.error.code];
+    if (kind) {
+      return new BackendClientError(kind, requestId);
+    }
+  } catch {
+    // Non-JSON error bodies are intentionally not surfaced to users.
+  }
+  return new BackendClientError('backend_failure', requestId);
+}
+
+function normalizeClientError(error) {
+  if (error instanceof BackendClientError) {
+    return error;
+  }
+  if (error instanceof RequestTimeoutError) {
+    return new BackendClientError('timeout');
+  }
+  if (error instanceof ApiContractError) {
+    return new BackendClientError('invalid_response');
+  }
+  return new BackendClientError('backend_unreachable');
+}
+
+function validateHealthResponse(payload) {
+  if (!payload || payload.status !== 'ok' || typeof payload.default_model !== 'string') {
+    throw invalidResponse();
+  }
+  return payload;
+}
+
+function validateReadinessResponse(payload) {
+  if (
+    !payload ||
+    !['ready', 'not_ready'].includes(payload.status) ||
+    typeof payload.default_model !== 'string' ||
+    typeof payload.dataset_available !== 'boolean' ||
+    typeof payload.dataset_required !== 'boolean' ||
+    !Array.isArray(payload.models) ||
+    !payload.models.every((model) => isSupportedModelType(model.model_type) && typeof model.available === 'boolean')
+  ) {
+    throw invalidResponse();
+  }
+  return payload;
+}
+
+async function getBackendStatus(client) {
+  let healthResponse;
+  try {
+    healthResponse = await client.health();
+  } catch (error) {
+    return { state: normalizeClientError(error).kind, requestId: null };
+  }
+  if (!healthResponse.ok) {
+    const error = await parseBackendError(healthResponse);
+    return { state: error.kind, requestId: error.requestId };
+  }
+  try {
+    validateHealthResponse(await healthResponse.json());
+  } catch (error) {
+    return { state: normalizeClientError(error).kind, requestId: getRequestId(healthResponse) };
+  }
+
+  let readinessResponse;
+  try {
+    readinessResponse = await client.ready();
+  } catch (error) {
+    return { state: normalizeClientError(error).kind, requestId: null };
+  }
+  let readinessPayload;
+  let readiness;
+  try {
+    readinessPayload = await readinessResponse.json();
+    readiness = validateReadinessResponse(readinessPayload);
+  } catch (error) {
+    if (!readinessResponse.ok) {
+      const responseError = await parseBackendError(readinessResponse, readinessPayload);
+      return { state: responseError.kind, requestId: responseError.requestId };
+    }
+    return { state: normalizeClientError(error).kind, requestId: getRequestId(readinessResponse) };
+  }
+  if (readiness.status === 'not_ready') {
+    return { state: 'backend_not_ready', requestId: getRequestId(readinessResponse) };
+  }
+  if (!readinessResponse.ok) {
+    const error = await parseBackendError(readinessResponse, readinessPayload);
+    return { state: error.kind, requestId: error.requestId };
+  }
+  return { state: 'ready', requestId: getRequestId(readinessResponse) };
+}
+
 module.exports = {
   ApiContractError,
+  BackendClientError,
   REQUIRED_MEASUREMENTS,
+  RequestTimeoutError,
   SUPPORTED_MODEL_TYPES,
   V2_ENDPOINTS,
   appendCsvModelType,
   createAssessmentRequest,
+  getBackendStatus,
+  getRequestId,
   isSupportedModelType,
+  normalizeClientError,
+  parseBackendError,
   validateAssessmentResponse,
   validateCsvRowsResponse,
+  validateHealthResponse,
+  validateReadinessResponse,
 };
