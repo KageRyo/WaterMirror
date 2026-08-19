@@ -14,6 +14,6 @@ Local development and internal preview builds allow HTTP backends so the app can
 
 ## Native permissions
 
-The current app uses [`expo-document-picker`](https://docs.expo.dev/versions/v54.0.0/sdk/document-picker/) for CSV uploads and AsyncStorage for local result persistence. DocumentPicker opens the operating system's document-provider UI; it does not require the photo-library permission used by [`expo-media-library`](https://docs.expo.dev/versions/v54.0.0/sdk/media-library/). The upload path keeps `copyToCacheDirectory: true` so the selected file can be read immediately after selection.
+The current app uses [`expo-document-picker`](https://docs.expo.dev/versions/v57.0.0/sdk/document-picker/) for CSV uploads and AsyncStorage for local result persistence. DocumentPicker opens the operating system's document-provider UI; it does not require the photo-library permission used by [`expo-media-library`](https://docs.expo.dev/versions/v57.0.0/sdk/media-library/). The upload path keeps `copyToCacheDirectory: true` so the selected file can be read immediately after selection.
 
 The app does not use the camera or photo library. The unused camera and photo-library usage descriptions, media-library permission request, and `expo-media-library` dependency were removed from the application configuration and source. If CSV selection fails on a device after this change, investigate the system document provider or file URI handling rather than adding photo-library permission back to the app.
