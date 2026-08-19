@@ -22,6 +22,7 @@ function loadFixture(name) {
 test('v2 endpoints and supported model types match the WQSurrogateModels contract', () => {
   assert.deepEqual(V2_ENDPOINTS, {
     health: '/health',
+    ready: '/ready',
     models: '/models',
     assessment: '/assessment',
     csvSummary: '/assessment/csv/summary',
