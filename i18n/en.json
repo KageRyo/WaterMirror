@@ -55,10 +55,16 @@
     },
     "connection": {
       "status": "Connection Status: ",
-      "connecting": "Connecting to MPR Water Quality Analysis Server...",
-      "connected": "Connected to MPR Analysis Model",
-      "disconnected": "MPR Analysis Server Not Started",
-      "failed": "Connection to MPR Analysis Model Failed"
+      "connecting": "Connecting to the water quality backend...",
+      "ready": "Backend is ready",
+      "backend_not_ready": "Backend is running but not ready",
+      "backend_unreachable": "Backend cannot be reached",
+      "timeout": "Backend connection timed out",
+      "invalid_response": "Backend returned an incompatible response",
+      "backend_failure": "Backend request failed",
+      "invalid_input": "Backend rejected the request",
+      "invalid_csv": "Backend rejected the CSV upload",
+      "model_unavailable": "Selected model is unavailable"
     },
     "upload": {
       "success": "Analysis Complete",
@@ -66,6 +72,17 @@
       "failed": "Upload Failed",
       "errorMessage": "Failed to upload data to server. You may not have selected any file, or network connection is abnormal.",
       "retryMessage": "An error occurred, please try again later."
+    },
+    "errors": {
+      "backend_unreachable": "Cannot reach the backend. Check the server address and network connection.",
+      "backend_not_ready": "The backend is running but not ready to process assessments.",
+      "timeout": "The request timed out. Please try again later.",
+      "invalid_input": "Check the assessment values and try again.",
+      "invalid_csv": "Check that the CSV has the required columns and numeric values.",
+      "model_unavailable": "The selected model is not available on the backend.",
+      "invalid_response": "The backend returned an incompatible response.",
+      "backend_failure": "The backend could not complete the request.",
+      "requestId": "Support reference: {{requestId}}"
     },
     "buttons": {
       "clear": "Delete",

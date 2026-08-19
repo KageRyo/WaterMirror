@@ -55,10 +55,16 @@
     },
     "connection": {
       "status": "連線狀況: ",
-      "connecting": "與MPR水質分析伺服器連線中...",
-      "connected": "已連線到MPR水質分析模型",
-      "disconnected": "MPR水質分析伺服器未開啟",
-      "failed": "與MPR水質分析模型連線失敗"
+      "connecting": "正在連線至水質後端...",
+      "ready": "後端已就緒",
+      "backend_not_ready": "後端正在運行，但尚未就緒",
+      "backend_unreachable": "無法連線到後端",
+      "timeout": "連線後端逾時",
+      "invalid_response": "後端回傳不相容的資料",
+      "backend_failure": "後端請求失敗",
+      "invalid_input": "後端拒絕此請求",
+      "invalid_csv": "後端拒絕 CSV 上傳",
+      "model_unavailable": "所選模型無法使用"
     },
     "upload": {
       "success": "分析完成",
@@ -66,6 +72,17 @@
       "failed": "上傳失敗",
       "errorMessage": "資料上傳至伺服器失敗。您可能未選取任何檔案，或是網路連線異常。",
       "retryMessage": "發生錯誤，請稍後重試。"
+    },
+    "errors": {
+      "backend_unreachable": "無法連線到後端，請檢查伺服器位址與網路連線。",
+      "backend_not_ready": "後端正在運行，但尚未能處理評估。",
+      "timeout": "請求逾時，請稍後再試。",
+      "invalid_input": "請檢查評估數值後再試。",
+      "invalid_csv": "請確認 CSV 具有必要欄位，且所有數值皆為數字。",
+      "model_unavailable": "所選模型目前無法在後端使用。",
+      "invalid_response": "後端回傳不相容的資料。",
+      "backend_failure": "後端無法完成此請求。",
+      "requestId": "支援識別碼：{{requestId}}"
     },
     "buttons": {
       "clear": "刪除",
