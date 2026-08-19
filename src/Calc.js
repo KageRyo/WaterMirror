@@ -156,12 +156,10 @@ export default function CalcScreen({ navigation }) {
           name: pickedFile.name,
           type: pickedFile.mimeType
         });
-        formData.append('model_type', selectedModelType);
-        
         try {
-          const response = await apiClient.assessCsvSummary(formData);
+          const response = await apiClient.assessCsvSummary(formData, selectedModelType);
           if (response.ok) {
-            const responseData = await response.json();
+            const responseData = apiClient.parseAssessmentResponse(await response.json());
             handleUploadSuccess(responseData);
           } else {
             throw new Error(await parseErrorMessage(response));
@@ -211,7 +209,7 @@ export default function CalcScreen({ navigation }) {
         model_type: selectedModelType,
       });
       if (response.ok) {
-        const responseData = await response.json();
+        const responseData = apiClient.parseAssessmentResponse(await response.json());
         handleUploadSuccess(responseData);
       } else {
         throw new Error(await parseErrorMessage(response));

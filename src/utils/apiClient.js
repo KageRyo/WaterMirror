@@ -1,5 +1,13 @@
 import config from '@/config';
 
+const {
+  V2_ENDPOINTS,
+  appendCsvModelType,
+  createAssessmentRequest,
+  validateAssessmentResponse,
+  validateCsvRowsResponse,
+} = require('./apiContract.cjs');
+
 const BASE_URL = config.apiBaseUrl.replace(/\/$/, ''); // remove trailing slash if any
 const V2_BASE = `${BASE_URL}/api/v2`;
 
@@ -35,6 +43,12 @@ export const apiClient = {
 
   fetchWithTimeout,
 
+  endpoints: V2_ENDPOINTS,
+
+  parseAssessmentResponse: validateAssessmentResponse,
+
+  parseCsvRowsResponse: validateCsvRowsResponse,
+
   // ==================== 高階 API 方法 ====================
 
   /**
@@ -47,13 +61,13 @@ export const apiClient = {
    */
   assess: (data) =>
     fetchWithTimeout(
-      v2('/assessment'),
+      v2(V2_ENDPOINTS.assessment),
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(createAssessmentRequest(data)),
       },
       config.requestTimeoutMs
     ),
@@ -61,12 +75,22 @@ export const apiClient = {
   /**
    * CSV 批次上傳（回傳平均分數）
    */
-  assessCsvSummary: (formData) =>
+  assessCsvSummary: (formData, modelType = config.defaultModelType) =>
     fetchWithTimeout(
-      v2('/assessment/csv/summary'),
+      v2(V2_ENDPOINTS.csvSummary),
       {
         method: 'POST',
-        body: formData,
+        body: appendCsvModelType(formData, modelType),
+      },
+      config.requestTimeoutMs
+    ),
+
+  assessCsvRows: (formData, modelType = config.defaultModelType) =>
+    fetchWithTimeout(
+      v2(V2_ENDPOINTS.csvRows),
+      {
+        method: 'POST',
+        body: appendCsvModelType(formData, modelType),
       },
       config.requestTimeoutMs
     ),
