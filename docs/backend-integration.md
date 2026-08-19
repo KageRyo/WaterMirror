@@ -34,8 +34,10 @@ EXPO_PUBLIC_API_BASE_URL=https://api.example.com
 ## Primary Endpoints Used by WaterMirror
 
 - `GET /api/v2/health`
+- `GET /api/v2/models`
 - `POST /api/v2/assessment`
 - `POST /api/v2/assessment/csv/summary`
+- `POST /api/v2/assessment/csv/rows` (available for row-level consumers)
 - `GET /api/v2/percentile`
 - `GET /api/v2/categories`
 
@@ -65,6 +67,10 @@ WaterMirror should display backend-returned fields directly:
 - `latency_ms`
 
 WaterMirror should not re-derive WQI5 category thresholds locally.
+
+The client validates the response shape before navigating to the result screen.
+An incomplete or incompatible response is treated as a controlled assessment
+failure instead of rendering partial data.
 
 ## Legacy Compatibility
 

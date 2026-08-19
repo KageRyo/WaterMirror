@@ -1,3 +1,5 @@
+const { SUPPORTED_MODEL_TYPES, isSupportedModelType } = require('./apiContract.cjs');
+
 function normalizeBaseUrl(url) {
   return (url || 'http://localhost:8001').replace(/\/+$/, '');
 }
@@ -5,24 +7,6 @@ function normalizeBaseUrl(url) {
 function parseInteger(value, fallback) {
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-/**
- * Supported model types for WQI5 assessment.
- * Must be kept in sync with WQSurrogateModels backend.
- */
-const SUPPORTED_MODEL_TYPES = [
-  'direct_wqi5',
-  'lr',
-  'mpr',
-  'svm',
-  'rf',
-  'xgboost',
-  'lightgbm',
-];
-
-function isSupportedModelType(modelType) {
-  return SUPPORTED_MODEL_TYPES.includes(modelType);
 }
 
 function buildAppConfig(env) {

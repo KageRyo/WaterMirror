@@ -1,0 +1,15 @@
+{
+  "score": 89.542,
+  "category": "Excellent",
+  "rating_range": "85 < WQI5 ≤ 100",
+  "model_type": "direct_wqi5",
+  "latency_ms": 0.123,
+  "assessment": {
+    "DO": "Good",
+    "BOD": "Good",
+    "NH3N": "Good",
+    "EC": "Good",
+    "SS": "Good"
+  },
+  "warnings": []
+}

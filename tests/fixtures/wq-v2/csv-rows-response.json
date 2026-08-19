@@ -1,0 +1,5 @@
+{
+  "scores": [89.542, 78.741],
+  "model_type": "direct_wqi5",
+  "latency_ms": 0.456
+}
