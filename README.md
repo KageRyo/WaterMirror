@@ -4,6 +4,12 @@
 
 WaterMirror is a cross-platform mobile frontend for WQI5-based current-state water quality assessment.
 
+<p align="center">
+  <img src="docs/screenshots/readme-flow.png" width="100%" alt="WaterMirror flow: home screen, manual input with Random Forest selected, assessment result, and improvement suggestions" />
+</p>
+
+<p align="center"><sub>From left to right: home, RF input, result, and improvement suggestions. The interface is real; sample measurements, backend-ready status, assessment, percentile, and chart data are simulated locally and do not come from a live backend.</sub></p>
+
 It allows users to:
 
 - input five water quality indicators manually
@@ -29,18 +35,6 @@ WaterMirror depends on the API contract exposed by [WQSurrogateModels](https://g
 - Ammonia nitrogen (`NH3N`)
 - Electrical conductivity (`EC`)
 - Suspended solids (`SS`)
-
-## Screenshots
-
-These screenshots show the actual Expo Web interface at a portrait phone viewport, from the home screen through model selection, manual input, and the assessment report. The model menu shows the available choices; the example assessment uses **Random Forest (RF)**. Measurements (`DO 7.2`, `BOD 3.1`, `NH3-N 0.5`, `EC 280`, `SS 45`), backend-ready status, assessment response (WQI5 89.54, `Excellent`), percentile, and chart data are simulated locally for illustration and do not come from a live backend.
-
-| Home | Model choices |
-| :---: | :---: |
-| <img src="docs/screenshots/home.png" width="300" alt="WaterMirror home screen" /> | <img src="docs/screenshots/model-options.png" width="300" alt="WaterMirror model picker listing the available assessment models" /> |
-
-| Manual input · Random Forest (RF) | Assessment result · Random Forest (RF) |
-| :---: | :---: |
-| <img src="docs/screenshots/manual-input.png" width="300" alt="WaterMirror manual input form with illustrative sample measurements and Random Forest selected" /> | <img src="docs/screenshots/assessment-result.png" width="300" alt="WaterMirror illustrative assessment result showing Random Forest" /> |
 
 ## Prerequisites
 
