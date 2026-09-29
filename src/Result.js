@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '@/utils/apiClient';
 
 const {
-  getAssessmentTranslationKey,
   getCategoryColor,
   getCategoryTranslationKey,
   normalizeResultPayload,
@@ -140,85 +139,6 @@ export default function ResultScreen({ navigation, route }) {
     };
   }, [percentile, t]);
 
-  // 顯示查看改善建議
-  const showMoreAlert = () => {
-    if (!result?.assessment) return;
-    const assessmentEntries = Object.entries(result.assessment);
-    const badValues = assessmentEntries.filter(([, value]) => 
-      value === 'Poor' || value === 'OutOfRange'
-    );
-
-    Alert.alert(
-      t('result.improvement.title'),
-      `${assessmentEntries.map(([key, value]) => {
-        return `${t(`result.improvement.parameters.${key}`)}：${t(`result.waterQuality.${getAssessmentTranslationKey(value)}`)}`;
-      }).join('\n')}\n`,
-      badValues.length === 0
-        ? [{ text: t('result.buttons.iKnow') }]
-        : [
-            { text: t('result.buttons.iKnow') },
-            { text: t('result.buttons.next'), onPress: () => showBadValues(badValues) }
-          ]
-    );
-  };
-
-// 顯示不良水質項目的改善建議
-const showBadValues = (badValues) => {
-  let suggestions = '';
-  badValues.forEach(([key, value], index) => {
-    if (value === 'Poor' || value === 'OutOfRange') {
-      switch (key) {
-        case 'DO':
-          if (value === 'OutOfRange') {
-            suggestions += t('result.improvement.suggestions.DO.error');
-          } else if (value === 'Poor') {
-            suggestions += t('result.improvement.suggestions.DO.poor');
-          }
-          break;
-        case 'BOD':
-          if (value === 'OutOfRange') {
-            suggestions += t('result.improvement.suggestions.BOD.error');
-          } else if (value === 'Poor') {
-            suggestions += t('result.improvement.suggestions.BOD.poor');
-          }
-          break;
-        case 'NH3N':
-          if (value === 'OutOfRange') {
-            suggestions += t('result.improvement.suggestions.NH3N.error');
-          } else if (value === 'Poor') {
-            suggestions += t('result.improvement.suggestions.NH3N.poor');
-          }
-          break;
-        case 'EC':
-          if (value === 'OutOfRange') {
-            suggestions += t('result.improvement.suggestions.EC.error');
-          } else if (value === 'Poor') {
-            suggestions += t('result.improvement.suggestions.EC.poor');
-          }
-          break;
-        case 'SS':
-          if (value === 'OutOfRange') {
-            suggestions += t('result.improvement.suggestions.SS.error');
-          } else if (value === 'Poor') {
-            suggestions += t('result.improvement.suggestions.SS.poor');
-          }
-          break;
-        default:
-          suggestions += `${key} ${t('result.improvement.title')}：\n`;
-      }
-    }
-    if (index !== badValues.length - 1) {
-      suggestions += '\n\n';
-    }
-  });
-
-  Alert.alert(
-    t('result.improvement.title'),
-    suggestions,
-    [{ text: t('result.buttons.iKnow') }]
-    );
-  };
-
   // 資料尚未準備好時顯示載入中
   if (!isReady || !result) {
     return (
@@ -293,7 +213,7 @@ const showBadValues = (badValues) => {
         />
         <Button 
           title={t('result.buttons.viewSuggestions')} 
-          onPress={showMoreAlert}
+          onPress={() => navigation.navigate('Suggestions', { assessment: result.assessment })}
         />
       </View>
 

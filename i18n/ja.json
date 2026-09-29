@@ -118,6 +118,7 @@
       },
       "improvement": {
         "title": "改善提案",
+        "noRecommendations": "現在、不良またはエラーと判定された指標はありません。定期的な監視を続けてください。",
         "parameters": {
           "DO": "溶存酸素（%）",
           "BOD": "生物化学的酸素要求量（mg/L）",

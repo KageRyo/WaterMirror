@@ -132,6 +132,7 @@
     },
     "improvement": {
       "title": "Suggestions",
+      "noRecommendations": "No indicators are currently marked Poor or Error. Continue routine monitoring.",
       "parameters": {
         "DO": "Dissolved Oxygen (%)",
         "BOD": "Biochemical Oxygen Demand (mg/L)",
