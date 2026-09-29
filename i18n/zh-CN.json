@@ -118,7 +118,6 @@
     },
     "improvement": {
       "title": "改善建议",
-      "noRecommendations": "目前没有标记为不良或错误的项目，请继续定期监测。",
       "parameters": {
         "DO": "溶氧量（%）",
         "BOD": "生物需氧量（mg/L）",

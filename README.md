@@ -5,10 +5,10 @@
 WaterMirror is a cross-platform mobile frontend for WQI5-based current-state water quality assessment.
 
 <p align="center">
-  <img src="docs/screenshots/readme-flow.png" width="100%" alt="WaterMirror flow: home screen, manual input with Random Forest selected, assessment result, and improvement suggestions" />
+  <img src="docs/screenshots/readme-flow.png" width="100%" alt="WaterMirror home screen, manual input with Random Forest selected, and assessment result" />
 </p>
 
-<p align="center"><sub>From left to right: home, RF input, result, and improvement suggestions. The interface is real; sample measurements, backend-ready status, assessment, percentile, and chart data are simulated locally and do not come from a live backend.</sub></p>
+<p align="center"><sub>Sample measurements and assessment results are simulated locally.</sub></p>
 
 It allows users to:
 

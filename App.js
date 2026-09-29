@@ -10,7 +10,6 @@ import i18n from './i18n';
 import HomeScreen from './src/Home';
 import CalcScreen from './src/Calc';
 import ResultScreen from './src/Result';
-import SuggestionsScreen from './src/Suggestions';
 
 const Stack = createNativeStackNavigator();
 
@@ -40,13 +39,6 @@ function AppNavigator() {
         options={() => ({ 
           title: t('nav.result')
         })} 
-      />
-      <Stack.Screen
-        name="Suggestions"
-        component={SuggestionsScreen}
-        options={() => ({
-          title: t('result.improvement.title')
-        })}
       />
     </Stack.Navigator>
   );
