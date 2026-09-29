@@ -1,6 +1,6 @@
 # WaterMirror
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-57.0.14-brightgreen.svg)](https://expo.dev) [![Expo app version](https://img.shields.io/badge/Expo%20app%20version-2.2.2-brightgreen.svg)](app.json) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-57.0.25-brightgreen.svg)](https://expo.dev) [![Expo app version](https://img.shields.io/badge/Expo%20app%20version-2.2.2-brightgreen.svg)](app.json) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
 
 WaterMirror is a cross-platform mobile frontend for WQI5-based current-state water quality assessment.
 
@@ -29,6 +29,14 @@ WaterMirror depends on the API contract exposed by [WQSurrogateModels](https://g
 - Ammonia nitrogen (`NH3N`)
 - Electrical conductivity (`EC`)
 - Suspended solids (`SS`)
+
+## Screenshots
+
+These screenshots show the actual Expo Web interface at a portrait phone viewport. They use illustrative sample measurements (`DO 7.2`, `BOD 3.1`, `NH3-N 0.5`, `EC 280`, `SS 45`). The green backend-ready indicator and assessment response are simulated locally (WQI5 89.54, `Excellent`, 80th percentile); they do not show a live backend assessment.
+
+| Manual input | Assessment result |
+| :---: | :---: |
+| <img src="docs/screenshots/manual-input.png" width="320" alt="WaterMirror manual input form with illustrative sample measurements" /> | <img src="docs/screenshots/assessment-result.png" width="320" alt="WaterMirror assessment result with illustrative sample data" /> |
 
 ## Prerequisites
 
