@@ -32,11 +32,15 @@ WaterMirror depends on the API contract exposed by [WQSurrogateModels](https://g
 
 ## Screenshots
 
-These screenshots show the actual Expo Web interface at a portrait phone viewport. They use illustrative sample measurements (`DO 7.2`, `BOD 3.1`, `NH3-N 0.5`, `EC 280`, `SS 45`). The green backend-ready indicator and assessment response are simulated locally (WQI5 89.54, `Excellent`, 80th percentile); they do not show a live backend assessment.
+These screenshots show the actual Expo Web interface at a portrait phone viewport, from the home screen through model selection, manual input, and the assessment report. The model menu shows the available choices; the example assessment uses **Random Forest (RF)**. Measurements (`DO 7.2`, `BOD 3.1`, `NH3-N 0.5`, `EC 280`, `SS 45`), backend-ready status, assessment response (WQI5 89.54, `Excellent`), percentile, and chart data are simulated locally for illustration and do not come from a live backend.
 
-| Manual input | Assessment result |
+| Home | Model choices |
 | :---: | :---: |
-| <img src="docs/screenshots/manual-input.png" width="320" alt="WaterMirror manual input form with illustrative sample measurements" /> | <img src="docs/screenshots/assessment-result.png" width="320" alt="WaterMirror assessment result with illustrative sample data" /> |
+| <img src="docs/screenshots/home.png" width="300" alt="WaterMirror home screen" /> | <img src="docs/screenshots/model-options.png" width="300" alt="WaterMirror model picker listing the available assessment models" /> |
+
+| Manual input · Random Forest (RF) | Assessment result · Random Forest (RF) |
+| :---: | :---: |
+| <img src="docs/screenshots/manual-input.png" width="300" alt="WaterMirror manual input form with illustrative sample measurements and Random Forest selected" /> | <img src="docs/screenshots/assessment-result.png" width="300" alt="WaterMirror illustrative assessment result showing Random Forest" /> |
 
 ## Prerequisites
 
