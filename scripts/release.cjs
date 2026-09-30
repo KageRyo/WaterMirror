@@ -27,9 +27,9 @@ function getApkUrl(builds) {
 if (require.main === module) {
   try {
     if (process.argv[2] === 'artifact') {
-      console.log(getApkUrl(JSON.parse(fs.readFileSync(process.argv[3], 'utf8'))));
+      console.log(getApkUrl(JSON.parse(fs.readFileSync(0, 'utf8'))));
     } else if (process.argv[2] === 'metadata') {
-      const config = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
+      const config = JSON.parse(fs.readFileSync(0, 'utf8'));
       const release = validateRelease({
         tag: process.env.RELEASE_TAG,
         version: require('../app.json').expo.version,
@@ -38,7 +38,7 @@ if (require.main === module) {
       });
       for (const [key, value] of Object.entries(release)) console.log(`${key}=${value}`);
     } else {
-      throw new Error('Usage: node scripts/release.cjs metadata config.json | artifact build.json');
+      throw new Error('Usage: node scripts/release.cjs metadata < config.json | artifact < build.json');
     }
   } catch (error) {
     console.error(error.message);

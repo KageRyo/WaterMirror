@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { backendUrlStore } from '../src/utils/apiClient';
 
@@ -21,14 +21,16 @@ export function BackendProvider({ children }) {
     return () => { active = false; };
   }, []);
 
-  async function saveUrl(value) {
+  const saveUrl = useCallback(async (value) => {
     const saved = await backendUrlStore.save(value);
     setUrl(saved);
     setLoadFailed(false);
-  }
+  }, []);
+
+  const contextValue = useMemo(() => ({ url, saveUrl, loadFailed }), [url, saveUrl, loadFailed]);
 
   if (!loaded) return <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator /></View>;
-  return <BackendContext.Provider value={{ url, saveUrl, loadFailed }}>{children}</BackendContext.Provider>;
+  return <BackendContext.Provider value={contextValue}>{children}</BackendContext.Provider>;
 }
 
 export const useBackend = () => useContext(BackendContext);

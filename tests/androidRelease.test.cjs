@@ -45,3 +45,21 @@ test('artifact selection accepts only a finished Android APK build', () => {
     [{ ...build, artifacts: { buildUrl: 'http://expo.dev/build.apk' } }],
   ]) assert.throws(() => getApkUrl(data));
 });
+
+test('release CLI reads build JSON from stdin and fails without an artifact URL', () => {
+  const { spawnSync } = require('node:child_process');
+  const path = require('node:path');
+  const script = path.join(__dirname, '..', 'scripts', 'release.cjs');
+  const build = { platform: 'ANDROID', status: 'FINISHED', artifacts: { buildUrl: 'https://expo.dev/build.apk' } };
+  const success = spawnSync(process.execPath, [script, 'artifact'], {
+    input: JSON.stringify([build]), encoding: 'utf8',
+  });
+  assert.equal(success.status, 0);
+  assert.equal(success.stdout.trim(), build.artifacts.buildUrl);
+  const failed = spawnSync(process.execPath, [script, 'artifact'], {
+    input: JSON.stringify([{ ...build, status: 'ERRORED' }]), encoding: 'utf8',
+  });
+  assert.equal(failed.status, 1);
+  assert.equal(failed.stdout, '');
+  assert.match(failed.stderr, /did not finish successfully/);
+});

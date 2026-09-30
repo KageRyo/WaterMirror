@@ -1,7 +1,13 @@
 const STORAGE_KEY = 'watermirror-backend-url';
 
+function withoutTrailingSlashes(value) {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === '/') end -= 1;
+  return value.slice(0, end);
+}
+
 function normalizeBackendUrl(value) {
-  const input = String(value || '').trim().replace(/\/+$/, '');
+  const input = withoutTrailingSlashes(String(value || '').trim());
   // React Native's URL parser accepts invalid hosts and ports that browsers reject.
   const address = /^https?:\/\/(\[[0-9a-f:.]+\]|[a-z0-9.-]+)(?::(\d{1,5}))?(\/[^?#\s\\]*)?$/i.exec(input);
   if (!address || (address[2] && (Number(address[2]) < 1 || Number(address[2]) > 65535))) {
@@ -13,7 +19,7 @@ function normalizeBackendUrl(value) {
       /\/api\/v2\/?$/.test(url.pathname)) {
     throw new Error('Enter an HTTP or HTTPS service root without /api/v2');
   }
-  return url.href.replace(/\/+$/, '');
+  return withoutTrailingSlashes(url.href);
 }
 
 function createBackendUrlStore({ storage, defaultUrl = '' }) {

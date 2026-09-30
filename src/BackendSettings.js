@@ -6,6 +6,7 @@ import { fetchWithTimeout } from './utils/apiClient';
 
 const { normalizeBackendUrl } = require('./utils/backendSettings.cjs');
 const { getBackendStatus } = require('./utils/apiContract.cjs');
+const LAN_BACKEND_EXAMPLE = 'http://192.168.1.20:8001'; // NOSONAR: User-approved HTTP LAN example; the form explains unencrypted transport.
 
 export default function BackendSettingsScreen({ navigation }) {
   const { t } = useTranslation();
@@ -55,7 +56,7 @@ export default function BackendSettingsScreen({ navigation }) {
       {loadFailed && <Text style={styles.warning}>{t('backend.loadFailed')}</Text>}
       <TextInput style={styles.input} value={draft} editable={!busy}
         accessibilityLabel={t('backend.label')} autoCapitalize="none" autoCorrect={false}
-        keyboardType="url" placeholder="http://192.168.1.20:8001"
+        keyboardType="url" placeholder={LAN_BACKEND_EXAMPLE}
         onChangeText={(value) => { setDraft(value); setStatus(''); setError(''); }} />
       {error ? <Text accessibilityRole="alert" style={styles.warning}>{error}</Text> : null}
       <Text style={styles.warning}>{t('backend.httpNotice')}</Text>

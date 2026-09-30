@@ -49,7 +49,7 @@ const useServerConnection = () => {
         if (active) setStatus('backend_unreachable');
       }
     };
-    checkConnection();
+    void checkConnection();
     const intervalId = setInterval(checkConnection, 5000);
     return () => { active = false; clearInterval(intervalId); };
   }, [url]);
@@ -80,7 +80,7 @@ export default function CalcScreen({ navigation }) {
   );
 
   useEffect(() => {
-    loadStoredData();
+    void loadStoredData();
   }, []);
 
   // 載入暫存資料
@@ -118,7 +118,7 @@ export default function CalcScreen({ navigation }) {
         {
           text: t('calc.buttons.viewReport'),
           onPress: () => {
-            storeData(data, result);
+            void storeData(data, result);
             navigation.navigate('Result', { result });
           },
         },
