@@ -8,13 +8,14 @@ const { normalizeBackendUrl } = require('./utils/backendSettings.cjs');
 const { getBackendStatus } = require('./utils/apiContract.cjs');
 const LAN_BACKEND_EXAMPLE = 'http://192.168.1.20:8001'; // NOSONAR: User-approved HTTP LAN example; the form explains unencrypted transport.
 
-export default function BackendSettingsScreen({ navigation }) {
+export default function BackendSettingsScreen() {
   const { t } = useTranslation();
   const { url, saveUrl, loadFailed } = useBackend();
   const [draft, setDraft] = useState(url);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
 
   function validatedUrl() {
     try { return normalizeBackendUrl(draft); } catch {
@@ -43,7 +44,7 @@ export default function BackendSettingsScreen({ navigation }) {
     setBusy(true);
     try {
       await saveUrl(candidate);
-      navigation.goBack();
+      setSaved(true);
     } catch {
       setError(t('backend.saveFailed'));
     } finally { setBusy(false); }
@@ -57,13 +58,13 @@ export default function BackendSettingsScreen({ navigation }) {
       <TextInput style={styles.input} value={draft} editable={!busy}
         accessibilityLabel={t('backend.label')} autoCapitalize="none" autoCorrect={false}
         keyboardType="url" placeholder={LAN_BACKEND_EXAMPLE}
-        onChangeText={(value) => { setDraft(value); setStatus(''); setError(''); }} />
+        onChangeText={(value) => { setDraft(value); setStatus(''); setError(''); setSaved(false); }} />
       {error ? <Text accessibilityRole="alert" style={styles.warning}>{error}</Text> : null}
       <Text style={styles.warning}>{t('backend.httpNotice')}</Text>
       <View style={styles.button}><Button title={t('backend.test')} disabled={busy} onPress={testConnection} /></View>
       {status ? <Text accessibilityLiveRegion="polite">{t(`calc.connection.${status}`)}</Text> : null}
       <View style={styles.button}><Button title={t('backend.save')} disabled={busy} onPress={save} /></View>
-      <Text style={styles.hint}>{t('backend.savedLocally')}</Text>
+      {saved ? <Text accessibilityLiveRegion="polite">{t('backend.saved')}</Text> : null}
     </ScrollView>
   );
 }

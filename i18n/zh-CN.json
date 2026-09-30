@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "智能水质分析与改善评估系统",
-    "version": "版本：WaterMirror-{{platform}}-v2.2.2"
+    "version": "版本：WaterMirror-{{platform}}-v2.3.0"
   },
   "nav": {
     "home": "首页",
@@ -173,16 +173,16 @@
     }
   },
   "backend": {
-    "title": "后端地址设置",
-    "label": "后端服务网址",
-    "hint": "请输入包含 http:// 或 https:// 的网址与端口，无需加上 /api/v2。局域网 IP 必须能从此设备访问。",
+    "title": "后端地址",
+    "label": "服务网址",
+    "hint": "包含协议与端口，不需加 /api/v2。",
     "notConfigured": "尚未设置后端地址",
     "invalidUrl": "请输入有效的 HTTP 或 HTTPS 服务网址，不含 /api/v2、账号密码、查询参数或片段。",
-    "httpNotice": "HTTP 不会加密传输数据。建议公开服务使用 HTTPS；HTTP IP 适合可信任的局域网。",
+    "httpNotice": "HTTP 未加密，公开服务建议使用 HTTPS。",
     "test": "测试连接",
-    "save": "保存地址",
+    "save": "保存",
     "saveFailed": "无法保存后端地址，请重试。",
     "loadFailed": "无法读取已保存的地址，请重新设置。",
-    "savedLocally": "地址保存在此设备上，重新启动 App 后仍会保留。"
+    "saved": "已保存"
   }
 }
