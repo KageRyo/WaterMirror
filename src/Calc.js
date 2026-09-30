@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import config from '@/config';
 import { apiClient } from '@/utils/apiClient';
+import { useBackend } from '../contexts/BackendContext';
 
 const { getModelTypeLabel } = require('./utils/resultHelpers.cjs');
 
@@ -34,22 +35,24 @@ const ConnectionStatus = ({ status }) => {
 
 // 用於檢查與伺服器的連線狀態的 Hook
 const useServerConnection = () => {
+  const { url } = useBackend();
   const [status, setStatus] = useState('connecting');
 
-  const checkConnection = async () => {
-    try {
-      const backend = await apiClient.backendStatus();
-      setStatus(backend.state);
-    } catch {
-      setStatus('backend_unreachable');
-    }
-  };
-
   useEffect(() => {
-    checkConnection();
+    let active = true;
+    setStatus('connecting');
+    const checkConnection = async () => {
+      try {
+        const backend = await apiClient.backendStatus();
+        if (active) setStatus(backend.state);
+      } catch {
+        if (active) setStatus('backend_unreachable');
+      }
+    };
+    void checkConnection();
     const intervalId = setInterval(checkConnection, 5000);
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => { active = false; clearInterval(intervalId); };
+  }, [url]);
 
   return status;
 };
@@ -77,7 +80,7 @@ export default function CalcScreen({ navigation }) {
   );
 
   useEffect(() => {
-    loadStoredData();
+    void loadStoredData();
   }, []);
 
   // 載入暫存資料
@@ -115,7 +118,7 @@ export default function CalcScreen({ navigation }) {
         {
           text: t('calc.buttons.viewReport'),
           onPress: () => {
-            storeData(data, result);
+            void storeData(data, result);
             navigation.navigate('Result', { result });
           },
         },

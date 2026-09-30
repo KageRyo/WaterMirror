@@ -1,9 +1,10 @@
 import React from 'react';
-import { Alert, Image, Linking, Platform, StyleSheet, Text, TouchableOpacity, View, ActionSheet } from 'react-native';
+import { Alert, Image, Linking, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View, ActionSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useBackend } from '../contexts/BackendContext';
 import { ActionSheetProvider, useActionSheet } from '@expo/react-native-action-sheet';
 
 import GitHubMark from '../assets/github-mark.png';
@@ -28,6 +29,7 @@ const TopSection = () => {
 // 按鈕區塊
 const BtnSection = ({ navigation }) => {
   const { t } = useTranslation();
+  const { url } = useBackend();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { showActionSheetWithOptions } = useActionSheet();
   
@@ -95,6 +97,10 @@ const BtnSection = ({ navigation }) => {
   ];
 
   const handlePress = async (route) => {
+    if (route === 'Calc' && !url) {
+      navigation.navigate('BackendSettings');
+      return;
+    }
     if (route === 'Result') {
       try {
         const storedResult = await AsyncStorage.getItem('waterQualityResult');
@@ -130,6 +136,13 @@ const BtnSection = ({ navigation }) => {
         <CustomBtn {...btnData[2]} onPress={() => handlePress(btnData[2].route)} />
         <View style={btnStyles.btnSpace} />
         <CustomBtn {...btnData[3]} onPress={() => handlePress(btnData[3].route)} />
+      </View>
+      <View style={btnStyles.langBtnRow}>
+        <CustomBtn text={t('backend.title')} bgColor="#E6F2FF"
+          onPress={() => navigation.navigate('BackendSettings')} isLangBtn={true} />
+        <Text style={{ marginTop: 8, maxWidth: 320 }} numberOfLines={1}>
+          {url || t('backend.notConfigured')}
+        </Text>
       </View>
       <View style={btnStyles.langBtnRow}>
         <CustomBtn 
@@ -181,20 +194,20 @@ const openGitHub = () => {
 export function HomeScreen() {
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <TopSection />
       <View style={styles.content}>
         <BtnSection navigation={navigation} />
       </View>
       <BottomSection />
-    </View>
+    </ScrollView>
   );
 }
 
 // 主樣式表
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 20,

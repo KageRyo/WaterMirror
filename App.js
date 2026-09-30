@@ -6,6 +6,8 @@ import './i18n';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { LanguageProvider } from './contexts/LanguageContext';
 import i18n from './i18n';
+import { BackendProvider } from './contexts/BackendContext';
+import BackendSettingsScreen from './src/BackendSettings';
 
 import HomeScreen from './src/Home';
 import CalcScreen from './src/Calc';
@@ -19,6 +21,8 @@ function AppNavigator() {
 
   return (
     <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="BackendSettings" component={BackendSettingsScreen}
+        options={{ title: t('backend.title') }} />
       <Stack.Screen 
         name="Home" 
         component={HomeScreen} 
@@ -48,10 +52,12 @@ export default function App() {
   return (
     <I18nextProvider i18n={i18n}>
       <LanguageProvider>
-        <NavigationContainer>
-          <StatusBar />
-          <AppNavigator />
-        </NavigationContainer>
+        <BackendProvider>
+          <NavigationContainer>
+            <StatusBar />
+            <AppNavigator />
+          </NavigationContainer>
+        </BackendProvider>
       </LanguageProvider>
     </I18nextProvider>
   );

@@ -2,7 +2,7 @@
   "app": {
     "name": "WaterMirror",
     "subtitle": "智能水质分析与改善评估系统",
-    "version": "版本：WaterMirror-{{platform}}-v2.2.2"
+    "version": "版本：WaterMirror-{{platform}}-v2.3.0"
   },
   "nav": {
     "home": "首页",
@@ -171,5 +171,18 @@
       "bad": "糟糕",
       "terrible": "恶劣"
     }
+  },
+  "backend": {
+    "title": "后端地址",
+    "label": "服务网址",
+    "hint": "包含协议与端口，不需加 /api/v2。",
+    "notConfigured": "尚未设置后端地址",
+    "invalidUrl": "请输入有效的 HTTP 或 HTTPS 服务网址，不含 /api/v2、账号密码、查询参数或片段。",
+    "httpNotice": "HTTP 未加密，公开服务建议使用 HTTPS。",
+    "test": "测试连接",
+    "save": "保存",
+    "saveFailed": "无法保存后端地址，请重试。",
+    "loadFailed": "无法读取已保存的地址，请重新设置。",
+    "saved": "已保存"
   }
 }

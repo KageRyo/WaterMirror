@@ -2,7 +2,7 @@
     "app": {
       "name": "WaterMirror",
       "subtitle": "インテリジェント水質分析と改善評価システム",
-      "version": "バージョン：WaterMirror-{{platform}}-v2.2.2"
+      "version": "バージョン：WaterMirror-{{platform}}-v2.3.0"
     },
     "nav": {
       "home": "ホーム",
@@ -171,5 +171,18 @@
         "bad": "悪い",
         "terrible": "極めて悪い"
       }
-    }
+    },
+  "backend": {
+    "title": "バックエンドURL",
+    "label": "サービスURL",
+    "hint": "プロトコルとポートを含め、/api/v2 は付けないでください。",
+    "notConfigured": "バックエンドのURLが未設定です",
+    "invalidUrl": "/api/v2、認証情報、クエリ、フラグメントを含まない有効なHTTPまたはHTTPSのURLを入力してください。",
+    "httpNotice": "HTTPは暗号化されません。公開サービスにはHTTPSを推奨します。",
+    "test": "接続テスト",
+    "save": "保存",
+    "saveFailed": "保存できませんでした。再試行してください。",
+    "loadFailed": "保存したURLを読み込めませんでした。再設定してください。",
+    "saved": "保存しました"
   }
+}

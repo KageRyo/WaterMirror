@@ -2,7 +2,7 @@
   "expo": {
     "name": "WaterMirror",
     "slug": "WaterMirror",
-    "version": "2.2.2",
+    "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,7 +19,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.kaeryo.watermirror"
+      "package": "com.kaeryo.watermirror",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -43,6 +44,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "69a4804c-b0e6-476a-ae6b-d49f9e858f8b"
+      }
+    },
+    "owner": "imryo"
   }
 }

@@ -40,6 +40,7 @@ function withCleartextSetting(plugins, enabled) {
 
 function createAppConfig(config, env = process.env) {
   const isProduction = getBuildVariant(env) === PRODUCTION_VARIANT;
+  const allowCleartext = !isProduction || env.ALLOW_HTTP_BACKEND === 'true';
   const infoPlist = { ...(config.ios?.infoPlist || {}) };
 
   if (isProduction) {
@@ -57,7 +58,7 @@ function createAppConfig(config, env = process.env) {
       ...config.ios,
       infoPlist,
     },
-    plugins: withCleartextSetting(config.plugins, !isProduction),
+    plugins: withCleartextSetting(config.plugins, allowCleartext),
   };
 }
 
