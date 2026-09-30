@@ -1,12 +1,24 @@
 {
   "cli": {
-    "version": ">= 16.0.0"
+    "version": ">= 16.0.0",
+    "appVersionSource": "local"
   },
   "build": {
     "preview": {
       "distribution": "internal",
       "env": {
         "APP_VARIANT": "preview"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "release-apk": {
+      "extends": "production",
+      "environment": "production",
+      "env": {
+        "APP_VARIANT": "production",
+        "ALLOW_HTTP_BACKEND": "true"
       },
       "android": {
         "buildType": "apk"

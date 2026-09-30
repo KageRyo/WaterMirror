@@ -1,35 +1,117 @@
-name: Validate release metadata
+name: Build and publish Android release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - "WaterMirror-v*"
 
 permissions:
   contents: read
 
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  validate:
+  build:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      APP_VARIANT: production
+      ALLOW_HTTP_BACKEND: 'true'
+      EXPO_PUBLIC_API_BASE_URL: ${{ vars.EXPO_PUBLIC_API_BASE_URL }}
+    outputs:
+      tag: ${{ steps.metadata.outputs.tag }}
+      title: ${{ steps.metadata.outputs.title }}
+      apk-name: ${{ steps.metadata.outputs.apkName }}
     steps:
-      - name: Check out repository
+      - name: Check out tagged source
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - name: Verify repository visibility
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Verify repository visibility and release prerequisites
         env:
           GH_TOKEN: ${{ github.token }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          visibility="$(gh api "repos/${GITHUB_REPOSITORY}" --jq .visibility)"
-          test "$visibility" = "public"
+          test "$(gh api "repos/${GITHUB_REPOSITORY}" --jq .visibility)" = public
+          test -n "$EXPO_TOKEN" || { echo 'Configure the EXPO_TOKEN Actions secret'; exit 1; }
 
-      - name: Verify release tag and title
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate production config and release metadata
+        id: metadata
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          expected_version="$(node -p "require('./app.json').expo.version")"
-          expected_tag="WaterMirror-v${expected_version}"
-          expected_name="WaterMirror v${expected_version}"
-          test "$RELEASE_TAG" = "$expected_tag"
-          test "$RELEASE_NAME" = "$expected_name"
+          npx expo config --json > "$RUNNER_TEMP/expo-config.json"
+          node scripts/release.cjs metadata "$RUNNER_TEMP/expo-config.json" >> "$GITHUB_OUTPUT"
+          npm test
+
+      - name: Set up EAS CLI
+        run: npm install --global eas-cli@24.8.0
+
+      - name: Build production APK and wait for completion
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          eas build --platform android --profile release-apk --non-interactive --wait --json > "$RUNNER_TEMP/eas-build.json"
+
+      - name: Download and verify APK
+        env:
+          APK_NAME: ${{ steps.metadata.outputs.apkName }}
+        run: |
+          artifact_url="$(node scripts/release.cjs artifact "$RUNNER_TEMP/eas-build.json")"
+          mkdir -p release-assets
+          curl --fail --location --retry 3 --proto '=https' --proto-redir '=https' "$artifact_url" --output "release-assets/$APK_NAME"
+          unzip -t "release-assets/$APK_NAME"
+          unzip -l "release-assets/$APK_NAME" AndroidManifest.xml | grep -F AndroidManifest.xml
+          build_tools="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+          "$build_tools/apksigner" verify "release-assets/$APK_NAME"
+          "$build_tools/aapt" dump xmltree "release-assets/$APK_NAME" AndroidManifest.xml > "$RUNNER_TEMP/android-manifest.txt"
+          grep -E 'android:usesCleartextTraffic.*0xffffffff$' "$RUNNER_TEMP/android-manifest.txt"
+          cd release-assets
+          sha256sum "$APK_NAME" > SHA256SUMS.txt
+          sha256sum --check SHA256SUMS.txt
+
+      - name: Store verified release assets
+        uses: actions/upload-artifact@v6
+        with:
+          name: android-release
+          path: release-assets/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified release assets
+        uses: actions/download-artifact@v7
+        with:
+          name: android-release
+          path: release-assets
+
+      - name: Publish release with APK and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ needs.build.outputs.tag }}
+          RELEASE_TITLE: ${{ needs.build.outputs.title }}
+          APK_NAME: ${{ needs.build.outputs.apk-name }}
+        run: |
+          cd release-assets
+          sha256sum --check SHA256SUMS.txt
+          gh release create "$RELEASE_TAG" "$APK_NAME" SHA256SUMS.txt \
+            --verify-tag --draft --title "$RELEASE_TITLE" --generate-notes
+          gh release edit "$RELEASE_TAG" --draft=false

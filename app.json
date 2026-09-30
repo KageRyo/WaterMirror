@@ -43,6 +43,12 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "69a4804c-b0e6-476a-ae6b-d49f9e858f8b"
+      }
+    },
+    "owner": "imryo"
   }
 }
