@@ -171,5 +171,18 @@
         "bad": "悪い",
         "terrible": "極めて悪い"
       }
-    }
+    },
+  "backend": {
+    "title": "バックエンド設定",
+    "label": "バックエンドサービスのURL",
+    "hint": "http:// または https:// と必要なポート番号を入力してください。/api/v2 は不要です。LANのIPはこの端末からアクセスできる必要があります。",
+    "notConfigured": "バックエンドのURLが未設定です",
+    "invalidUrl": "/api/v2、認証情報、クエリ、フラグメントを含まない有効なHTTPまたはHTTPSのURLを入力してください。",
+    "httpNotice": "HTTP通信は暗号化されません。公開サービスではHTTPS、HTTPのIPアドレスは信頼できるLANで使用してください。",
+    "test": "接続テスト",
+    "save": "URLを保存",
+    "saveFailed": "URLを保存できませんでした。再試行してください。",
+    "loadFailed": "保存したURLを読み込めませんでした。再設定してください。",
+    "savedLocally": "URLはこの端末に保存され、アプリの再起動後も保持されます。"
   }
+}

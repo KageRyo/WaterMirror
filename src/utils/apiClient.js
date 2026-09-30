@@ -1,4 +1,7 @@
 import config from '@/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const { createBackendUrlStore } = require('./backendSettings.cjs');
 
 const {
   V2_ENDPOINTS,
@@ -12,8 +15,10 @@ const {
   validateCsvRowsResponse,
 } = require('./apiContract.cjs');
 
-const BASE_URL = config.apiBaseUrl.replace(/\/$/, ''); // remove trailing slash if any
-const V2_BASE = `${BASE_URL}/api/v2`;
+export const backendUrlStore = createBackendUrlStore({
+  storage: AsyncStorage,
+  defaultUrl: process.env.EXPO_PUBLIC_API_BASE_URL || (__DEV__ ? config.apiBaseUrl : ''),
+});
 
 /**
  * 帶超時的 fetch（可重用）
@@ -32,9 +37,7 @@ export function fetchWithTimeout(url, options = {}, timeout = config.requestTime
  * 用法: apiClient.v2('/assessment') → http://.../api/v2/assessment
  */
 export function v2(path) {
-  if (!path) return V2_BASE;
-  const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  return `${V2_BASE}${cleanPath}`;
+  return backendUrlStore.v2(path);
 }
 
 /**

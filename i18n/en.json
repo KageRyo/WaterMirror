@@ -185,5 +185,18 @@
       "bad": "Bad",
       "terrible": "Terrible"
     }
+  },
+  "backend": {
+    "title": "Backend settings",
+    "label": "Backend service URL",
+    "hint": "Include http:// or https:// and the port if needed. Do not append /api/v2. A LAN IP must be reachable from this device.",
+    "notConfigured": "Backend address not configured",
+    "invalidUrl": "Enter a valid HTTP or HTTPS service root without /api/v2, credentials, query parameters, or fragments.",
+    "httpNotice": "HTTP sends data without encryption. Use HTTPS for public services; use HTTP IP addresses only on a trusted LAN.",
+    "test": "Test connection",
+    "save": "Save address",
+    "saveFailed": "Could not save the backend address. Please try again.",
+    "loadFailed": "Could not load the saved address. Please configure it again.",
+    "savedLocally": "The address is saved on this device and kept after restarting the app."
   }
 }

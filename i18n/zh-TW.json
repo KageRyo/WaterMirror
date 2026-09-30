@@ -185,5 +185,18 @@
       "bad": "糟糕",
       "terrible": "惡劣"
     }
+  },
+  "backend": {
+    "title": "後端位址設定",
+    "label": "後端服務網址",
+    "hint": "請填入包含 http:// 或 https:// 的網址與連接埠，不需加上 /api/v2。區網 IP 必須從這部裝置連得到。",
+    "notConfigured": "尚未設定後端位址",
+    "invalidUrl": "請輸入有效的 HTTP 或 HTTPS 服務網址，不含 /api/v2、帳密、查詢參數或片段。",
+    "httpNotice": "HTTP 不會加密傳輸資料。建議公開服務使用 HTTPS；HTTP IP 適合可信任的區網。",
+    "test": "測試連線",
+    "save": "儲存位址",
+    "saveFailed": "無法儲存後端位址，請再試一次。",
+    "loadFailed": "無法讀取已儲存的位址，請重新設定。",
+    "savedLocally": "位址儲存在這部裝置，重新啟動 App 後仍會保留。"
   }
 }

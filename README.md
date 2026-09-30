@@ -1,6 +1,6 @@
 # WaterMirror
 
-[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-57.0.25-brightgreen.svg)](https://expo.dev) [![Expo app version](https://img.shields.io/badge/Expo%20app%20version-2.2.2-brightgreen.svg)](app.json) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![Expo](https://img.shields.io/badge/Expo-57.0.26-brightgreen.svg)](https://expo.dev) [![Expo app version](https://img.shields.io/badge/Expo%20app%20version-2.2.2-brightgreen.svg)](app.json) [![CI](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml/badge.svg)](https://github.com/KageRyo/WaterMirror/actions/workflows/ci.yml)
 
 WaterMirror is a cross-platform mobile frontend for WQI5-based current-state water quality assessment.
 
@@ -55,6 +55,17 @@ npx expo start
 ```
 
 ## Environment Configuration
+
+In the app, open **Backend settings** from the home screen to enter your own
+backend URL, test its health and readiness, and save it on the device. For a
+LAN server, include the protocol and port: `http://192.168.1.20:8001`. Public
+APKs support HTTP IP addresses; HTTPS is recommended for public services.
+The saved address overrides the initial build-time URL and survives restarts.
+Release builds without a default URL prompt for configuration before data entry.
+
+<img src="docs/screenshots/backend-settings.png" width="360" alt="Backend settings with an example HTTP LAN IP address" />
+
+The screenshot uses an example LAN address; it does not identify a public service.
 
 Set `EXPO_PUBLIC_API_BASE_URL` to the backend service root. Do not include `/api/v2`.
 
