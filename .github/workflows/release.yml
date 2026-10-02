@@ -83,7 +83,7 @@ jobs:
           sha256sum --check SHA256SUMS.txt
 
       - name: Store verified release assets
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: android-release
           path: release-assets/
