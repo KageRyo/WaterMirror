@@ -5,8 +5,16 @@ on:
     branches: [main]
     tags:
       - "WaterMirror-v*"
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'LICENSE'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'LICENSE'
 
 permissions:
   contents: read
