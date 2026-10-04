@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "test": "node --test tests/*.test.cjs",
     "expo:config": "expo config --json",
-    "expo:doctor": "expo-doctor"
+    "expo:doctor": "expo-doctor",
+    "audit:ci": "node scripts/audit.cjs"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^4.1.0",
@@ -33,7 +34,7 @@
     "react-dom": "19.2.8",
     "react-i18next": "^15.1.0",
     "react-native": "0.86.3",
-    "react-native-chart-kit": "^6.12.0",
+    "react-native-chart-kit": "^6.12.3",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-picker-select": "^9.0.1",
     "react-native-safe-area-context": "~5.7.0",
