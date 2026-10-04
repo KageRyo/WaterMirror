@@ -123,6 +123,7 @@ Example row:
 
 ## Documentation
 
+- [Privacy Policy](PRIVACY.md)
 - [Backend Integration](docs/backend-integration.md)
 - [CSV Format](docs/csv-format.md)
 - [Result Fields](docs/result-fields.md)
