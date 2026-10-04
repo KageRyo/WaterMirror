@@ -79,7 +79,8 @@ jobs:
           "$build_tools/aapt" dump xmltree "release-assets/$APK_NAME" AndroidManifest.xml > "$RUNNER_TEMP/android-manifest.txt"
           grep -E 'android:usesCleartextTraffic.*0xffffffff$' "$RUNNER_TEMP/android-manifest.txt"
           cd release-assets
-          sha256sum "$APK_NAME" > SHA256SUMS.txt
+          cp "$APK_NAME" WaterMirror.apk
+          sha256sum "$APK_NAME" WaterMirror.apk > SHA256SUMS.txt
           sha256sum --check SHA256SUMS.txt
 
       - name: Store verified release assets
@@ -112,6 +113,6 @@ jobs:
         run: |
           cd release-assets
           sha256sum --check SHA256SUMS.txt
-          gh release create "$RELEASE_TAG" "$APK_NAME" SHA256SUMS.txt \
+          gh release create "$RELEASE_TAG" "$APK_NAME" WaterMirror.apk SHA256SUMS.txt \
             --verify-tag --draft --title "$RELEASE_TITLE" --generate-notes
           gh release edit "$RELEASE_TAG" --draft=false
