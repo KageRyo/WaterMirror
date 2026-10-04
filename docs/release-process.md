@@ -49,6 +49,7 @@ then publishes it. Build or upload failures therefore cannot publish a
 source-only release. A successful release contains:
 
 - `WaterMirror-vX.Y.Z.apk`
+- `WaterMirror.apk` (stable filename for the latest direct download)
 - `SHA256SUMS.txt`
 - GitHub-generated source archives
 
