@@ -98,7 +98,7 @@ const BtnSection = ({ navigation }) => {
 
   const handlePress = async (route) => {
     if (route === 'Calc' && !url) {
-      navigation.navigate('BackendSettings');
+      navigation.navigate('BackendSettings', undefined, { pop: true });
       return;
     }
     if (route === 'Result') {
@@ -109,7 +109,7 @@ const BtnSection = ({ navigation }) => {
           Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
           return;  // 如果沒有資料，直接返回，不執行導航
         }
-        navigation.navigate(route, { result: parsedResult });
+        navigation.navigate(route, { result: parsedResult }, { pop: true });
       } catch (error) {
         Alert.alert(t('alerts.notice'), t('alerts.pleaseInputData'));
         return;
@@ -121,7 +121,7 @@ const BtnSection = ({ navigation }) => {
         // 不執行任何操作以隱藏錯誤訊息
       }
     } else {
-      navigation.navigate(route);
+      navigation.navigate(route, undefined, { pop: true });
     }
   };
 
@@ -139,7 +139,7 @@ const BtnSection = ({ navigation }) => {
       </View>
       <View style={btnStyles.langBtnRow}>
         <CustomBtn text={t('backend.title')} bgColor="#E6F2FF"
-          onPress={() => navigation.navigate('BackendSettings')} isLangBtn={true} />
+          onPress={() => navigation.navigate('BackendSettings', undefined, { pop: true })} isLangBtn={true} />
         <Text style={{ marginTop: 8, maxWidth: 320 }} numberOfLines={1}>
           {url || t('backend.notConfigured')}
         </Text>

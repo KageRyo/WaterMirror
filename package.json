@@ -16,8 +16,8 @@
     "@expo/react-native-action-sheet": "^4.1.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-picker/picker": "2.11.4",
-    "@react-navigation/native": "^6.1.17",
-    "@react-navigation/native-stack": "^6.11.0",
+    "@react-navigation/native": "^7.5.1",
+    "@react-navigation/native-stack": "^7.21.0",
     "babel-plugin-module-resolver": "^5.0.3",
     "expo": "~57.0.30",
     "expo-build-properties": "~57.0.22",
@@ -45,7 +45,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.7",
     "babel-preset-expo": "~57.0.16",
-    "image-size": "file:vendor/image-size"
+    "image-size": "^2.0.4"
   },
   "expo": {
     "install": {

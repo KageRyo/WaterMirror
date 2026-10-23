@@ -289,7 +289,7 @@ const showBadValues = (badValues) => {
       <View style={styles.btnContainer}>
         <Button 
           title={t('result.buttons.reenterData')} 
-          onPress={() => navigation.navigate('Calc')} 
+          onPress={() => navigation.navigate('Calc', undefined, { pop: true })}
         />
         <Button 
           title={t('result.buttons.viewSuggestions')} 

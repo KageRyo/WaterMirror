@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:22.23.4
 
 # 安裝必要的工具
 RUN apt-get update \
