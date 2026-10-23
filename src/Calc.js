@@ -119,7 +119,7 @@ export default function CalcScreen({ navigation }) {
           text: t('calc.buttons.viewReport'),
           onPress: () => {
             void storeData(data, result);
-            navigation.navigate('Result', { result });
+            navigation.navigate('Result', { result }, { pop: true });
           },
         },
       ],
