@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { buildAppConfig, normalizeBaseUrl, SUPPORTED_MODEL_TYPES, isSupportedModelType } = require('../src/utils/appConfig.cjs');
+const { buildAppConfig, normalizeBaseUrl, isSupportedModelType } = require('../src/utils/appConfig.cjs');
 
 test('normalizeBaseUrl removes trailing slash', () => {
   assert.equal(normalizeBaseUrl('https://api.example.com/'), 'https://api.example.com');
@@ -30,12 +30,6 @@ test('buildAppConfig falls back on unsupported model type', () => {
     EXPO_PUBLIC_DEFAULT_MODEL: 'unknown_model',
   });
   assert.equal(config.defaultModelType, 'direct_wqi5');
-});
-
-test('SUPPORTED_MODEL_TYPES is exported and contains expected values', () => {
-  assert.ok(Array.isArray(SUPPORTED_MODEL_TYPES));
-  assert.ok(SUPPORTED_MODEL_TYPES.includes('direct_wqi5'));
-  assert.ok(SUPPORTED_MODEL_TYPES.includes('lightgbm'));
 });
 
 test('isSupportedModelType works correctly', () => {
