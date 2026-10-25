@@ -10,9 +10,11 @@
     "test": "node --test tests/*.test.cjs",
     "expo:config": "expo config --json",
     "expo:doctor": "expo-doctor",
-    "audit:ci": "node scripts/audit.cjs"
+    "audit:ci": "node scripts/audit.cjs",
+    "postinstall": "node scripts/patch-toolchain.cjs --apply"
   },
   "dependencies": {
+    "@expo/mcp-tunnel": "0.2.4",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-picker/picker": "2.11.4",
@@ -61,7 +63,9 @@
     "uuid": "11.1.1",
     "react-native-picker-select": {
       "@react-native-picker/picker": "$@react-native-picker/picker"
-    }
+    },
+    "zod": "4.6.7",
+    "node-forge": "https://codeload.github.com/digitalbazaar/forge/tar.gz/ceba34402e329f0365134f23fe19898756527d65"
   },
   "private": true
 }

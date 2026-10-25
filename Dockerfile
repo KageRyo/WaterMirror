@@ -12,6 +12,8 @@ WORKDIR /workspace
 
 # 複製 package.json 和 package-lock.json
 COPY package*.json ./
+COPY scripts/patch-toolchain.cjs ./scripts/
+COPY security/toolchain-patches.json ./security/
 RUN npm ci
 
 # 安裝專案依賴
