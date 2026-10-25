@@ -1,9 +1,7 @@
 const { spawnSync } = require('node:child_process');
 
-const ALLOWED_UNPATCHED_ADVISORIES = new Set([
-  'GHSA-vfj7-8cjw-p6xm', // braces: no patched release as of 2026-10-04
-  'GHSA-86w9-cpqp-85rv', // node-forge: no patched npm release as of 2026-10-04
-]);
+// Fail closed if an install skipped or changed the reviewed source fixes.
+require('./patch-toolchain.cjs').processPatches();
 
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const result = spawnSync(npmCommand, ['audit', '--json'], {
@@ -26,7 +24,12 @@ try {
   process.exit(1);
 }
 
-const vulnerabilities = report.vulnerabilities ?? {};
+if (report.error || !report.vulnerabilities || !report.metadata?.vulnerabilities || ![0, 1].includes(result.status)) {
+  console.error('npm audit did not return a valid completed vulnerability report');
+  process.exit(1);
+}
+
+const vulnerabilities = report.vulnerabilities;
 const severityRank = { info: 0, low: 1, moderate: 2, high: 3, critical: 4 };
 
 function advisoryId(via) {
@@ -56,7 +59,6 @@ function collectAdvisories(packageName, seen = new Set()) {
 }
 
 const blocked = [];
-const allowed = [];
 
 for (const [packageName, vulnerability] of Object.entries(vulnerabilities)) {
   if ((severityRank[vulnerability.severity] ?? 0) < severityRank.high) continue;
@@ -65,17 +67,6 @@ for (const [packageName, vulnerability] of Object.entries(vulnerabilities)) {
   const highAdvisories = advisories.filter(
     (item) => (severityRank[item.severity] ?? 0) >= severityRank.high,
   );
-
-  if (
-    highAdvisories.length > 0 &&
-    highAdvisories.every((item) => {
-      const id = advisoryId(item);
-      return id && ALLOWED_UNPATCHED_ADVISORIES.has(id);
-    })
-  ) {
-    allowed.push(packageName);
-    continue;
-  }
 
   blocked.push({
     packageName,
@@ -88,17 +79,10 @@ for (const [packageName, vulnerability] of Object.entries(vulnerabilities)) {
   });
 }
 
-if (allowed.length > 0) {
-  console.warn(
-    'Allowed unpatched upstream high-severity advisories affecting:',
-    allowed.join(', '),
-  );
-}
-
 if (blocked.length > 0) {
   console.error('Blocking high/critical npm audit findings:');
   console.error(JSON.stringify(blocked, null, 2));
   process.exit(1);
 }
 
-console.log('No unapproved high/critical npm audit findings.');
+console.log('No high/critical npm audit findings; reviewed toolchain fixes verified.');
