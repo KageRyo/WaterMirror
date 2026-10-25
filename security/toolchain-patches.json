@@ -1,0 +1,23 @@
+{
+  "mcpVersion": "0.2.4",
+  "zodVersion": "4.6.7",
+  "forgeVersion": "1.4.1-0",
+  "forgeResolved": "https://codeload.github.com/digitalbazaar/forge/tar.gz/ceba34402e329f0365134f23fe19898756527d65",
+  "forgeRsaSha256": "acc22e5d36e27832c34e02dd3933aad7977d45b047eead5016520735efedc9c5",
+  "patches": [
+    {
+      "path": "dist/TunnelMcpServerProxy.js",
+      "before": "import { zodToJsonSchema } from 'zod-to-json-schema';",
+      "after": "// Zod 4's native converter preserves the CLI's nested tool schemas.\nconst zodToJsonSchema = (schema) => z.toJSONSchema(schema, { target: 'draft-7' });",
+      "beforeSha256": "5e39700527aad772b22343f1384f0153d0b2e5a5715b70c3cd86c7a8b5ea6940",
+      "afterSha256": "5b85dbc8a989520952918693b1339d6f3933b27f37c6d800da82905a6f507928"
+    },
+    {
+      "path": "dist/types.d.ts",
+      "before": "import { type ZodOptional, type ZodRawShape, type ZodType, type ZodTypeDef } from 'zod';\ntype PromptArgsRawShape = {\n    [k: string]: ZodType<string, ZodTypeDef, string> | ZodOptional<ZodType<string, ZodTypeDef, string>>;",
+      "after": "import { type ZodOptional, type ZodRawShape, type ZodType } from 'zod';\ntype PromptArgsRawShape = {\n    [k: string]: ZodType<string, string> | ZodOptional<ZodType<string, string>>;",
+      "beforeSha256": "99af540fd215c3b1f916a4d814116ccd9b2c40195037baebfb7c6113998b595c",
+      "afterSha256": "fd171da7c898ba5de14cbe159d77a6f2c492d81459923e9db0ca0b7a95aec55d"
+    }
+  ]
+}
