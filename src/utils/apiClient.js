@@ -67,7 +67,8 @@ export const apiClient = {
    */
   health: () => fetchWithTimeout(v2('/health'), {}, 3000),
 
-  ready: () => fetchWithTimeout(v2(V2_ENDPOINTS.ready), {}, 3000),
+  // A cold edge device validates mounted artifacts before reporting readiness.
+  ready: () => fetchWithTimeout(v2(V2_ENDPOINTS.ready), {}, config.requestTimeoutMs),
 
   backendStatus: () => getBackendStatus(apiClient),
 
