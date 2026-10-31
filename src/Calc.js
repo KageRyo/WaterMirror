@@ -137,7 +137,7 @@ export default function CalcScreen({ navigation }) {
 
   // 處理上傳的CSV水質資料檔案
   const handleFileUpload = useCallback(async () => {
-    if (isUploading) return; // 如果正在上傳中，直接返回
+    if (isUploading || isSubmitting) return; // 如果正在上傳中，直接返回
 
     try {
       setIsUploading(true);
@@ -179,11 +179,11 @@ export default function CalcScreen({ navigation }) {
     } finally {
       setIsUploading(false); // 無論成功與否，都將上傳狀態設為 false
     }
-  }, [handleUploadSuccess, isUploading, selectedModelType, t]); // 加入相依性陣列
+  }, [handleUploadSuccess, isUploading, isSubmitting, selectedModelType, t]); // 加入相依性陣列
 
   // 處理手動輸入的水質資料
   const handleSubmit = async () => {
-    if (isSubmitting) return;
+    if (isSubmitting || isUploading) return;
 
     const emptyFields = Object.entries(data).filter(([, value]) => value === '');
     if (emptyFields.length > 0) {
@@ -305,7 +305,7 @@ export default function CalcScreen({ navigation }) {
     
         <View style={styles.btnContainer}>
           <Button title={t('calc.buttons.clear')} onPress={clearInput} />
-          <Button title={isSubmitting ? t('calc.connection.connecting') : t('calc.buttons.submit')} onPress={handleSubmit} disabled={isSubmitting} />
+          <Button title={isSubmitting ? t('calc.connection.connecting') : t('calc.buttons.submit')} onPress={handleSubmit} disabled={isSubmitting || isUploading} />
         </View>
 
         <View style={styles.dataDisplayContainer}>
@@ -332,9 +332,13 @@ export default function CalcScreen({ navigation }) {
           <Button 
             title={isUploading ? t('calc.connection.connecting') : t('calc.buttons.uploadFile')}
             onPress={handleFileUpload}
-            disabled={isUploading} // 在上傳過程中禁用按鈕
+            disabled={isUploading || isSubmitting} // 在上傳過程中禁用按鈕
           />
         </View>
+
+        {(isSubmitting || isUploading) && (
+          <Text accessibilityLiveRegion="polite">{t('calc.assessmentPending')}</Text>
+        )}
 
         {/* 警告訊息 */}
         <View style={styles.warningContainer}>

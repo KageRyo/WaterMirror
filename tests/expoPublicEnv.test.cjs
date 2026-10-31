@@ -10,6 +10,8 @@ test('Expo public settings use static process.env references', () => {
     'EXPO_PUBLIC_API_BASE_URL',
     'EXPO_PUBLIC_DEFAULT_MODEL',
     'EXPO_PUBLIC_REQUEST_TIMEOUT_MS',
+    'EXPO_PUBLIC_READINESS_TIMEOUT_MS',
+    'EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS',
   ]) {
     assert.match(configSource, new RegExp(`process\\.env\\.${variable}`));
   }

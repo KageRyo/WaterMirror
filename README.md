@@ -93,6 +93,19 @@ EXPO_PUBLIC_DEFAULT_MODEL=direct_wqi5
 EXPO_PUBLIC_REQUEST_TIMEOUT_MS=10000
 ```
 
+Health probes have a 3-second timeout. With no timeout overrides, ordinary requests
+use 10 seconds, readiness checks allow 60 seconds for artifact verification, and
+assessments (including CSV) allow 240 seconds for the first model load on edge devices.
+Both saved-backend checks and the settings screen's test connection use the same policy.
+Set `EXPO_PUBLIC_READINESS_TIMEOUT_MS` and `EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS`
+to tune these stages separately. For compatibility, an explicit positive
+`EXPO_PUBLIC_REQUEST_TIMEOUT_MS` also sets their fallback unless the dedicated
+setting is provided. For example, add `EXPO_PUBLIC_READINESS_TIMEOUT_MS=60000`
+and `EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS=240000` to the configurations above.
+The release-apk build profile explicitly sets the 10s/60s/240s budgets so a legacy
+general timeout in the cloud environment cannot shorten model loading. Timeouts are
+build-time settings; existing APKs retain their bundled values until rebuilt.
+
 ## Backend Contract
 
 WaterMirror uses `src/utils/apiClient.js` as the centralized client for the backend.
