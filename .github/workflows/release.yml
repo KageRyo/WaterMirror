@@ -1,6 +1,12 @@
 name: Build and publish Android release
 
 on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing WaterMirror version tag to build and publish
+        required: true
+        type: string
   push:
     tags:
       - "WaterMirror-v*"
@@ -9,7 +15,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: android-release-${{ github.ref }}
+  group: android-release-${{ inputs.release_tag || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -20,6 +26,7 @@ jobs:
       APP_VARIANT: production
       ALLOW_HTTP_BACKEND: 'true'
       EXPO_PUBLIC_API_BASE_URL: ${{ vars.EXPO_PUBLIC_API_BASE_URL }}
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
     outputs:
       tag: ${{ steps.metadata.outputs.tag }}
       title: ${{ steps.metadata.outputs.title }}
@@ -28,7 +35,16 @@ jobs:
       - name: Check out tagged source
         uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.release_tag || github.ref }}
+          fetch-depth: 0
           persist-credentials: false
+
+      - name: Verify tagged source is part of main
+        run: |
+          [[ "$RELEASE_TAG" =~ ^WaterMirror-v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Expected a WaterMirror-vX.Y.Z tag'; exit 1; }
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")"
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor HEAD FETCH_HEAD
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -51,8 +67,6 @@ jobs:
 
       - name: Validate production config and release metadata
         id: metadata
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
         run: |
           ./node_modules/.bin/expo config --json > "$RUNNER_TEMP/expo-config.json"
           node scripts/release.cjs metadata < "$RUNNER_TEMP/expo-config.json" >> "$GITHUB_OUTPUT"
