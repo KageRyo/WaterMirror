@@ -159,3 +159,11 @@ Example row:
 ## License
 
 Apache License 2.0. See `LICENSE`.
+
+### Retry an interrupted Android release
+
+If the Android release workflow fails before publishing, run **Build and publish
+Android release** manually from `main` with `release_tag` set to the existing
+`WaterMirror-vX.Y.Z` tag. The workflow checks out that immutable tag and verifies
+it belongs to `main` before building. Keep the original tag; do not move it for
+release-pipeline maintenance.
