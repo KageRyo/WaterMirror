@@ -102,7 +102,9 @@ to tune these stages separately. For compatibility, an explicit positive
 `EXPO_PUBLIC_REQUEST_TIMEOUT_MS` also sets their fallback unless the dedicated
 setting is provided. For example, add `EXPO_PUBLIC_READINESS_TIMEOUT_MS=60000`
 and `EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS=240000` to the configurations above.
-Timeouts are build-time settings; existing APKs retain their bundled values until rebuilt.
+The release-apk build profile explicitly sets the 10s/60s/240s budgets so a legacy
+general timeout in the cloud environment cannot shorten model loading. Timeouts are
+build-time settings; existing APKs retain their bundled values until rebuilt.
 
 ## Backend Contract
 

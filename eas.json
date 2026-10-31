@@ -18,7 +18,10 @@
       "environment": "production",
       "env": {
         "APP_VARIANT": "production",
-        "ALLOW_HTTP_BACKEND": "true"
+        "ALLOW_HTTP_BACKEND": "true",
+        "EXPO_PUBLIC_REQUEST_TIMEOUT_MS": "10000",
+        "EXPO_PUBLIC_READINESS_TIMEOUT_MS": "60000",
+        "EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS": "240000"
       },
       "android": {
         "buildType": "apk"
