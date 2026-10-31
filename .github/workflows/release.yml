@@ -45,7 +45,9 @@ jobs:
           test -n "$EXPO_TOKEN" || { echo 'Configure the EXPO_TOKEN Actions secret'; exit 1; }
 
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          npm ci --ignore-scripts
+          node scripts/patch-toolchain.cjs --apply
 
       - name: Validate production config and release metadata
         id: metadata
