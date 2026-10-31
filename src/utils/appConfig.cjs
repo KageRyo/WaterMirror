@@ -6,7 +6,7 @@ function normalizeBaseUrl(url) {
 
 function parseInteger(value, fallback) {
   const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) ? parsed : fallback;
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
 function buildAppConfig(env) {
@@ -20,10 +20,16 @@ function buildAppConfig(env) {
     );
   }
 
+  const requestTimeoutMs = parseInteger(env.EXPO_PUBLIC_REQUEST_TIMEOUT_MS, 10000);
+  // Keep an explicitly configured general timeout as the fallback for existing builds.
+  const hasGeneralOverride = parseInteger(env.EXPO_PUBLIC_REQUEST_TIMEOUT_MS, null) !== null;
+
   return {
     apiBaseUrl: normalizeBaseUrl(env.EXPO_PUBLIC_API_BASE_URL),
     defaultModelType: isSupportedModelType(defaultModelType) ? defaultModelType : 'direct_wqi5',
-    requestTimeoutMs: parseInteger(env.EXPO_PUBLIC_REQUEST_TIMEOUT_MS, 10000),
+    requestTimeoutMs,
+    readinessTimeoutMs: parseInteger(env.EXPO_PUBLIC_READINESS_TIMEOUT_MS, hasGeneralOverride ? requestTimeoutMs : 60000),
+    assessmentTimeoutMs: parseInteger(env.EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS, hasGeneralOverride ? requestTimeoutMs : 240000),
     supportedModelTypes: SUPPORTED_MODEL_TYPES,
   };
 }

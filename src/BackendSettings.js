@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useBackend } from '../contexts/BackendContext';
+import config from './config';
 import { fetchWithTimeout } from './utils/apiClient';
 
 const { normalizeBackendUrl } = require('./utils/backendSettings.cjs');
-const { getBackendStatus } = require('./utils/apiContract.cjs');
+const { createBackendStatusClient } = require('./utils/backendStatusClient.cjs');
 const LAN_BACKEND_EXAMPLE = 'http://192.168.1.20:8001'; // NOSONAR: User-approved HTTP LAN example; the form explains unencrypted transport.
 
 export default function BackendSettingsScreen() {
@@ -30,10 +31,11 @@ export default function BackendSettingsScreen() {
     setBusy(true);
     setStatus('connecting');
     try {
-      const result = await getBackendStatus({
-        health: () => fetchWithTimeout(`${candidate}/api/v2/health`, {}, 10000),
-        ready: () => fetchWithTimeout(`${candidate}/api/v2/ready`, {}, 10000),
-      });
+      const result = await createBackendStatusClient({
+        v2: (path) => `${candidate}/api/v2${path}`,
+        fetchWithTimeout,
+        config,
+      }).backendStatus();
       setStatus(result.state);
     } finally { setBusy(false); }
   }

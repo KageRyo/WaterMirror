@@ -1,13 +1,14 @@
 import config from '@/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const { createBackendStatusClient } = require('./backendStatusClient.cjs');
+
 const { createBackendUrlStore } = require('./backendSettings.cjs');
 
 const {
   V2_ENDPOINTS,
   appendCsvModelType,
   createAssessmentRequest,
-  getBackendStatus,
   normalizeClientError,
   parseBackendError,
   RequestTimeoutError,
@@ -65,12 +66,7 @@ export const apiClient = {
   /**
    * 健康檢查（用於連線狀態）
    */
-  health: () => fetchWithTimeout(v2('/health'), {}, 3000),
-
-  // A cold edge device validates mounted artifacts before reporting readiness.
-  ready: () => fetchWithTimeout(v2(V2_ENDPOINTS.ready), {}, config.requestTimeoutMs),
-
-  backendStatus: () => getBackendStatus(apiClient),
+  ...createBackendStatusClient({ v2, fetchWithTimeout, config }),
 
   /**
    * 單筆水質資料評估
@@ -85,7 +81,7 @@ export const apiClient = {
         },
         body: JSON.stringify(createAssessmentRequest(data)),
       },
-      config.requestTimeoutMs
+      config.assessmentTimeoutMs
     ),
 
   /**
@@ -98,7 +94,7 @@ export const apiClient = {
         method: 'POST',
         body: appendCsvModelType(formData, modelType),
       },
-      config.requestTimeoutMs
+      config.assessmentTimeoutMs
     ),
 
   assessCsvRows: (formData, modelType = config.defaultModelType) =>
@@ -108,7 +104,7 @@ export const apiClient = {
         method: 'POST',
         body: appendCsvModelType(formData, modelType),
       },
-      config.requestTimeoutMs
+      config.assessmentTimeoutMs
     ),
 
   /**

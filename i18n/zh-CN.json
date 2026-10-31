@@ -35,6 +35,7 @@
     }
   },
   "calc": {
+    "assessmentPending": "正在评估水质。后端首次加载模型可能需要数分钟，请保持此画面开启。",
     "title": "手动输入水质数据",
     "parameters": {
       "DO": "溶氧量（DO, %）",

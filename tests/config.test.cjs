@@ -36,3 +36,24 @@ test('isSupportedModelType works correctly', () => {
   assert.equal(isSupportedModelType('lightgbm'), true);
   assert.equal(isSupportedModelType('invalid'), false);
 });
+
+
+test('cold-start budgets are separate and explicit general overrides remain compatible', () => {
+  const defaults = buildAppConfig({});
+  assert.equal(defaults.readinessTimeoutMs, 60000);
+  assert.equal(defaults.assessmentTimeoutMs, 240000);
+  const general = buildAppConfig({ EXPO_PUBLIC_REQUEST_TIMEOUT_MS: '7000' });
+  assert.equal(general.readinessTimeoutMs, 7000);
+  assert.equal(general.assessmentTimeoutMs, 7000);
+  const stages = buildAppConfig({ EXPO_PUBLIC_REQUEST_TIMEOUT_MS: '7000',
+    EXPO_PUBLIC_READINESS_TIMEOUT_MS: '90000', EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS: '300000' });
+  assert.equal(stages.requestTimeoutMs, 7000);
+  assert.equal(stages.readinessTimeoutMs, 90000);
+  assert.equal(stages.assessmentTimeoutMs, 300000);
+  for (const value of ['0', '-1', 'invalid']) {
+    const invalid = buildAppConfig({ EXPO_PUBLIC_REQUEST_TIMEOUT_MS: value,
+      EXPO_PUBLIC_READINESS_TIMEOUT_MS: value, EXPO_PUBLIC_ASSESSMENT_TIMEOUT_MS: value });
+    assert.equal(invalid.readinessTimeoutMs, 60000);
+    assert.equal(invalid.assessmentTimeoutMs, 240000);
+  }
+});

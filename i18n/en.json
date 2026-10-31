@@ -45,6 +45,7 @@
     }
   },
   "calc": {
+    "assessmentPending": "Assessing water quality. The first request may take several minutes while the backend loads the model. Please keep this screen open.",
     "title": "Water Quality Data Input",
     "parameters": {
       "DO": "Dissolved Oxygen (DO, %)",
