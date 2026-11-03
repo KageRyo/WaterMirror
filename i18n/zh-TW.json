@@ -49,9 +49,9 @@
     "title": "手動輸入水質資料",
     "parameters": {
       "DO": "溶氧量（DO, %）",
-      "BOD": "生物需氧量（BOD, mg/L）",
+      "BOD": "生化需氧量（BOD, mg/L）",
       "NH3N": "氨氮（NH3-N, mg/L）",
-      "EC": "導電度（EC, μumho/co）",
+      "EC": "導電度（EC, μS/cm）",
       "SS": "懸浮固體（SS, mg/L）"
     },
     "connection": {
@@ -135,9 +135,9 @@
       "title": "改善建議",
       "parameters": {
         "DO": "溶氧量（%）",
-        "BOD": "生物需氧量（mg/L）",
+        "BOD": "生化需氧量（mg/L）",
         "NH3N": "氨氮（mg/L）",
-        "EC": "導電度（μumho/co）",
+        "EC": "導電度（μS/cm）",
         "SS": "懸浮固體（mg/L）"
       },
       "suggestions": {

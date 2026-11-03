@@ -34,6 +34,15 @@
         "percentileData": "サーバーからパーセンタイルデータを取得できません。"
       }
     },
+    "modelTypes": {
+      "direct_wqi5": "WQI5 式（直接計算）",
+      "lr": "線形回帰 (LR)",
+      "mpr": "多項式回帰 (MPR)",
+      "svm": "サポートベクターマシン (SVM)",
+      "rf": "ランダムフォレスト (RF)",
+      "xgboost": "XGBoost",
+      "lightgbm": "LightGBM"
+    },
     "calc": {
     "assessmentPending": "水質を評価しています。初回はバックエンドのモデル読み込みに数分かかる場合があります。この画面を開いたままお待ちください。",
       "title": "水質データ手動入力",
@@ -41,7 +50,7 @@
         "DO": "溶存酸素（DO, %）",
         "BOD": "生物化学的酸素要求量（BOD, mg/L）",
         "NH3N": "アンモニア態窒素（NH3-N, mg/L）",
-        "EC": "電気伝導度（EC, μumho/co）",
+        "EC": "電気伝導度（EC, μS/cm）",
         "SS": "浮遊物質（SS, mg/L）"
       },
       "connection": {
@@ -90,6 +99,10 @@
       "warning": {
         "message": "WaterMirrorにはエラーが発生する可能性があります。慎重にご使用ください。"
       },
+      "modelSelection": {
+        "label": "分析モデルを選択",
+        "hint": "direct_wqi5 は式による基準、その他は機械学習の代替モデルです"
+      },
       "dataDisplay": {
         "title": "現在の水質データ",
         "noData": "上の入力欄に水質データを入力するか、CSVファイルをアップロードしてください"
@@ -123,7 +136,7 @@
           "DO": "溶存酸素（%）",
           "BOD": "生物化学的酸素要求量（mg/L）",
           "NH3N": "アンモニア態窒素（mg/L）",
-          "EC": "電気伝導度（μumho/co）",
+          "EC": "電気伝導度（μS/cm）",
           "SS": "浮遊物質（mg/L）"
         },
         "suggestions": {

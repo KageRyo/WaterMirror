@@ -51,7 +51,7 @@
       "DO": "Dissolved Oxygen (DO, %)",
       "BOD": "Biochemical Oxygen Demand (BOD, mg/L)",
       "NH3N": "Ammonia Nitrogen (NH3-N, mg/L)",
-      "EC": "Electrical Conductivity (EC, μumho/co)",
+      "EC": "Electrical Conductivity (EC, μS/cm)",
       "SS": "Suspended Solids (SS, mg/L)"
     },
     "connection": {
@@ -137,7 +137,7 @@
         "DO": "Dissolved Oxygen (%)",
         "BOD": "Biochemical Oxygen Demand (mg/L)",
         "NH3N": "Ammonia Nitrogen (mg/L)",
-        "EC": "Electrical Conductivity (μumho/co)",
+        "EC": "Electrical Conductivity (μS/cm)",
         "SS": "Suspended Solids (mg/L)"
       },
       "suggestions": {
