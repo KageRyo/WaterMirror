@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PieChart, BarChart } from 'react-native-chart-kit';
 import { useTranslation } from 'react-i18next';
 
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from './utils/apiClient';
 
 const {
   getAssessmentTranslationKey,
