@@ -20,7 +20,6 @@
     "@react-native-picker/picker": "2.11.4",
     "@react-navigation/native": "^7.5.1",
     "@react-navigation/native-stack": "^7.21.0",
-    "babel-plugin-module-resolver": "^5.0.3",
     "expo": "~57.0.30",
     "expo-build-properties": "~57.0.22",
     "expo-constants": "~57.0.22",
@@ -65,7 +64,9 @@
       "@react-native-picker/picker": "$@react-native-picker/picker"
     },
     "zod": "4.6.7",
-    "node-forge": "https://codeload.github.com/digitalbazaar/forge/tar.gz/ceba34402e329f0365134f23fe19898756527d65"
+    "node-forge": "https://codeload.github.com/digitalbazaar/forge/tar.gz/ceba34402e329f0365134f23fe19898756527d65",
+    "glob": "^14.0.2",
+    "minimatch": "^11.0.1"
   },
   "private": true
 }

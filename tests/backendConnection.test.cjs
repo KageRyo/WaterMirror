@@ -83,7 +83,7 @@ test('API assessment budgets do not slow ordinary requests or health probes', as
     fetch: async () => ({ ok: true }),
     setTimeout: (_, timeout) => { budgets.push(timeout); },
     require: (id) => {
-      if (id === '@/config') return config;
+      if (id === '../config') return config;
       if (id === '@react-native-async-storage/async-storage') return {};
       return require(`../src/utils/${id.slice(2)}`);
     },

@@ -5,8 +5,8 @@ import * as DocumentPicker from 'expo-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 
-import config from '@/config';
-import { apiClient } from '@/utils/apiClient';
+import config from './config';
+import { apiClient } from './utils/apiClient';
 import { useBackend } from '../contexts/BackendContext';
 
 const { getModelTypeLabel } = require('./utils/resultHelpers.cjs');
