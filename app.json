@@ -2,7 +2,7 @@
   "expo": {
     "name": "WaterMirror",
     "slug": "WaterMirror",
-    "version": "2.3.6",
+    "version": "2.3.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +20,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.kaeryo.watermirror",
-      "versionCode": 8
+      "versionCode": 9
     },
     "web": {
       "favicon": "./assets/favicon.png"
