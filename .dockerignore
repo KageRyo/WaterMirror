@@ -5,3 +5,15 @@ dist-*
 .github
 .devcontainer
 npm-debug.log*
+# Local credentials and environment files must never enter an image.
+**/.env
+**/.env.*
+!.env.example
+**/*.jks
+**/*.keystore
+**/*.p8
+**/*.p12
+**/*.key
+**/*.pem
+**/*.mobileprovision
+**/.expo
