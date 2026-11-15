@@ -20,7 +20,7 @@ function processPatches(apply = false) {
   checkVersion('node-forge', policy.forgeVersion);
   const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json')));
   if (lock.packages['node_modules/node-forge']?.resolved !== policy.forgeResolved) {
-    throw new Error('node-forge must use the reviewed immutable security-fix source');
+    throw new Error('node-forge must use the reviewed fixed package');
   }
   const rsa = fs.readFileSync(path.join(packageRoot('node-forge'), 'lib/rsa.js'));
   if (sha256(rsa) !== policy.forgeRsaSha256) throw new Error('node-forge RSA security fix is missing or changed');
