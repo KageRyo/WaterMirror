@@ -52,8 +52,8 @@ test('oversized constrained Zod collections reject before parsing their elements
 test('real Expo MCP registration preserves strict command inputs, outputs and prompt arguments', async () => {
   const { TunnelMcpServerProxy } = await import('@expo/mcp-tunnel');
   const cliRequire = createRequire(createRequire(require.resolve('expo/package.json')).resolve('@expo/cli/package.json'));
-  const { addMcpCapabilities } = cliRequire('./build/src/start/server/MCPDevToolsPluginCLIExtensions.js');
-  const { DevToolsPluginCliExtensionResults } = cliRequire('./build/src/start/server/DevToolsPluginCliExtensionResults.js');
+  const { addMcpCapabilities } = cliRequire('./build/src/start/server/mcp/MCPDevToolsPluginCLIExtensions.js');
+  const { DevToolsPluginCliExtensionResults } = cliRequire('./build/src/start/server/devtools/DevToolsPluginCliExtensionResults.js');
   const plugin = {
     packageName: 'watermirror-security-fixture', packageRoot: '/unused-fixture',
     cliExtensions: { description: 'Fixture', entryPoint: 'unused.js', commands: [{
@@ -64,7 +64,7 @@ test('real Expo MCP registration preserves strict command inputs, outputs and pr
   };
   // Registration only: the transport and external commands are never started.
   const proxy = new TunnelMcpServerProxy('ws://127.0.0.1:1', { projectRoot: process.cwd() });
-  await addMcpCapabilities(proxy, { projectRoot: process.cwd(), devtoolsPluginManager: { queryPluginsAsync: async () => [plugin] } });
+  await addMcpCapabilities(proxy, { projectRoot: process.cwd(), devtoolsPluginManager: { queryPluginsAsync: async () => [plugin] } }, z);
   const input = proxy.registeredTools.get(plugin.packageName).inputSchema.properties.parameters;
   assert.deepEqual(input.properties.command.enum, ['inspect']);
   assert.equal(input.properties.limit.type, 'number');
