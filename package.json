@@ -65,7 +65,7 @@
       "@react-native-picker/picker": "$@react-native-picker/picker"
     },
     "zod": "4.6.7",
-    "node-forge": "https://codeload.github.com/digitalbazaar/forge/tar.gz/ceba34402e329f0365134f23fe19898756527d65",
+    "node-forge": "1.4.3",
     "glob": "^14.0.2",
     "minimatch": "^11.0.1"
   },
