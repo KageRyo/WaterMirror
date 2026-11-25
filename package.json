@@ -33,7 +33,7 @@
     "prop-types": "^15.8.1",
     "react": "19.2.9",
     "react-dom": "19.2.9",
-    "react-i18next": "^15.1.0",
+    "react-i18next": "^18.0.3",
     "react-native": "0.86.3",
     "react-native-chart-kit": "^6.12.3",
     "react-native-gesture-handler": "~2.32.0",
