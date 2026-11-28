@@ -17,7 +17,7 @@ It allows users to:
 - submit data to the [WQSurrogateModels](https://github.com/KageRyo/WQSurrogateModels) backend
 - display backend-returned WQI5 score, category, rating range, and warnings
 
-WaterMirror does not calculate WQI5 thresholds locally. The backend is the source of truth for assessment logic.
+The backend applies the WQI5 assessment logic and category thresholds; WaterMirror displays the returned result.
 
 ## Relationship with the Companion Repository
 
