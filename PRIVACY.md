@@ -23,7 +23,7 @@ Saved inputs and results can be loaded again in later sessions. The **Clear** bu
 
 ## Backend Processing and Logs
 
-The unmodified WQSurrogateModels application logic processes assessment inputs and uploaded CSV content to produce results. It does not persist those inputs or CSV contents in an application database or retained assessment file. Upload handling may use temporary files managed by the web framework; this is not a guarantee that data never touches disk.
+The unmodified WQSurrogateModels application logic processes assessment inputs and uploaded CSV content to produce results. It does not persist those inputs or CSV contents in an application database or retained assessment file. Upload handling may write uploaded data to temporary files managed by the web framework.
 
 The backend emits operational/request metadata such as timestamps, request IDs, HTTP methods, routes, status codes, latency, model types, and error codes. Its structured request logging does not include assessment request bodies or CSV contents. Other application errors may produce diagnostic logs.
 
@@ -31,7 +31,7 @@ Hosting infrastructure, web servers, and reverse proxies may maintain their own 
 
 ## Custom and Third-Party Backends
 
-WaterMirror allows users to configure their own backend URL. Third-party or modified backends may store, log, or otherwise process submitted data differently. Their operators determine those practices; this document does not guarantee their behavior. Contact the operator for deployment-specific privacy, retention, or deletion questions.
+WaterMirror allows users to configure their own backend URL. Third-party or modified backends may store, log, or otherwise process submitted data differently, as decided by their operators. Contact the operator for deployment-specific privacy, retention, or deletion questions.
 
 ## Transport Security
 
